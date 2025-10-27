@@ -1,0 +1,307 @@
+div.container {
+  display: grid;
+  grid-template-columns: 5fr 1.5fr 1.5fr;
+  grid-template-rows: repeat(10, 1fr);
+  background-color: #eceff2;
+}
+
+div.container .right-text {
+  grid-column: 2/4;
+  grid-row: 4/7;
+}
+
+.slider {
+  grid-column: 1/2;
+  grid-row: 1/10;
+  display: grid;
+  grid-template-columns: 1fr 8fr 1fr;
+  grid-template-rows: 1fr 10fr 1fr;
+  height: 40rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.slide {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  grid-row: 2 / 3;
+  grid-column: 2 / 3;
+  position: relative;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.slide video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 2;
+  user-select: none;
+  border-radius: 50%;
+}
+
+.arrow.left {
+  grid-row: 2 / 3;
+  grid-column: 2 / 3;
+  justify-self: start;
+  align-self: center;
+}
+
+.arrow.right {
+  grid-row: 2 / 3;
+  grid-column: 2 / 3;
+  justify-self: end;
+  align-self: center;
+}
+
+div.second-container {
+  height: 40rem;
+  background-color: #f5f5f5;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(20, 1fr);
+  gap: 1rem;
+}
+
+.services {
+  grid-row: 3/4;
+  grid-column: 3/6;
+}
+
+.service1-logo {
+  width: 4rem;
+  grid-column: 2/5;
+  grid-row: 6/7;
+  margin-left: 2rem;
+}
+
+.service1 {
+  grid-row: 7/8;
+  grid-column: 2/5;
+  padding-left: 1rem;
+}
+.service1-description {
+  grid-row: 8/10;
+  grid-column: 2/5;
+}
+.service2-logo {
+  width: 4rem;
+  grid-row: 6/7;
+  grid-column: 6/9;
+  margin-left: 2rem;
+}
+.service2 {
+  grid-row: 7/8;
+  grid-column: 6/9;
+}
+.service2-description {
+  grid-row: 8/10;
+  grid-column: 6/9;
+}
+
+.service3-logo {
+  width: 4rem;
+  grid-row: 6/7;
+  grid-column: 10/13;
+  margin-left: 2rem;
+}
+.service3 {
+  grid-row: 7/8;
+  grid-column: 10/13;
+  padding-left: 2rem;
+}
+.service3-description {
+  grid-row: 8/10;
+  grid-column: 10/13;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.slider2 {
+  position: relative;
+  width: 30rem;
+  height: auto;
+  margin: auto;
+  overflow: hidden;
+  grid-row: 9/12;
+  grid-column: 14/20;
+}
+
+.slides2 {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+.slides2 img {
+  width: 100%;
+  flex-shrink: 0;
+}
+button.prev2,
+button.next2 {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+button.prev2 {
+  left: 10px;
+}
+button.next2 {
+  right: 10px;
+}
+
+.dots {
+  text-align: center;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+.dot {
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+  margin: 0 4px;
+  background-color: #bbb;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.dot.active2 {
+  background-color: white;
+}
+
+div.projects {
+  grid-row: 4/7;
+  grid-column: 14/20;
+}
+
+div.projects a {
+  text-decoration: none;
+  color: burlywood;
+  border-bottom: solid;
+}
+
+@media (min-width: 398px) and (max-width: 768px) {
+  div.container {
+    grid-template-rows: 1fr 5fr;
+    grid-template-columns: 100vw;
+    height: 550px;
+  }
+
+  div.container .right-text {
+    grid-row: 1;
+    grid-column: 1;
+    padding: 25px;
+  }
+
+  div.container .right-text p {
+    grid-column: 1;
+    margin-top: 1rem;
+  }
+
+  .slider {
+    grid-row: 2;
+    grid-column: 1;
+    height: 100%;
+  }
+
+  div.second-container {
+    height: 400px;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 7px;
+  }
+
+  .services {
+    grid-column: 4/6;
+  }
+  .service1-logo {
+    width: 35px;
+    grid-column: 2/3;
+    grid-row: 5/6;
+    margin: 0;
+  }
+
+  .service1 {
+    grid-row: 6/7;
+    grid-column: 2/3;
+    padding: 0;
+  }
+  .service1-description {
+    padding-left: 10px;
+    grid-row: 7/10;
+    grid-column: 1/4;
+  }
+  .service2-logo {
+    width: 35px;
+    grid-row: 5/6;
+    grid-column: 5/6;
+    margin: 0;
+  }
+  .service2 {
+    grid-row: 6/7;
+    grid-column: 5/6;
+  }
+  .service2-description {
+    grid-row: 7/9;
+    grid-column: 4/7;
+    padding-left: 10px;
+  }
+  .service3-logo {
+    width: 35px;
+    grid-row: 5/6;
+    grid-column: 8/9;
+    margin: 0;
+  }
+  .service3 {
+    grid-row: 6/7;
+    grid-column: 8/9;
+    padding-left: 3px;
+  }
+  .service3-description {
+    grid-row: 7/9;
+    grid-column: 7/10;
+    padding-left: 8px;
+  }
+
+  .slider2 {
+    width: 200px;
+    grid-row: 11/16;
+    grid-column: 7/12;
+  }
+  div.projects {
+    grid-row: 10/15;
+    grid-column: 2/7;
+  }
+  div.projects a {
+    font-size: smaller;
+  }
+}

@@ -1,0 +1,300 @@
+* {
+  margin: 0;
+}
+body {
+  margin-top: 112px;
+}
+.navbar {
+  display: grid;
+  grid-template-columns: 1fr 7fr 1fr;
+  grid-template-rows: 112px;
+  justify-items: center;
+  align-items: center;
+  background-color: #06202b;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+}
+
+.main-menu {
+  border-bottom: solid #dda853 2.5px;
+  border-left: #dda853 solid 2.5px;
+  border-radius: 10px;
+}
+
+.logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.logo {
+  padding-left: 1rem;
+}
+
+.navbar .menu {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+}
+
+.navbar .menu a {
+  text-decoration: none;
+  color: #f0ece6;
+  font-size: 1.75rem;
+}
+
+.main-contact {
+  pointer-events: none;
+}
+
+#contact {
+  position: relative;
+  display: inline-block;
+}
+
+.mini-btn li {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: 100%;
+}
+
+.mini-btn img {
+  width: 2rem;
+  object-fit: cover;
+}
+
+.mini-btn {
+  width: 16rem;
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: absolute;
+  left: 0;
+  background: #fff;
+  padding: 10px;
+  list-style: none;
+  z-index: 100;
+  align-items: center;
+  transition: opacity 0.7s ease, visibility 0s linear 0.7s;
+  transform: translateX(-20px);
+  gap: 3px;
+}
+
+#contact:hover .mini-btn {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.7s ease;
+}
+
+.main-footer {
+  background-color: #eceff2;
+  height: 30rem;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  row-gap: 1rem;
+}
+
+.main-footer p.company-name {
+  grid-column: 2/5;
+  grid-row: 3/5;
+}
+
+.main-footer p.phone-number {
+  grid-column: 2/4;
+  grid-row: 5/8;
+}
+
+.main-footer p.email {
+  grid-column: 2/4;
+  grid-row: 8/9;
+}
+.main-footer p.adress {
+  grid-column: 2/4;
+  grid-row: 9/10;
+}
+
+.main-footer p.follow-us {
+  grid-column: 8/9;
+  grid-row: 2/3;
+}
+.main-footer #follow-us {
+  grid-column: 8/9;
+  grid-row: 3/4;
+  height: 2rem;
+  width: 2rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.main-footer img.follow-us-logo {
+  height: 2rem;
+  grid-column: 8/9;
+  grid-row: 3/4;
+}
+
+.main-footer div.location {
+  grid-column: 9/10;
+  grid-row: 4/8;
+}
+
+.header-text {
+  font-size: 2rem;
+  font-family: "Open Sans", sans-serif;
+}
+
+.sub-header-text {
+  font-size: 1.5rem;
+  font-family: "Open Sans", sans-serif;
+}
+
+.sub-text {
+  font-size: 1.2rem;
+  font-family: "Lato", sans-serif;
+}
+
+@media (min-width: 398px) and (max-width: 768px) {
+  body {
+    margin-top: 75px;
+  }
+
+  .navbar {
+    width: 100vw;
+    max-width: 100vw;
+    height: 75px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .logo {
+    height: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .logo img {
+    width: 60px;
+    margin-top: 1rem;
+    max-width: 1000%;
+    max-height: 1000%;
+  }
+  .navbar .menu {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .navbar .menu a {
+    font-size: 0.9rem;
+  }
+  .mini-btn a svg {
+    width: 16px;
+    height: 16px;
+  }
+  .main-footer {
+    padding-left: 1rem;
+    height: 250px;
+    grid-template-rows: repeat(20, 1fr);
+    row-gap: 0.5rem;
+  }
+  .main-footer p.company-name {
+    grid-column: 1/5;
+  }
+  .main-footer p.phone-number {
+    grid-column: 1/4;
+  }
+
+  .main-footer p.email {
+    grid-column: 1/4;
+  }
+
+  .main-footer p.adress {
+    grid-column: 1/4;
+    grid-row: 9/12;
+  }
+
+  .main-footer p.follow-us {
+    grid-column: 7/9;
+    grid-row: 3/4;
+  }
+  .main-footer #follow-us {
+    grid-column: 7/9;
+    grid-row: 4/6;
+    display: flex;
+    width: auto;
+    height: auto;
+    gap: 0;
+  }
+  .main-footer #follow-us svg {
+    width: 12px;
+    height: 12px;
+  }
+  .main-footer div.location {
+    grid-column: 6/10;
+    grid-row: 7/12;
+  }
+  .main-footer div.location iframe {
+    width: 150px;
+    height: 112.5px;
+  }
+  .main-footer img.follow-us-logo {
+    height: auto;
+  }
+
+  .header-text {
+    font-size: 12px;
+  }
+
+  .sub-header-text {
+    font-size: 9px;
+  }
+
+  .sub-text {
+    font-size: 7px; /* yazıyı biraz büyüt */
+  }
+  .mini-btn {
+    width: 90%;
+    min-width: 60px;
+    max-width: 320px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 12px;
+    background: #fff;
+    border-radius: 12px;
+    /* BURAYI DEĞİŞTİR */
+    opacity: 0; /* başlangıçta kapalı */
+    visibility: hidden; /* görünmesin */
+    transition: opacity 0.7s ease, visibility 0s linear 0.7s;
+    gap: 5px;
+  }
+
+  #contact:hover .mini-btn {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.7s ease;
+  }
+
+  .mini-btn li {
+    width: auto;
+    transform: translateX(-7px);
+  }
+
+  .mini-btn a svg,
+  .mini-btn img {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .mini-btn .sub-text {
+    display: none;
+  }
+}
