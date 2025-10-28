@@ -298,3 +298,159 @@ body {
     display: none;
   }
 }
+
+@media (max-width: 397px) {
+  /* Navbar */
+  body {
+    margin-top: 60px;
+  }
+
+  .navbar {
+    width: 100vw;
+    max-width: 100vw;
+    height: 60px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    height: 25px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .logo img {
+    width: 50px;
+    margin-top: 0.7rem;
+    max-width: 1000%;
+    max-height: 1000%;
+  }
+
+  .navbar .menu {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .navbar .menu a {
+    font-size: 0.8rem;
+  }
+
+  .mini-btn a svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Footer */
+  .main-footer {
+    padding-left: 1rem;
+    height: 220px;
+    grid-template-rows: repeat(20, 1fr);
+    row-gap: 0.4rem;
+  }
+
+  .main-footer p.company-name {
+    grid-column: 1/5;
+  }
+
+  .main-footer p.phone-number {
+    grid-column: 1/4;
+  }
+
+  .main-footer p.email {
+    grid-column: 1/4;
+  }
+
+  .main-footer p.adress {
+    grid-column: 1/4;
+    grid-row: 9/12;
+  }
+
+  .main-footer p.follow-us {
+    grid-column: 7/9;
+    grid-row: 3/4;
+  }
+
+  .main-footer #follow-us {
+    grid-column: 7/9;
+    grid-row: 4/6;
+    display: flex;
+    width: auto;
+    height: auto;
+    gap: 0;
+  }
+
+  .main-footer #follow-us svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .main-footer div.location {
+    grid-column: 6/10;
+    grid-row: 7/12;
+  }
+
+  .main-footer div.location iframe {
+    width: 130px;
+    height: 95px;
+  }
+
+  .main-footer img.follow-us-logo {
+    height: auto;
+  }
+
+  .header-text {
+    font-size: 10px;
+  }
+
+  .sub-header-text {
+    font-size: 8px;
+  }
+
+  .sub-text {
+    font-size: 6.5px;
+  }
+
+  .mini-btn {
+    width: 85%;
+    min-width: 60px;
+    max-width: 300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 10px;
+    background: #fff;
+    border-radius: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.7s ease, visibility 0s linear 0.7s;
+    gap: 4px;
+  }
+
+  #contact:hover .mini-btn {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.7s ease;
+  }
+
+  .mini-btn li {
+    width: auto;
+    transform: translateX(-7px);
+  }
+
+  .mini-btn a svg,
+  .mini-btn img {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .mini-btn .sub-text {
+    display: none;
+  }
+}

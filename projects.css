@@ -75,7 +75,7 @@
   background-color: #333;
 }
 
-@media (min-width: 398px) and (max-width: 768px) {
+@media (max-width: 768px) {
   .container {
     margin-top: 75px;
   }

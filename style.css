@@ -305,3 +305,116 @@ div.projects a {
     font-size: smaller;
   }
 }
+@media (max-width: 397px) {
+  div.container {
+    grid-template-rows: 1fr 4.5fr;
+    grid-template-columns: 100vw;
+    height: 480px;
+  }
+
+  div.container .right-text {
+    grid-row: 1;
+    grid-column: 1;
+    padding: 18px;
+  }
+
+  div.container .right-text p {
+    grid-column: 1;
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .slider {
+    grid-row: 2;
+    grid-column: 1;
+    height: 90%;
+  }
+
+  div.second-container {
+    height: 340px;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 5px;
+  }
+
+  .services {
+    grid-column: 4/8;
+    font-size: 0.85rem;
+  }
+
+  .service1-logo {
+    width: 28px;
+    grid-column: 2/3;
+    grid-row: 5/6;
+    margin: 0;
+  }
+
+  .service1 {
+    grid-row: 6/7;
+    grid-column: 2/3;
+    padding: 0;
+    font-size: 0.75rem;
+  }
+
+  .service1-description {
+    padding-left: 8px;
+    grid-row: 7/10;
+    grid-column: 1/4;
+    font-size: 0.7rem;
+  }
+
+  .service2-logo {
+    width: 28px;
+    grid-row: 5/6;
+    grid-column: 5/6;
+    margin: 0;
+  }
+
+  .service2 {
+    grid-row: 6/7;
+    grid-column: 5/6;
+    font-size: 0.75rem;
+  }
+
+  .service2-description {
+    grid-row: 7/9;
+    grid-column: 4/7;
+    padding-left: 8px;
+    font-size: 0.7rem;
+  }
+
+  .service3-logo {
+    width: 28px;
+    grid-row: 5/6;
+    grid-column: 8/9;
+    margin: 0;
+  }
+
+  .service3 {
+    grid-row: 6/7;
+    grid-column: 8/9;
+    padding-left: 2px;
+    font-size: 0.75rem;
+  }
+
+  .service3-description {
+    grid-row: 7/9;
+    grid-column: 7/10;
+    padding-left: 6px;
+    font-size: 0.7rem;
+  }
+
+  .slider2 {
+    width: 170px;
+    grid-row: 11/16;
+    grid-column: 7/12;
+  }
+
+  div.projects {
+    grid-row: 10/15;
+    grid-column: 2/7;
+  }
+
+  div.projects a {
+    font-size: 0.75rem;
+  }
+}
