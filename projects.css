@@ -12,7 +12,7 @@
 
 .slider {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   position: relative;
   width: 18.4vw;
   height: 25rem;
