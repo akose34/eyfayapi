@@ -1,0 +1,11 @@
+{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [".astro/types.d.ts", "src/**/*", "tests/**/*", "e2e/**/*", "scripts/**/*", "*.ts"],
+  "exclude": ["dist", "node_modules"]
+}

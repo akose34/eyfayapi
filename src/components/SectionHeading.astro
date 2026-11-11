@@ -1,0 +1,64 @@
+---
+/**
+ * Editorial heading block: eyebrow · title · lead · optional action.
+ *
+ *   level   'h1' for page titles, 'h2' (default) for sections, 'h3' nested
+ *   size    'page' (text-5xl) | 'section' (text-4xl) | 'sub' (text-3xl)
+ *   align   'start' | 'center'
+ *
+ * Put an action (TextLink/Button) in the "action" slot; on large screens it
+ * aligns to the end of the heading row.
+ */
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+  lead?: string;
+  level?: 'h1' | 'h2' | 'h3';
+  size?: 'page' | 'section' | 'sub';
+  align?: 'start' | 'center';
+  id?: string;
+  class?: string | undefined;
+}
+
+const {
+  title,
+  eyebrow,
+  lead,
+  level = 'h2',
+  size = 'section',
+  align = 'start',
+  id,
+  class: className,
+} = Astro.props;
+const Heading = level;
+const sizes = {
+  page: 'text-5xl',
+  section: 'text-4xl',
+  sub: 'text-3xl',
+} as const;
+const hasAction = Astro.slots.has('action');
+---
+
+<div
+  class:list={[
+    'flex flex-col gap-8',
+    hasAction && align === 'start' && 'lg:flex-row lg:items-end lg:justify-between',
+    align === 'center' && 'items-center text-center',
+    className,
+  ]}
+>
+  <div class:list={['max-w-3xl', align === 'center' && 'flex flex-col items-center']}>
+    {eyebrow && <Eyebrow rule={align === 'start'}>{eyebrow}</Eyebrow>}
+    <Heading id={id} class:list={[sizes[size], eyebrow && 'mt-4']}>
+      {title}
+    </Heading>
+    {lead && <p class="text-ink-muted mt-6 max-w-(--container-prose) text-lg">{lead}</p>}
+  </div>
+  {hasAction && (
+    <div class="shrink-0">
+      <slot name="action" />
+    </div>
+  )}
+</div>

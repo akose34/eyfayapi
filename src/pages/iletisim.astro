@@ -1,0 +1,196 @@
+---
+/**
+ * Contact (Stage 6). Every value comes from `contact` in src/data/company.ts
+ * (verified legacy data). No form: the site has no backend, and a form that
+ * cannot deliver messages would be dishonest.
+ *
+ *   A  Hero                 dark: headline + short invitation
+ *   B  Contact methods      WhatsApp and mobile as primary tiles; landline,
+ *                           e-mail and Instagram as secondary rows
+ *   C  Office location      verified address + directions link + a
+ *                           click-to-load Google map (nothing loads before)
+ *   D  Closing choice       WhatsApp (primary) · phone · e-mail
+ */
+import ContactCTA from '@/components/ContactCTA.astro';
+import Eyebrow from '@/components/Eyebrow.astro';
+import Icon, { type IconName } from '@/components/Icon.astro';
+import MapConsent from '@/components/MapConsent.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Section from '@/components/Section.astro';
+import TextLink from '@/components/TextLink.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { company, contact } from '@/data/company';
+
+interface Method {
+  icon: IconName;
+  label: string;
+  value: string;
+  action: string;
+  href: string;
+  external?: boolean;
+}
+
+const primary: Method[] = [
+  {
+    icon: 'whatsapp',
+    label: 'WhatsApp',
+    value: contact.whatsapp.display,
+    action: 'WhatsApp’ta mesaj yazın',
+    href: contact.whatsapp.href,
+    external: true,
+  },
+  {
+    icon: 'phone',
+    label: contact.mobile.label,
+    value: contact.mobile.display,
+    action: 'Arayın',
+    href: contact.mobile.href,
+  },
+];
+
+const secondary: Method[] = [
+  {
+    icon: 'phone',
+    label: contact.landline.label,
+    value: contact.landline.display,
+    action: 'Arayın',
+    href: contact.landline.href,
+  },
+  {
+    icon: 'mail',
+    label: 'E-posta',
+    value: contact.email.value,
+    action: 'E-posta gönderin',
+    href: contact.email.enquiryHref,
+  },
+  {
+    icon: 'instagram',
+    label: 'Instagram',
+    value: contact.instagram.handle,
+    action: 'Profili görüntüleyin',
+    href: contact.instagram.url,
+    external: true,
+  },
+];
+/** Visually hidden ": " / ", " separators give each link a readable name
+ * ("WhatsApp: +90 …, WhatsApp’ta mesaj yazın") that contains its visible text. */
+const primaryMethods = primary;
+const secondaryMethods = secondary;
+---
+
+<BaseLayout
+  title="İletişim"
+  og="contact"
+  description={`Eyfa Yapı iletişim: ${contact.mobile.display}, ${contact.email.value}, ${company.address.district}/${company.address.city}.`}
+>
+  <PageHeader
+    title="Bize ulaşın"
+    eyebrow="İletişim"
+    lead="Projeleriniz ve sorularınız için bize telefon, WhatsApp veya e-posta ile doğrudan ulaşabilirsiniz."
+    breadcrumbs={[{ label: 'İletişim' }]}
+    width="wide"
+  />
+
+  {/* B — Contact methods */}
+  <Section width="wide" labelledby="iletisim-kanallari">
+    <h2 id="iletisim-kanallari" class="sr-only">
+      İletişim kanalları
+    </h2>
+    <ul class="grid gap-(--spacing-grid) md:grid-cols-2">
+      {primaryMethods.map((m) => (
+        <li>
+          <a
+            href={m.href}
+            class="group bg-surface-raised border-line hover:border-accent flex h-full flex-col justify-between gap-10 rounded-lg border p-6 transition-colors sm:p-8 lg:p-10"
+            {...(m.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            <span class="flex items-center justify-between">
+              <span class="eyebrow">
+                {m.label}
+                <span class="sr-only">: </span>
+              </span>
+              <Icon name={m.icon} size={24} class="text-accent-text" />
+            </span>
+            <span>
+              <span class="font-display block text-2xl whitespace-nowrap tabular-nums sm:text-4xl">
+                {m.value}
+                <span class="sr-only">, </span>
+              </span>
+              <span class="text-accent-text mt-4 inline-flex items-center gap-2 text-sm font-semibold">
+                {m.action}
+                {m.external && <span class="sr-only"> (yeni sekmede açılır)</span>}
+                <Icon
+                  name={m.external ? 'arrow-up-right' : 'arrow-right'}
+                  size={16}
+                  class="transition-transform group-hover:translate-x-1"
+                />
+              </span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <ul class="border-line mt-12 grid border-t sm:grid-cols-3">
+      {secondaryMethods.map((m) => (
+        <li class="border-line border-b sm:border-b-0 sm:not-last:border-r">
+          <a
+            href={m.href}
+            class="group flex min-h-24 flex-col justify-center gap-1 py-6 sm:px-6 sm:first:pl-0"
+            {...(m.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            <span class="text-ink-muted flex items-center gap-2 text-xs tracking-(--tracking-ui)">
+              <Icon name={m.icon} size={14} class="text-accent-text" />
+              {m.label}
+              <span class="sr-only">: </span>
+            </span>
+            <span class="group-hover:text-accent-text text-lg font-medium break-all transition-colors sm:break-normal">
+              {m.value}
+              <span class="sr-only">, </span>
+            </span>
+            <span class="text-ink-muted text-xs">
+              {m.action}
+              {m.external && <span class="sr-only"> (yeni sekmede açılır)</span>}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  {/* C — Office location */}
+  <Section tone="white" width="wide" labelledby="ofis">
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+      <div class="lg:col-span-4">
+        <Eyebrow>Ofis</Eyebrow>
+        <h2 id="ofis" class="mt-6 text-4xl">
+          Ofisimiz
+        </h2>
+        <address class="mt-8 not-italic">
+          <span class="block font-semibold">{company.legalName}</span>
+          <span class="text-ink-muted mt-3 block">
+            {company.address.street}
+            <br />
+            {company.address.postalCode} {company.address.district} / {company.address.city}
+          </span>
+        </address>
+        <div class="mt-8 flex flex-col items-start gap-3">
+          <TextLink href={contact.address.directionsHref} external>
+            Google Haritalar’da yol tarifi
+          </TextLink>
+        </div>
+      </div>
+      <div class="lg:col-span-8">
+        <MapConsent />
+      </div>
+    </div>
+  </Section>
+
+  {/* D — Closing choice */}
+  <ContactCTA
+    title="Size en uygun kanalı seçin"
+    lead="WhatsApp’tan yazabilir, bizi arayabilir ya da e-posta gönderebilirsiniz."
+    headingId="iletisim-secim"
+    showContactPageLink={false}
+  />
+</BaseLayout>

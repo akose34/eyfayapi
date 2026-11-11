@@ -1,0 +1,127 @@
+---
+/**
+ * Responsive image wrapper with a fixed aspect ratio (no layout shift).
+ *
+ * - `src` is a legacy media path ("projects-img/7.webp"). An unknown path
+ *   still FAILS THE BUILD (typo protection, src/lib/media.ts). Pass `null` when
+ *   no image exists yet: a calm placeholder is rendered instead.
+ * - `fit="contain"` for drawings/floor plans (never cropped), `cover` for photos.
+ * - `zoom` scales the image gently while a parent `.group` is hovered.
+ * - `caption` wraps the frame in <figure>/<figcaption>.
+ * - `aspect="fill"` (S3) drops the ratio and fills a parent that has its own
+ *   height (e.g. the full-bleed hero panel) — the parent must define the size,
+ *   so there is still no layout shift.
+ */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { croppedImage } from '@/lib/media';
+
+type Aspect =
+  'landscape' | 'photo' | 'wide' | 'cinema' | 'portrait' | 'square' | 'feature' | 'fill';
+
+interface Props {
+  src: string | null;
+  alt: string;
+  aspect?: Aspect;
+  fit?: 'cover' | 'contain';
+  /** CSS object-position, e.g. "50% 30%". */
+  position?: string;
+  widths?: number[];
+  sizes?: string;
+  priority?: boolean;
+  zoom?: boolean;
+  caption?: string;
+  rounded?: boolean;
+  /**
+   * Encoder quality 1–100. Photos (`cover`) default to PHOTO_QUALITY; drawings
+   * (`contain`) keep the encoder default (80) so plan lines stay crisp.
+   */
+  quality?: number;
+  class?: string | undefined;
+}
+
+const {
+  src,
+  alt,
+  aspect = 'landscape',
+  fit = 'cover',
+  position,
+  widths = [400, 640, 750, 960, 1280],
+  sizes = '100vw',
+  priority = false,
+  zoom = false,
+  caption,
+  rounded = true,
+  quality,
+  class: className,
+} = Astro.props;
+
+const aspects: Record<Aspect, string> = {
+  landscape: 'aspect-landscape',
+  photo: 'aspect-photo',
+  wide: 'aspect-wide',
+  cinema: 'aspect-cinema',
+  portrait: 'aspect-portrait',
+  square: 'aspect-square',
+  feature: 'aspect-landscape lg:aspect-portrait', // 4:3 on phones, 4:5 from 1024px
+  fill: 'h-full',
+};
+// Measured letterbox bands are removed at BUILD time by the image service
+// (src/lib/image-service.ts); the HTML width/height/srcset describe the
+// cropped picture. Originals stay untouched. Only verified solid black bands
+// are listed (src/data/image-crops.json) — drawing content is never cropped.
+const cropped = src ? croppedImage(src) : null;
+/** Stage 7: matches the hero setting; visually checked on phones and 2x desktop. */
+const PHOTO_QUALITY = 72;
+const encoderQuality = quality ?? (fit === 'cover' ? PHOTO_QUALITY : undefined);
+const maxWidth = Math.max(...widths);
+const Wrapper = caption ? 'figure' : 'div';
+const renderWidth = cropped ? Math.min(maxWidth, cropped.width) : 0;
+const renderHeight = cropped ? Math.round((renderWidth * cropped.height) / cropped.width) : 0;
+---
+
+<Wrapper class:list={['min-w-0', aspect === 'fill' && 'h-full', className]}>
+  <div
+    class:list={[
+      'relative overflow-hidden',
+      aspects[aspect],
+      rounded && 'rounded-lg',
+      // Placeholder colour while the photo loads: matches the surface (no light flash
+      // on dark sections, Stage 8). Drawings always sit on white.
+      fit === 'contain' ? 'bg-white' : 'bg-ivory-200 [.tone-dark_&]:bg-charcoal-800',
+    ]}
+  >
+    {cropped ? (
+      <Image
+        src={cropped.src}
+        {...cropped.options}
+        alt={alt}
+        widths={widths.filter((w) => w <= cropped.width)}
+        width={renderWidth}
+        height={renderHeight}
+        sizes={sizes}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : 'auto'}
+        decoding="async"
+        {...(encoderQuality ? { quality: encoderQuality } : {})}
+        style={position ? `object-position:${position}` : undefined}
+        class:list={[
+          'absolute inset-0 size-full',
+          fit === 'contain' ? 'object-contain p-3 sm:p-4' : 'object-cover',
+          zoom &&
+            'transition-transform duration-(--duration-slow) ease-(--ease-out-quiet) group-hover:scale-103',
+        ]}
+      />
+    ) : (
+      <div
+        class="text-ink-muted absolute inset-0 flex flex-col items-center justify-center gap-2 text-xs"
+        role="img"
+        aria-label={alt || 'Görsel hazırlanıyor'}
+      >
+        <Icon name="image-off" size={28} class="text-line-strong" />
+        <span aria-hidden="true">Görsel hazırlanıyor</span>
+      </div>
+    )}
+  </div>
+  {caption && <figcaption class="text-ink-muted mt-3 text-sm">{caption}</figcaption>}
+</Wrapper>

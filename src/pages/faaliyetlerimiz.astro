@@ -1,0 +1,15 @@
+---
+/**
+ * Retired route (owner decision C2, 2026-11-11). The Activities page showed one
+ * item, the SUGİAD membership, which the owner confirmed is the founder's
+ * personal membership, not the company's. With no verified corporate activity
+ * left, the page redirects to About. The data stays in src/data/activities.ts
+ * (withheld) and the original media in Faaliyetler-img/.
+ */
+import RedirectDocument from '@/components/RedirectDocument.astro';
+import { retiredRoutes } from '@/data/legacy-redirects';
+
+const target = retiredRoutes.find((r) => r.from === '/faaliyetlerimiz/')?.to ?? '/hakkimizda/';
+---
+
+<RedirectDocument to={target} />

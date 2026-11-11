@@ -1,0 +1,210 @@
+---
+/**
+ * About (Stage 5). Corporate narrative built only from verified content
+ * (src/data/corporate.ts — every editorial block lists its verbatim basis).
+ *
+ *   A  Editorial hero        dark: breadcrumbs, eyebrow, H1, lead + wide photo
+ *   B  Introduction          ivory: large statement + two short paragraphs
+ *   C  Story                 white: "2004" — the only verified date — as a
+ *                            typographic anchor, a narrative, the verified
+ *                            fields of work and two photographs. No invented
+ *                            timeline.
+ *   D  Mission & vision      mission as a dark statement band, vision as a
+ *                            light, right-set statement (two compositions)
+ *   E  Approach              sand: four numbered principles
+ *   F  Projects transition   dark split: photo + CTA to the portfolio
+ *   G  Contact transition    a restrained link row (not a full CTA band)
+ *
+ * The founder biography is deliberately absent: it contains time-sensitive
+ * and personal details awaiting owner confirmation (CONTENT_INVENTORY §6).
+ */
+import Button from '@/components/Button.astro';
+import Container from '@/components/Container.astro';
+import Eyebrow from '@/components/Eyebrow.astro';
+import FeatureRow from '@/components/FeatureRow.astro';
+import MediaFrame from '@/components/MediaFrame.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Section from '@/components/Section.astro';
+import TextLink from '@/components/TextLink.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { contact, legacyCopy } from '@/data/company';
+import { about, aboutImages } from '@/data/corporate';
+
+const mobile = contact.mobile;
+---
+
+<BaseLayout title="Hakkımızda" description={about.hero.lead.text} og="about">
+  <PageHeader
+    title={about.hero.title.text}
+    eyebrow={about.hero.eyebrow}
+    lead={about.hero.lead.text}
+    breadcrumbs={[{ label: 'Hakkımızda' }]}
+    width="wide"
+  />
+  <div class="tone-dark pb-10 sm:pb-14">
+    <Container width="wide">
+      <MediaFrame
+        src={aboutImages.hero.src}
+        alt={aboutImages.hero.alt}
+        aspect="wide"
+        position={aboutImages.hero.position}
+        priority
+        quality={72}
+        widths={[640, 750, 960, 1280, 1600, 2000]}
+        sizes="(min-width: 1376px) 1296px, 100vw"
+        class="lg:[&>div]:aspect-cinema"
+      />
+    </Container>
+  </div>
+
+  {/* B — Introduction */}
+  <Section width="wide" labelledby="kurumsal-giris">
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+      <div class="lg:col-span-6">
+        <Eyebrow>EYFA Yapı</Eyebrow>
+        <h2 id="kurumsal-giris" class="mt-6 text-4xl">
+          {about.introduction.statement.text}
+        </h2>
+      </div>
+      <div class="prose-eyfa lg:col-span-5 lg:col-start-8 lg:pt-12">
+        {about.introduction.paragraphs.map((p) => (
+          <p>{p.text}</p>
+        ))}
+      </div>
+    </div>
+  </Section>
+
+  {/* C — Story: one verified date, narrative instead of a timeline. */}
+  <Section tone="white" width="wide" labelledby="hikayemiz">
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+      <div class="lg:col-span-4">
+        <Eyebrow>Hikâyemiz</Eyebrow>
+        <h2 id="hikayemiz" class="sr-only">
+          Hikâyemiz
+        </h2>
+        <p
+          class="font-display text-accent-text mt-6 text-[clamp(5rem,3rem+9vw,10rem)] leading-none tabular-nums"
+          aria-hidden="true"
+        >
+          {about.story.founded}
+        </p>
+        <p class="text-ink-muted mt-4 text-sm tracking-(--tracking-ui)">Kuruluş yılı · İstanbul</p>
+      </div>
+      <div class="lg:col-span-7 lg:col-start-6">
+        <p class="font-display text-3xl">{about.story.lead.text}</p>
+        <ul class="border-line mt-10 border-t">
+          {legacyCopy.activityAreas.map((area) => (
+            <li class="border-line grid gap-1 border-b py-5 sm:grid-cols-[12rem_1fr] sm:gap-6">
+              <h3 class="font-sans text-sm font-semibold tracking-(--tracking-ui)">{area.title}</h3>
+              <p class="text-ink-muted">{area.text}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="text-ink-muted mt-10 max-w-(--container-prose) text-lg">
+          {about.story.closing.text}
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-16 grid gap-(--spacing-grid) sm:grid-cols-12 lg:mt-24">
+      <MediaFrame
+        src={aboutImages.storyFrame.src}
+        alt={aboutImages.storyFrame.alt}
+        aspect="portrait"
+        widths={[480, 750, 960, 1280]}
+        sizes="(min-width: 640px) 40vw, 100vw"
+        class="reveal sm:col-span-5"
+      />
+      <MediaFrame
+        src={aboutImages.storyFinished.src}
+        alt={aboutImages.storyFinished.alt}
+        aspect="photo"
+        widths={[480, 750, 960, 1280]}
+        sizes="(min-width: 640px) 58vw, 100vw"
+        class="reveal sm:col-span-7 sm:self-end"
+      />
+    </div>
+  </Section>
+
+  {/* D — Mission (dark statement band) */}
+  <section class="tone-dark border-line border-t" aria-labelledby="misyon">
+    <Container width="wide" class="py-section grid gap-10 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+      <div class="lg:col-span-3">
+        <Eyebrow>Misyonumuz</Eyebrow>
+        <h2 id="misyon" class="sr-only">
+          Misyonumuz
+        </h2>
+      </div>
+      <p class="font-display text-3xl lg:col-span-8 lg:col-start-5">{about.mission.text}</p>
+    </Container>
+  </section>
+
+  {/* D — Vision (light, right-set statement) */}
+  <Section width="wide" labelledby="vizyon">
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+      <div class="border-accent border-l-2 pl-6 lg:col-span-8 lg:pl-10">
+        <h2 id="vizyon" class="eyebrow">
+          Vizyonumuz
+        </h2>
+        <p class="font-display mt-6 text-4xl">{about.vision.text}</p>
+      </div>
+    </div>
+  </Section>
+
+  {/* E — Approach */}
+  <Section tone="sand" width="wide" labelledby="yaklasim">
+    <Eyebrow>Yaklaşımımız</Eyebrow>
+    <h2 id="yaklasim" class="mt-6 max-w-2xl text-4xl">
+      Her projede aynı ilkeler
+    </h2>
+    <ol class="mt-14 grid gap-x-(--spacing-grid) gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+      {about.approach.map((item, index) => (
+        <li class="reveal border-line border-t pt-6">
+          <span class="text-accent-text text-xs font-semibold tabular-nums" aria-hidden="true">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <h3 class="mt-4 text-2xl">{item.title}</h3>
+          <p class="text-ink-muted mt-3">{item.body.text}</p>
+        </li>
+      ))}
+    </ol>
+  </Section>
+
+  {/* F — Projects transition */}
+  <section class="tone-dark" aria-labelledby="projelere-gecis">
+    <Container width="wide" class="py-section">
+      <FeatureRow image={aboutImages.projects} reverse aspect="photo">
+        <Eyebrow>Portföy</Eyebrow>
+        <h2 id="projelere-gecis" class="mt-6 text-4xl">
+          Projelerimizi yakından görün
+        </h2>
+        <p class="text-ink-muted mt-6 text-lg">Proje arşivimizden fotoğraflar.</p>
+        <div class="mt-10">
+          <Button href="/projeler/" icon="arrow-right" size="lg">
+            Projelerimiz
+          </Button>
+        </div>
+      </FeatureRow>
+    </Container>
+  </section>
+
+  {/* G — Contact transition (restrained) */}
+  <Section spacing="compact" width="wide" labelledby="iletisim-gecis">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+      <h2 id="iletisim-gecis" class="text-3xl">
+        Sorularınız için bize ulaşın
+      </h2>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
+        {mobile && (
+          <TextLink href={mobile.href} tone="ink" arrow={false}>
+            {mobile.display}
+          </TextLink>
+        )}
+        <TextLink href={contact.whatsapp.href} external tone="ink">
+          WhatsApp
+        </TextLink>
+        <TextLink href="/iletisim/">İletişim bilgileri</TextLink>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>

@@ -1,0 +1,49 @@
+---
+/**
+ * Inline text link with an animated underline and an optional arrow.
+ * Use for tertiary actions ("Tüm projeler →") and in-copy links.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import Icon from './Icon.astro';
+
+type Props = Omit<HTMLAttributes<'a'>, 'class'> & {
+  href: string;
+  arrow?: boolean;
+  external?: boolean;
+  /** `accent` uses the tone's gold text colour; `ink` matches body text. */
+  tone?: 'accent' | 'ink';
+  class?: string | undefined;
+};
+
+const {
+  href,
+  arrow = true,
+  external = false,
+  tone = 'accent',
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={[
+    'group/link inline-flex items-center gap-2 text-sm font-semibold tracking-(--tracking-ui)',
+    tone === 'accent' ? 'text-accent-text' : 'text-ink',
+    className,
+  ]}
+  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  {...rest}
+>
+  <span class="link-underline pb-0.5">
+    <slot />
+  </span>
+  {external && <span class="sr-only"> (yeni sekmede açılır)</span>}
+  {arrow && (
+    <Icon
+      name={external ? 'arrow-up-right' : 'arrow-right'}
+      size={16}
+      class="transition-transform duration-(--duration-base) ease-(--ease-out-quiet) group-hover/link:translate-x-1"
+    />
+  )}
+</a>

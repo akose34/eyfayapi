@@ -1,0 +1,190 @@
+---
+/**
+ * Accessible photo / drawing viewer. Include ONCE per page; it enhances every
+ * `a[data-lightbox]` link (see ProjectGallery.astro).
+ *
+ * Built on <dialog>.showModal(): the browser provides the focus trap, inert
+ * background, Escape-to-close and top-layer stacking. The script adds:
+ *   - previous / next buttons, ← / → keys (wrap around), Home / End
+ *   - swipe left/right on touch screens (pointer events, no library)
+ *   - a polite live region announcing "Fotoğraf 2 / 5" and the description
+ *   - focus restoration to the thumbnail that opened the viewer
+ *   - page scroll lock (shared `dialog[data-scroll-lock]` rule in global.css)
+ * No animation is used, so reduced-motion users see nothing different.
+ * Without JavaScript the links open the large image directly.
+ */
+import IconButton from './IconButton.astro';
+---
+
+<dialog
+  class="lightbox tone-dark m-0 h-dvh max-h-none w-full max-w-none p-0"
+  aria-label="Görsel görüntüleyici"
+  data-lightbox-dialog
+  data-scroll-lock
+>
+  <div class="flex h-full flex-col">
+    <div class="px-gutter flex h-16 shrink-0 items-center justify-between gap-4">
+      <p class="text-ink-muted text-sm tabular-nums" aria-live="polite" data-lightbox-status></p>
+      <IconButton icon="close" label="Görüntüleyiciyi kapat" data-lightbox-close />
+    </div>
+
+    <figure class="relative flex min-h-0 flex-1 flex-col items-center justify-center px-2 sm:px-20">
+      <div class="flex min-h-0 w-full flex-1 items-center justify-center" data-lightbox-stage>
+        <img
+          alt=""
+          class="max-h-full max-w-full object-contain select-none"
+          data-lightbox-image
+          decoding="async"
+          sizes="100vw"
+          width="1"
+          height="1"
+        />
+      </div>
+      <figcaption
+        class="text-ink-muted px-gutter max-w-3xl py-4 text-center text-sm"
+        data-lightbox-caption
+      ></figcaption>
+      <div class="absolute top-1/2 left-3 hidden -translate-y-1/2 sm:block">
+        <IconButton
+          icon="chevron-right"
+          label="Önceki görsel"
+          variant="outline"
+          class="rotate-180"
+          data-lightbox-prev
+        />
+      </div>
+      <div class="absolute top-1/2 right-3 hidden -translate-y-1/2 sm:block">
+        <IconButton
+          icon="chevron-right"
+          label="Sonraki görsel"
+          variant="outline"
+          data-lightbox-next
+        />
+      </div>
+    </figure>
+
+    <!-- Phone controls: large targets at the bottom, within thumb reach. -->
+    <div class="flex shrink-0 justify-center gap-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:hidden">
+      <IconButton
+        icon="chevron-right"
+        label="Önceki görsel"
+        variant="outline"
+        class="rotate-180"
+        data-lightbox-prev
+      />
+      <IconButton
+        icon="chevron-right"
+        label="Sonraki görsel"
+        variant="outline"
+        data-lightbox-next
+      />
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .lightbox {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+  }
+  .lightbox::backdrop {
+    background: transparent;
+  }
+  .lightbox[data-kind='plans'] [data-lightbox-image] {
+    background: #fff;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+  }
+</style>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox-dialog]');
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]'));
+
+  const img = dialog?.querySelector<HTMLImageElement>('[data-lightbox-image]');
+  const caption = dialog?.querySelector<HTMLElement>('[data-lightbox-caption]');
+  const status = dialog?.querySelector<HTMLElement>('[data-lightbox-status]');
+  const stage = dialog?.querySelector<HTMLElement>('[data-lightbox-stage]');
+
+  if (dialog && img && caption && status && stage && links.length) {
+    let group: HTMLAnchorElement[] = [];
+    let index = 0;
+    let opener: HTMLAnchorElement | null = null;
+
+    const show = (i: number) => {
+      index = (i + group.length) % group.length;
+      const link = group[index];
+      if (!link) return;
+      const kind = link.dataset.lightboxKind ?? 'photos';
+      dialog.dataset.kind = kind;
+      img.srcset = link.dataset.lightboxSrcset ?? '';
+      img.src = link.href;
+      img.width = Number(link.dataset.lightboxWidth) || 1;
+      img.height = Number(link.dataset.lightboxHeight) || 1;
+      img.alt = link.dataset.lightboxAlt ?? '';
+      caption.textContent = link.dataset.lightboxAlt ?? '';
+      const noun = kind === 'plans' ? 'Çizim' : 'Fotoğraf';
+      status.textContent = `${noun} ${index + 1} / ${group.length}`;
+      const single = group.length < 2;
+      dialog
+        .querySelectorAll<HTMLButtonElement>('[data-lightbox-prev],[data-lightbox-next]')
+        .forEach((button) => {
+          button.hidden = single;
+        });
+    };
+
+    links.forEach((link) => {
+      link.addEventListener('click', (event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return; // new tab etc.
+        event.preventDefault();
+        opener = link;
+        group = links.filter((l) => l.dataset.lightbox === link.dataset.lightbox);
+        show(group.indexOf(link));
+        dialog.showModal();
+      });
+    });
+
+    const close = () => dialog.open && dialog.close();
+    dialog.addEventListener('close', () => {
+      img.removeAttribute('src');
+      img.removeAttribute('srcset');
+      opener?.focus();
+    });
+    dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', close);
+    dialog
+      .querySelectorAll('[data-lightbox-prev]')
+      .forEach((b) => b.addEventListener('click', () => show(index - 1)));
+    dialog
+      .querySelectorAll('[data-lightbox-next]')
+      .forEach((b) => b.addEventListener('click', () => show(index + 1)));
+
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') show(index + 1);
+      else if (event.key === 'ArrowLeft') show(index - 1);
+      else if (event.key === 'Home') show(0);
+      else if (event.key === 'End') show(group.length - 1);
+      else return;
+      event.preventDefault();
+    });
+
+    // Swipe (touch / pen). A horizontal move of ≥ 50 px changes the image.
+    let startX: number | null = null;
+    stage.addEventListener('pointerdown', (event) => {
+      if (event.pointerType !== 'mouse') startX = event.clientX;
+    });
+    stage.addEventListener('pointerup', (event) => {
+      if (startX === null) return;
+      const dx = event.clientX - startX;
+      startX = null;
+      if (Math.abs(dx) >= 50) show(dx < 0 ? index + 1 : index - 1);
+    });
+    stage.addEventListener('pointercancel', () => {
+      startX = null;
+    });
+
+    // Clicking the empty area around the image closes the viewer.
+    stage.addEventListener('click', (event) => {
+      if (event.target === stage) close();
+    });
+  }
+</script>

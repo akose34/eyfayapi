@@ -1,0 +1,37 @@
+---
+/**
+ * A complete static redirect document (GitHub Pages cannot send HTTP 301s).
+ *
+ * - `<meta http-equiv="refresh" content="0">` + `<link rel="canonical">` to the
+ *   absolute target: search engines treat the pair as a permanent move.
+ * - `noindex`: the old URL itself never appears in results.
+ * - A visible fallback link for clients that ignore meta refresh.
+ * No script: nothing to hash for the CSP, nothing that can fail.
+ * Used for retired routes (src/data/legacy-redirects.ts → retiredRoutes).
+ */
+interface Props {
+  /** Site-relative target with trailing slash, e.g. "/hakkimizda/". */
+  to: string;
+  /** Short reason shown to people whose browser does not redirect. */
+  message?: string;
+}
+
+const { to, message = 'Bu sayfa taşındı' } = Astro.props;
+const site = Astro.site ?? new URL('https://eyfayapi.net');
+const absolute = new URL(to, site).toString();
+---
+
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Yönlendiriliyor… | Eyfa Yapı</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={absolute} />
+    <meta http-equiv="refresh" content={`0; url=${to}`} />
+  </head>
+  <body>
+    <p>
+      {message}: <a href={to}>{absolute}</a>
+    </p>
+  </body>
+</html>

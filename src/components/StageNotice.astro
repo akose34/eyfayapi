@@ -1,0 +1,25 @@
+---
+/**
+ * Visible notice for content that still awaits owner confirmation. It must
+ * never be replaced with invented copy — only with confirmed content.
+ * See docs/CONTENT_INVENTORY.md (confirmation checklist).
+ */
+interface Props {
+  title?: string;
+  class?: string | undefined;
+}
+const { title = 'Bu bölüm hazırlanıyor', class: className } = Astro.props;
+---
+
+<aside
+  class:list={[
+    'border-accent bg-surface-sunken text-ink grid gap-1 rounded-md border-l-2 px-5 py-4 text-sm',
+    className,
+  ]}
+  aria-label="Hazırlık notu"
+>
+  <p class="font-semibold">{title}</p>
+  <div class="text-ink-muted">
+    <slot />
+  </div>
+</aside>

@@ -1,0 +1,32 @@
+---
+/**
+ * Inner-page introduction on a dark band that continues the header:
+ * breadcrumbs · eyebrow · <h1> · lead. Exactly one per page.
+ */
+import Breadcrumbs, { type Crumb } from './Breadcrumbs.astro';
+import Container from './Container.astro';
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+  lead?: string;
+  /** Trail after "Ana Sayfa"; the last item is the current page. */
+  breadcrumbs: Crumb[];
+  width?: 'prose' | 'content' | 'wide';
+}
+
+const { title, eyebrow, lead, breadcrumbs, width = 'content' } = Astro.props;
+---
+
+<div class="tone-dark border-line border-t">
+  <Container width={width} class="pt-8 pb-14 sm:pb-20 lg:pt-10 lg:pb-24">
+    <Breadcrumbs items={breadcrumbs} />
+    <div class="mt-12 max-w-4xl lg:mt-16">
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <h1 class:list={['text-5xl', eyebrow && 'mt-5']}>{title}</h1>
+      {lead && <p class="text-ink-muted mt-6 max-w-(--container-prose) text-lg">{lead}</p>}
+      <slot />
+    </div>
+  </Container>
+</div>

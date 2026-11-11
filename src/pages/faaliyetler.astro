@@ -1,0 +1,12 @@
+---
+/**
+ * /faaliyetler/ — the short form of the retired Activities route. Kept as a
+ * redirect so that guessed or shortened links land on About (owner decision C2).
+ */
+import RedirectDocument from '@/components/RedirectDocument.astro';
+import { retiredRoutes } from '@/data/legacy-redirects';
+
+const target = retiredRoutes.find((r) => r.from === '/faaliyetler/')?.to ?? '/hakkimizda/';
+---
+
+<RedirectDocument to={target} />

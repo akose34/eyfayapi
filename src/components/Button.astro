@@ -1,0 +1,93 @@
+---
+/**
+ * Button / link-button. Renders <a> when `href` is set, otherwise <button>.
+ * See docs/DESIGN_SYSTEM.md §5 for when to use each variant.
+ *
+ * - primary   — champagne fill; the single main action of a view.
+ * - secondary — 1px outline in the current tone's ink (works on ivory AND charcoal).
+ * - light     — ivory fill; main action on dark (`.tone-dark`) sections.
+ *
+ * Links can never be "disabled"; pass `disabled` only to <button>s.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import Icon, { type IconName } from './Icon.astro';
+
+type Variant = 'primary' | 'secondary' | 'light';
+type Size = 'sm' | 'md' | 'lg';
+
+type Props = Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'class' | 'type'> & {
+  variant?: Variant;
+  size?: Size;
+  href?: string;
+  type?: 'button' | 'submit';
+  /** Opens in a new tab with rel="noopener noreferrer" and an SR hint. */
+  external?: boolean;
+  /** Trailing icon. Arrows nudge on hover. */
+  icon?: IconName;
+  /** Leading icon (e.g. phone, whatsapp). */
+  leadingIcon?: IconName;
+  disabled?: boolean;
+  fullWidth?: boolean;
+  class?: string | undefined;
+};
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  external = false,
+  icon,
+  leadingIcon,
+  disabled = false,
+  fullWidth = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const base =
+  'group/button inline-flex items-center justify-center gap-2.5 rounded-md font-semibold tracking-(--tracking-ui) whitespace-nowrap select-none ' +
+  'transition-[background-color,border-color,color,transform] duration-(--duration-base) ease-(--ease-out-quiet) ' +
+  'active:translate-y-px disabled:cursor-not-allowed disabled:opacity-45 disabled:active:translate-y-0';
+const sizes: Record<Size, string> = {
+  sm: 'min-h-11 px-4 text-sm', // 44px — still meets WCAG 2.5.8 comfortably
+  md: 'min-h-12 px-6 text-sm', // 48px
+  lg: 'min-h-14 px-8 text-base', // 56px
+};
+const variants: Record<Variant, string> = {
+  primary: 'bg-accent text-on-accent hover:bg-accent-hover',
+  secondary:
+    'border border-ink/70 text-ink hover:border-ink hover:bg-ink hover:text-surface disabled:hover:bg-transparent disabled:hover:text-ink',
+  light: 'bg-ivory text-charcoal hover:bg-white',
+};
+const classes = [base, sizes[size], variants[variant], fullWidth && 'w-full', className];
+const isArrow = icon === 'arrow-right' || icon === 'arrow-up-right';
+const iconClass = isArrow
+  ? 'transition-transform duration-(--duration-base) ease-(--ease-out-quiet) group-hover/button:translate-x-0.5'
+  : undefined;
+const iconSize = size === 'lg' ? 20 : 18;
+---
+
+{href ? (
+  <a
+    href={href}
+    class:list={classes}
+    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    {...rest}
+  >
+    {leadingIcon && <Icon name={leadingIcon} size={iconSize} />}
+    <span>
+      <slot />
+    </span>
+    {external && <span class="sr-only"> (yeni sekmede açılır)</span>}
+    {icon && <Icon name={icon} size={iconSize} class={iconClass} />}
+  </a>
+) : (
+  <button type={type} class:list={classes} disabled={disabled} {...rest}>
+    {leadingIcon && <Icon name={leadingIcon} size={iconSize} />}
+    <span>
+      <slot />
+    </span>
+    {icon && <Icon name={icon} size={iconSize} class={iconClass} />}
+  </button>
+)}

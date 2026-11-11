@@ -1,0 +1,103 @@
+---
+/**
+ * Project card. The whole card is one link (title link stretched with an
+ * ::after overlay) so there is a single tab stop and a meaningful link name.
+ *
+ * Shows only VERIFIED facts (location when confirmed) plus what is visible in
+ * the media itself: photo/drawing counts and an "İnşaat sürecinden" label when
+ * the photographs show work in progress (never implies completion).
+ * Unconfirmed names fall back to the neutral provisional label; the
+ * uncertainty itself lives in the typed data and the review docs, not in
+ * visitor-facing warnings (Stage 4).
+ *
+ * `image` may override the cover with another CURATED public photo of the
+ * same project (enforced at build time).
+ */
+import Icon from './Icon.astro';
+import MediaFrame from './MediaFrame.astro';
+import {
+  projectDisplayName,
+  projectPhotos,
+  projectPlans,
+  showsConstruction,
+} from '@/data/projects';
+import type { Project } from '@/types/content';
+
+interface Props {
+  project: Project;
+  headingLevel?: 'h2' | 'h3';
+  sizes?: string;
+  priority?: boolean;
+  /** Path of another curated public photo of this project. */
+  image?: string;
+  aspect?: 'landscape' | 'photo' | 'portrait' | 'square' | 'feature';
+  size?: 'default' | 'feature';
+}
+
+const {
+  project,
+  headingLevel = 'h3',
+  sizes = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw',
+  priority = false,
+  image,
+  aspect = 'landscape',
+  size = 'default',
+} = Astro.props;
+const photos = projectPhotos(project);
+const plans = projectPlans(project);
+const override = image ? photos.find((g) => g.src === image) : undefined;
+if (image && !override) {
+  throw new Error(`[ProjectCard] ${image} is not a curated public photo of ${project.slug}`);
+}
+const visual = override ?? photos[0] ?? plans[0] ?? project.cover;
+const Heading = headingLevel;
+const name = projectDisplayName(project);
+const location = project.location.status === 'VERIFIED' ? project.location.value : null;
+const meta = [photos.length && `${photos.length} fotoğraf`, plans.length && `${plans.length} çizim`]
+  .filter(Boolean)
+  .join(' · ');
+const construction = showsConstruction(project);
+const isPlan = visual.kind === 'floor-plan';
+---
+
+<article class="group relative flex flex-col">
+  <MediaFrame
+    src={visual.src}
+    alt={visual.alt}
+    aspect={aspect}
+    fit={isPlan ? 'contain' : 'cover'}
+    widths={size === 'feature' ? [480, 750, 960, 1280] : [400, 640, 750, 900]}
+    sizes={sizes}
+    priority={priority}
+    zoom={!isPlan}
+    class:list={[isPlan && 'border-line rounded-lg border']}
+  />
+  <div class="mt-5 flex items-start justify-between gap-4">
+    <div>
+      {location && <p class="eyebrow">{location}</p>}
+      <Heading
+        class:list={[
+          size === 'feature' ? 'text-3xl' : 'text-2xl',
+          'group-hover:text-accent-text transition-colors',
+        ]}
+      >
+        <a
+          href={`/projeler/${project.slug}/`}
+          class="after:absolute after:inset-0 after:z-(--z-raised) after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-(--color-focus)"
+        >
+          {name}
+        </a>
+      </Heading>
+      <p class="text-ink-muted mt-1 text-sm">
+        {meta}
+        {construction && <span> · İnşaat sürecinden</span>}
+      </p>
+    </div>
+    <span
+      aria-hidden="true"
+      class="border-line group-hover:border-accent group-hover:bg-accent group-hover:text-on-accent mt-1 inline-flex size-10 shrink-0 items-center justify-center rounded-full border transition-colors duration-(--duration-base)"
+    >
+      <Icon name="arrow-up-right" size={18} />
+    </span>
+  </div>
+</article>

@@ -1,0 +1,96 @@
+---
+/**
+ * Project gallery grid (photos or plan drawings) wired to <Lightbox>.
+ *
+ * Progressive enhancement: every thumbnail is a real link to a large
+ * optimised derivative (2048 px), so without JavaScript the image simply
+ * opens. With JavaScript, Lightbox intercepts the click and shows the image
+ * in an accessible modal viewer. Large variants inherit the build-time
+ * letterbox crop; drawings are never cropped (only solid bands are removed).
+ *
+ *   variant="photos"  2-up editorial grid; portrait photos keep a 4:5 frame
+ *   variant="plans"   drawings on white, uncropped (object-fit: contain)
+ */
+import { getImage } from 'astro:assets';
+import MediaFrame from './MediaFrame.astro';
+import { croppedImage } from '@/lib/media';
+import type { ProjectImage } from '@/types/content';
+
+interface Props {
+  images: ProjectImage[];
+  variant: 'photos' | 'plans';
+  /** Lightbox group; items of one group are browsed together. */
+  group: string;
+  /** Position of the first item in the group (when one group spans grids). */
+  startIndex?: number;
+  /** Total number of items in the group. */
+  total?: number;
+}
+
+const { images, variant, group, startIndex = 0, total = images.length } = Astro.props;
+
+const items = await Promise.all(
+  images.map(async (image) => {
+    const c = croppedImage(image.src);
+    const ratio = c.height / c.width;
+    const large = await getImage({
+      src: c.src,
+      ...c.options,
+      width: Math.min(2048, c.width),
+      height: Math.round(Math.min(2048, c.width) * ratio),
+      widths: [1280, 2048].filter((w) => w <= c.width),
+      sizes: '100vw',
+      quality: variant === 'plans' ? 85 : 78,
+    });
+    return {
+      image,
+      portrait: ratio > 1.05,
+      href: large.src,
+      srcset: large.srcSet.attribute,
+      width: Number(large.attributes.width),
+      height: Number(large.attributes.height),
+    };
+  }),
+);
+---
+
+<ul
+  class:list={[
+    'grid gap-(--spacing-grid)',
+    variant === 'photos' ? 'sm:grid-cols-2 sm:items-start' : 'sm:grid-cols-2 lg:grid-cols-3',
+  ]}
+>
+  {items.map((item, i) => {
+    const position = startIndex + i + 1;
+    return (
+      <li>
+        <a
+          href={item.href}
+          class="group block rounded-lg focus-visible:outline-offset-4"
+          data-lightbox={group}
+          data-lightbox-srcset={item.srcset}
+          data-lightbox-width={item.width}
+          data-lightbox-height={item.height}
+          data-lightbox-kind={variant}
+          data-lightbox-alt={item.image.alt}
+          aria-label={`${item.image.alt} — büyüt (${position}/${total})`}
+        >
+          <MediaFrame
+            src={item.image.src}
+            alt=""
+            aspect={variant === 'plans' ? 'landscape' : item.portrait ? 'portrait' : 'photo'}
+            fit={variant === 'plans' ? 'contain' : 'cover'}
+            widths={[480, 750, 960, 1280]}
+            sizes={
+              variant === 'plans'
+                ? '(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw'
+                : '(min-width: 640px) 50vw, 100vw'
+            }
+            zoom={variant === 'photos'}
+            class:list={[variant === 'plans' && 'border-line rounded-lg border']}
+          />
+        </a>
+      </li>
+    );
+  })}
+</ul>

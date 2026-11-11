@@ -1,0 +1,17 @@
+---
+/** Horizontal page container. Widths map to --container-* tokens. */
+interface Props {
+  width?: 'prose' | 'content' | 'wide';
+  class?: string | undefined;
+}
+const { width = 'content', class: className } = Astro.props;
+const widths = {
+  prose: 'max-w-(--container-prose)',
+  content: 'max-w-(--container-content)',
+  wide: 'max-w-(--container-wide)',
+} as const;
+---
+
+<div class:list={['px-gutter mx-auto w-full', widths[width], className]}>
+  <slot />
+</div>

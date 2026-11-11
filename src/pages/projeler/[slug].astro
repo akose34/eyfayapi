@@ -1,0 +1,222 @@
+---
+/**
+ * Project detail (Stage 4).
+ *
+ * Composition: dark page header (breadcrumbs · title · media summary) → wide
+ * hero photograph → "Bu sayfada" summary + verified facts → photo gallery →
+ * plan drawings (uncropped) → other projects → contact.
+ *
+ * Only VERIFIED facts are rendered; with none confirmed yet, the page relies
+ * on the authentic media and neutral copy. Construction photographs are
+ * labelled as such — a project is never presented as completed.
+ *
+ * Withheld projects (no publishable media) render a small redirect document
+ * to /projeler/ so the URL never 404s and nothing withheld is exposed.
+ */
+import type { GetStaticPaths } from 'astro';
+import Button from '@/components/Button.astro';
+import ContactCTA from '@/components/ContactCTA.astro';
+import Lightbox from '@/components/Lightbox.astro';
+import MediaFrame from '@/components/MediaFrame.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import ProjectGallery from '@/components/ProjectGallery.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import TextLink from '@/components/TextLink.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import {
+  otherProjects,
+  projectDisplayName,
+  projectPhotos,
+  projectPlans,
+  projects,
+  showsConstruction,
+} from '@/data/projects';
+import type { Project } from '@/types/content';
+import { contact } from '@/data/company';
+
+export const getStaticPaths = (() =>
+  projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const withheld = project.visibility === 'withheld';
+const title = projectDisplayName(project);
+const confirmed = project.name.status === 'VERIFIED';
+/** WhatsApp enquiry pre-filled with the PUBLIC project label only. */
+const enquiryHref = contact.whatsapp.forProject(title);
+const [hero, ...photos] = projectPhotos(project);
+const plans = projectPlans(project);
+const construction = showsConstruction(project);
+const others = withheld ? [] : otherProjects(project, 3);
+const site = Astro.site ?? new URL('https://eyfayapi.net');
+
+/** Verified facts only — each row appears once the owner confirms it. */
+const facts = [
+  ['Proje türü', project.type],
+  ['Konum', project.location],
+  ['Tamamlanma yılı', project.completionYear],
+].flatMap(([label, fact]) =>
+  fact && typeof fact === 'object' && 'status' in fact && fact.status === 'VERIFIED'
+    ? [[label as string, String(fact.value)]]
+    : [],
+);
+const description = project.description.status === 'VERIFIED' ? project.description.value : null;
+const summary = [
+  photos.length + (hero ? 1 : 0) > 0 && `${photos.length + (hero ? 1 : 0)} fotoğraf`,
+  plans.length > 0 && `${plans.length} çizim`,
+]
+  .filter(Boolean)
+  .join(' · ');
+/** Neutral, factual introduction used until a verified description exists. */
+const intro =
+  description ??
+  (construction
+    ? 'Eyfa Yapı arşivinden, projenin inşaat sürecine ait fotoğraflar.'
+    : hero
+      ? 'Eyfa Yapı arşivinden, projeye ait fotoğraflar.'
+      : 'Eyfa Yapı arşivinden, projeye ait mimari çizimler.');
+/** Meta description: verified description, or the neutral intro plus the media count. */
+const metaDescription = description ?? `${title}: ${intro.replace(/\.$/, '')} (${summary}).`;
+---
+
+{withheld ? (
+  <html lang="tr">
+    <head>
+      <meta charset="utf-8" />
+      <title>Yönlendiriliyor… | Eyfa Yapı</title>
+      <meta name="robots" content="noindex" />
+      <link rel="canonical" href={new URL('/projeler/', site).toString()} />
+      <meta http-equiv="refresh" content="0; url=/projeler/" />
+    </head>
+    <body>
+      <p>
+        Bu sayfa şu anda yayında değil: <a href="/projeler/">Projelerimiz</a>
+      </p>
+    </body>
+  </html>
+) : (
+  <BaseLayout title={title} description={metaDescription} og={project.slug} noindex={!confirmed}>
+    <PageHeader
+      title={title}
+      eyebrow={construction ? 'Proje · İnşaat süreci' : 'Proje'}
+      breadcrumbs={[{ label: 'Projeler', href: '/projeler/' }, { label: title }]}
+      width="wide"
+    >
+      <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-baseline sm:gap-8">
+        <p class="text-ink-muted max-w-xl text-lg">{intro}</p>
+        <p class="text-ink-muted shrink-0 text-sm tracking-(--tracking-ui)">{summary}</p>
+      </div>
+      {/* Project enquiry: asks for information only — never implies availability. */}
+      <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+        <Button href={enquiryHref} external leadingIcon="whatsapp">
+          Bu proje hakkında sorun
+        </Button>
+        <TextLink href="/iletisim/">Tüm iletişim kanalları</TextLink>
+      </div>
+    </PageHeader>
+
+    {hero && (
+      <div class="tone-dark pb-10 sm:pb-14">
+        <div class="px-gutter mx-auto max-w-(--container-wide)">
+          <a href="#galeri" class="sr-only focus:not-sr-only focus:mb-3 focus:inline-block">
+            Galeriye geç
+          </a>
+          <MediaFrame
+            src={hero.src}
+            alt={hero.alt}
+            aspect="wide"
+            priority
+            quality={72}
+            widths={[640, 750, 960, 1280, 1600, 2000]}
+            sizes="(min-width: 1376px) 1296px, 100vw"
+            class="lg:[&>div]:aspect-cinema"
+          />
+        </div>
+      </div>
+    )}
+
+    {(description || facts.length > 0) && (
+      <Section width="wide" labelledby="proje-ozet">
+        <div class="grid gap-12 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+          <div class="lg:col-span-7">
+            <h2 id="proje-ozet" class="text-3xl">
+              Proje hakkında
+            </h2>
+            {description && <p class="prose-eyfa mt-6">{description}</p>}
+          </div>
+          {facts.length > 0 && (
+            <dl class="border-line grid content-start border-t text-sm lg:col-span-4 lg:col-start-9">
+              {facts.map(([label, value]) => (
+                <div class="border-line flex justify-between gap-6 border-b py-4">
+                  <dt class="text-ink-muted">{label}</dt>
+                  <dd class="text-right font-medium">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </div>
+      </Section>
+    )}
+
+    {photos.length > 0 && (
+      <Section tone="white" width="wide" labelledby="galeri" spacing="compact">
+        <SectionHeading eyebrow="Galeri" title="Fotoğraflar" id="galeri" size="sub" />
+        <div class="mt-10">
+          <ProjectGallery images={photos} variant="photos" group="photos" />
+        </div>
+      </Section>
+    )}
+
+    {plans.length > 0 && (
+      <Section
+        tone={photos.length > 0 ? 'ivory' : 'white'}
+        width="wide"
+        labelledby="planlar"
+        spacing="compact"
+      >
+        <SectionHeading
+          eyebrow="Çizimler"
+          title="Planlar ve çizimler"
+          lead="Çizimler kırpılmadan gösterilir; büyütmek için görsele dokunun."
+          id="planlar"
+          size="sub"
+        />
+        <div class="mt-10">
+          <ProjectGallery images={plans} variant="plans" group="plans" />
+        </div>
+      </Section>
+    )}
+
+    {others.length > 0 && (
+      <Section tone="sand" width="wide" labelledby="diger-projeler">
+        <SectionHeading eyebrow="Portföy" title="Diğer projelerimiz" id="diger-projeler" size="sub">
+          <TextLink slot="action" href="/projeler/">
+            Tüm projeler
+          </TextLink>
+        </SectionHeading>
+        <ul class="mt-12 grid gap-x-(--spacing-grid) gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          {others.map((other) => (
+            <li>
+              <ProjectCard project={other} />
+            </li>
+          ))}
+        </ul>
+      </Section>
+    )}
+
+    <ContactCTA
+      title={`${title} hakkında bilgi alın`}
+      lead="Sorularınız için telefon, WhatsApp veya e-posta ile bize doğrudan ulaşabilirsiniz."
+      whatsappHref={enquiryHref}
+    />
+    <Lightbox />
+  </BaseLayout>
+)}

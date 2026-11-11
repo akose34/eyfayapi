@@ -1,0 +1,50 @@
+---
+/**
+ * The authentic Eyfa Yapı logo (logos/logo.png, transparent PNG, unmodified).
+ * The artwork occupies only the central ~70% × 49% of the 1024² canvas, so it
+ * is cropped with object-fit/object-position instead of editing the asset.
+ * Gold artwork: use on dark surfaces only (header, footer, dark sections).
+ */
+import { Image } from 'astro:assets';
+import { company } from '@/data/company';
+import { legacyImage } from '@/lib/media';
+
+interface Props {
+  /** Rendered height of the cropped artwork in px. */
+  height?: number;
+  /** Height from the lg breakpoint (1024px) up. Defaults to `height`. */
+  lgHeight?: number;
+  /** Accessible name. Empty when the parent link already names it. */
+  alt?: string;
+  eager?: boolean;
+  class?: string | undefined;
+}
+
+const {
+  height = 44,
+  lgHeight = height,
+  alt = company.brandName,
+  eager = false,
+  class: className,
+} = Astro.props;
+// Artwork bounding box ≈ 715×498 px → aspect ≈ 1.44. The extra scale trims the
+// remaining horizontal padding so the mark sits optically flush.
+const width = Math.round(Math.max(height, lgHeight) * 1.44);
+---
+
+<span
+  class:list={[
+    'relative inline-block aspect-[1.44] h-(--logo-h) shrink-0 overflow-hidden lg:h-(--logo-h-lg)',
+    className,
+  ]}
+  style={`--logo-h:${height}px;--logo-h-lg:${lgHeight}px`}
+>
+  <Image
+    src={legacyImage('logos/logo.png')}
+    alt={alt}
+    width={Math.round(width * 2.2)}
+    class="absolute inset-0 size-full scale-[1.38] object-cover object-[50%_45%]"
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+  />
+</span>

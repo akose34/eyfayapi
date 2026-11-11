@@ -1,0 +1,210 @@
+---
+/**
+ * Global site header.
+ *
+ * Desktop (≥1024px): logo · primary links · phone (≥1280px) · "İletişim" CTA.
+ * Mobile/tablet: logo · menu button that opens a full-screen modal <dialog>.
+ *
+ * Why <dialog>.showModal(): the browser makes the rest of the page inert,
+ * traps focus inside the menu, closes it on Escape and puts it in the top
+ * layer — no hand-written focus trap. Script below only wires aria-expanded,
+ * closes on link selection / desktop resize, and restores focus to the
+ * trigger. Without JavaScript the menu button is hidden and a plain link to
+ * the footer navigation is shown instead (see <noscript>).
+ */
+import BrandLogo from './BrandLogo.astro';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import IconButton from './IconButton.astro';
+import { company, contact } from '@/data/company';
+import { contactNav, isCurrentPath, primaryNav } from '@/data/navigation';
+
+const pathname = Astro.url.pathname;
+const mobile = contact.mobile;
+const current = (href: string) => (isCurrentPath(href, pathname) ? 'page' : undefined);
+---
+
+<header
+  id="top"
+  class="tone-dark sticky top-0 z-(--z-header) transition-shadow duration-(--duration-base) data-[scrolled]:shadow-(--shadow-header)"
+  data-site-header
+>
+  <div class="px-gutter mx-auto flex h-header max-w-(--container-wide) items-center justify-between gap-6 lg:h-header-lg">
+    <a
+      href="/"
+      class="-m-1 rounded-sm p-1"
+      aria-label={`${company.brandName} — Ana Sayfa`}
+      aria-current={current('/') ?? undefined}
+    >
+      <BrandLogo height={40} lgHeight={48} alt="" eager />
+    </a>
+
+    <nav aria-label="Ana menü" class="hidden lg:block">
+      <ul class="flex items-center gap-8 xl:gap-10">
+        {primaryNav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={current(item.href)}
+              class="link-underline text-ink-muted hover:text-ink aria-[current=page]:text-accent-text py-2 text-sm font-medium tracking-(--tracking-ui) transition-colors"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="hidden items-center gap-6 lg:flex">
+      <a
+        href={mobile.href}
+        class="text-ink-muted hover:text-ink hidden items-center gap-2 text-sm font-medium tabular-nums transition-colors xl:inline-flex"
+      >
+        <Icon name="phone" size={16} class="text-accent-text" />
+        {mobile.display}
+      </a>
+      <Button
+        href={contactNav.href}
+        size="sm"
+        icon="arrow-right"
+        aria-current={current(contactNav.href)}
+      >
+        {contactNav.label}
+      </Button>
+    </div>
+
+    <div class="-mr-2 hidden max-lg:[.js_&]:block">
+      <IconButton
+        icon="menu"
+        label="Menüyü aç"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        data-menu-open
+      />
+    </div>
+    <noscript>
+      <a href="#footer-nav" class="text-sm font-semibold lg:hidden">
+        Menü
+      </a>
+    </noscript>
+  </div>
+</header>
+
+<dialog
+  id="mobile-menu"
+  aria-label="Site menüsü"
+  class="mobile-menu tone-dark m-0 h-dvh max-h-none w-full max-w-none p-0 lg:hidden"
+  data-scroll-lock
+>
+  <div class="flex h-full flex-col overflow-y-auto">
+    <div class="px-gutter flex h-header shrink-0 items-center justify-between">
+      <BrandLogo height={40} />
+      <IconButton icon="close" label="Menüyü kapat" class="-mr-2" data-menu-close />
+    </div>
+
+    <nav aria-label="Mobil menü" class="px-gutter flex-1 pt-6 pb-10">
+      <ol class="border-line border-t">
+        {[...primaryNav, contactNav].map((item, index) => (
+          <li class="border-line border-b">
+            <a
+              href={item.href}
+              aria-current={current(item.href)}
+              class="group/item aria-[current=page]:text-accent-text flex min-h-16 items-center gap-5 py-3"
+              data-menu-link
+            >
+              <span class="text-accent-text w-6 text-xs font-semibold tabular-nums">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span class="font-display flex-1 text-3xl">{item.label}</span>
+              <Icon
+                name="arrow-right"
+                size={20}
+                class="text-ink-muted transition-transform group-hover/item:translate-x-1"
+              />
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="px-gutter border-line border-t pt-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <p class="eyebrow">İletişim</p>
+      <div class="mt-5 grid gap-3 sm:grid-cols-2">
+        <Button href={mobile.href} variant="secondary" leadingIcon="phone" fullWidth>
+          {mobile.display}
+        </Button>
+        <Button href={contact.whatsapp.href} external leadingIcon="whatsapp" fullWidth>
+          WhatsApp
+        </Button>
+      </div>
+      <a href={contact.email.href} class="link-underline text-ink-muted mt-5 inline-block text-sm">
+        {contact.email.value}
+      </a>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* No open/close animation on purpose: the menu must never be able to stay
+     invisible because a transition was throttled or skipped. */
+  .mobile-menu {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+  }
+  .mobile-menu::backdrop {
+    background: transparent;
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const dialog = document.querySelector<HTMLDialogElement>('#mobile-menu');
+  const openButton = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+
+  // Header elevation after scrolling: toggles a shadow only (no size change → no layout shift).
+  if (header) {
+    let ticking = false;
+    const update = () => {
+      header.toggleAttribute('data-scrolled', window.scrollY > 8);
+      ticking = false;
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+
+  if (dialog && openButton) {
+    const close = () => {
+      if (dialog.open) dialog.close();
+    };
+
+    openButton.addEventListener('click', () => {
+      dialog.showModal();
+      openButton.setAttribute('aria-expanded', 'true');
+    });
+
+    // Fires for Escape, the close button and link selection alike.
+    dialog.addEventListener('close', () => {
+      openButton.setAttribute('aria-expanded', 'false');
+      openButton.focus();
+    });
+
+    dialog.querySelector('[data-menu-close]')?.addEventListener('click', close);
+    dialog.querySelectorAll('[data-menu-link]').forEach((link) => {
+      link.addEventListener('click', close);
+    });
+
+    // If the viewport grows to desktop width, the dialog is no longer needed.
+    window.matchMedia('(min-width: 64rem)').addEventListener('change', (event) => {
+      if (event.matches) close();
+    });
+  }
+</script>
