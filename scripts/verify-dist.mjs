@@ -546,6 +546,49 @@ for (let n = 1; n <= 11; n++) {
   }
 }
 
+// Favicons (stable root URLs, square, multiples of 48 px for PNG; ICO 16/32/48).
+{
+  const pngSize = (buf) => [buf.readUInt32BE(16), buf.readUInt32BE(20)];
+  const expected = {
+    'favicon-48x48.png': 48,
+    'favicon-96x96.png': 96,
+    'favicon-192x192.png': 192,
+    'apple-touch-icon.png': 180,
+  };
+  for (const [name, size] of Object.entries(expected)) {
+    const path = join(DIST, name);
+    if (!existsSync(path)) {
+      fail(`missing favicon ${name}`);
+      continue;
+    }
+    const [w, h] = pngSize(readFileSync(path));
+    if (w !== size || h !== size) fail(`${name}: expected ${size}×${size}, got ${w}×${h}`);
+  }
+  const icoPath = join(DIST, 'favicon.ico');
+  if (!existsSync(icoPath)) fail('missing /favicon.ico (crawler fallback)');
+  else {
+    const ico = readFileSync(icoPath);
+    const count = ico.readUInt16LE(4);
+    const sizes = Array.from({ length: count }, (_, i) => ico.readUInt8(6 + i * 16) || 256);
+    if (
+      ico.readUInt16LE(2) !== 1 ||
+      !sizes.includes(16) ||
+      !sizes.includes(32) ||
+      !sizes.includes(48)
+    )
+      fail(`favicon.ico: expected 16/32/48 icon entries, got ${sizes.join('/')}`);
+  }
+  for (const f of files.filter((x) => x.endsWith('.html'))) {
+    const html = readFileSync(f, 'utf8');
+    if (isRedirectStub(html)) continue;
+    if (
+      !/<link rel="icon" href="\/favicon\.ico"/.test(html) ||
+      !/href="\/favicon-192x192\.png"/.test(html)
+    )
+      fail(`${rel(f)}: missing favicon declarations`);
+  }
+}
+
 const pages = files.filter((x) => x.endsWith('.html')).length;
 console.log(
   `verify-dist: ${pages} HTML files, ${files.length} files, ${(total / 1048576).toFixed(1)} MB`,
