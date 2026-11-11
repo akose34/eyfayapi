@@ -4,8 +4,7 @@
  * Tone-aware: inherits text colours from the surrounding surface.
  */
 import Icon, { type IconName } from './Icon.astro';
-import { company } from '@/data/company';
-import { mailtoHref, telHref, whatsappHref } from '@/lib/contact';
+import { contact } from '@/data/company';
 
 interface Props {
   /** Include the postal address row. */
@@ -22,35 +21,43 @@ interface Row {
   external?: boolean;
 }
 
-const { street, postalCode, district, city } = company.address;
+// Every value and link comes from the central `contact` source (company.ts).
 const rows: Row[] = [
-  ...company.phones.map((phone) => ({
-    icon: 'phone' as const,
-    label: phone.kind === 'mobile' ? 'Cep' : 'Telefon',
-    value: phone.display,
-    href: telHref(phone.e164),
-  })),
+  {
+    icon: 'phone',
+    label: contact.mobile.label,
+    value: contact.mobile.display,
+    href: contact.mobile.href,
+  },
+  {
+    icon: 'phone',
+    label: contact.landline.label,
+    value: contact.landline.display,
+    href: contact.landline.href,
+  },
   {
     icon: 'whatsapp',
     label: 'WhatsApp',
-    value: company.whatsapp.display,
-    href: whatsappHref(company.whatsapp.e164),
+    value: contact.whatsapp.display,
+    href: contact.whatsapp.href,
     external: true,
   },
-  { icon: 'mail', label: 'E-posta', value: company.email, href: mailtoHref(company.email) },
-  ...company.social.map((s) => ({
-    icon: 'instagram' as const,
+  { icon: 'mail', label: 'E-posta', value: contact.email.value, href: contact.email.href },
+  {
+    icon: 'instagram',
     label: 'Instagram',
-    value: s.handle,
-    href: s.url,
+    value: contact.instagram.handle,
+    href: contact.instagram.url,
     external: true,
-  })),
+  },
   ...(address
     ? [
         {
           icon: 'map-pin' as const,
           label: 'Adres',
-          value: `${street}, ${postalCode} ${district} / ${city}`,
+          value: contact.address.line,
+          href: contact.address.directionsHref,
+          external: true,
         },
       ]
     : []),

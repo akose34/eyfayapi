@@ -1,4 +1,12 @@
 import type { CompanyInfo } from '@/types/content';
+import {
+  DEFAULT_WHATSAPP_MESSAGE,
+  mailtoHref,
+  mapsDirectionsHref,
+  projectEnquiryMessage,
+  telHref,
+  whatsappHref,
+} from '@/lib/contact';
 
 /**
  * Company facts. Every VERIFIED value below is copied verbatim from the legacy
@@ -114,4 +122,43 @@ export const legacyCopy = {
   /** Excerpt of the vision statement (about.html, "Vizyonumuz"). */
   visionQuote:
     'Geleceğin şehirlerini bugünden tasarlayarak, güven, kalite ve estetikten ödün vermeden kalıcı eserler bırakmak',
+} as const;
+
+/* ------------------------------------------------------------------------ */
+/* Stage 6 — the single typed source for every contact link on the site.    */
+/* Components must use these instead of building tel:/mailto:/wa.me URLs.   */
+/* ------------------------------------------------------------------------ */
+
+const { street, postalCode, district, city } = company.address;
+
+/** One-line postal address, exactly as published (legacy footer wording). */
+export const addressLine = `${street}, ${postalCode} ${district}/${city}`;
+
+const [mobilePhone, landlinePhone] = company.phones;
+
+export const contact = {
+  mobile: { ...mobilePhone, label: 'Cep telefonu', href: telHref(mobilePhone.e164) },
+  landline: { ...landlinePhone, label: 'Sabit hat', href: telHref(landlinePhone.e164) },
+  email: {
+    value: company.email,
+    href: mailtoHref(company.email),
+    /** Subject for the contact page's email action. */
+    enquiryHref: mailtoHref(company.email, 'Web sitesi üzerinden bilgi talebi'),
+  },
+  whatsapp: {
+    display: company.whatsapp.display,
+    /** General enquiry with a polite default message. */
+    href: whatsappHref(company.whatsapp.e164, DEFAULT_WHATSAPP_MESSAGE),
+    /** Enquiry about one project, by its PUBLIC label only. */
+    forProject: (publicLabel: string) =>
+      whatsappHref(company.whatsapp.e164, projectEnquiryMessage(publicLabel)),
+  },
+  instagram: company.social[0],
+  address: {
+    line: addressLine,
+    /** Google Maps directions (Maps URLs API — keyless, nothing loads until clicked). */
+    directionsHref: mapsDirectionsHref(`${company.brandName}, ${addressLine}`),
+    /** Third-party embed: loaded ONLY after an explicit click (MapConsent). */
+    embedSrc: company.mapEmbedUrl,
+  },
 } as const;

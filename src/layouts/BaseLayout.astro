@@ -3,7 +3,7 @@ import '@/styles/global.css';
 import { getImage } from 'astro:assets';
 import SiteFooter from '@/components/SiteFooter.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
-import { company, legacyCopy } from '@/data/company';
+import { company, contact, legacyCopy } from '@/data/company';
 import { croppedImage, legacyImage } from '@/lib/media';
 import { SITE_NAME, canonicalUrl, pageTitle } from '@/lib/seo';
 
@@ -89,6 +89,16 @@ const touchIcon = await getImage({ src: legacyImage('logos/logo.png'), width: 18
           addressCountry: company.address.country,
         },
         sameAs: company.social.map((s) => s.url),
+        // Stage 6 — verified only: founder (about.html), map link, phone contact points.
+        // Deliberately absent: opening hours, geo, areaServed, ratings (none verified).
+        founder: { '@type': 'Person', name: company.founder.value },
+        hasMap: contact.address.directionsHref,
+        contactPoint: [contact.mobile, contact.landline].map((phone) => ({
+          '@type': 'ContactPoint',
+          telephone: phone.e164,
+          contactType: 'customer service',
+          availableLanguage: 'tr',
+        })),
       })}
     />
   </head>

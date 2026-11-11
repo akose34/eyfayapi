@@ -235,3 +235,35 @@ manually in a real browser against every production route at 320/768/1280 px (re
   - All four service anchors exist.
 - To publish a confirmed fact later: add it to the data with `provenance: 'legacy'` or a written
   source, and update the corresponding test expectation in the same change.
+
+## 13. Contact architecture (Stage 6)
+
+- **Single source:** `contact` in `src/data/company.ts` derives every channel (mobile, landline,
+  e-mail and enquiry mailto, WhatsApp with default and per-project messages, Instagram, address,
+  directions URL, map embed) from the verified `company` record. Components and pages import
+  `contact`. `tests/contact.test.ts` fails if a phone number or e-mail is hard-coded elsewhere.
+- **Helpers** (`src/lib/contact.ts`):
+  - `telHref` and `mailtoHref`.
+  - `whatsappHref`: always uses `encodeURIComponent`.
+  - `sanitizeMessage`: strips Unicode `Cc`/`Cf` characters (newlines, zero-width, bidi overrides),
+    collapses whitespace and caps the length.
+  - `projectEnquiryMessage`: uses the public label only, and falls back to the default message.
+  - `mapsDirectionsHref`: the keyless Google Maps URLs API.
+- **Map consent** (`MapConsent.astro`): the iframe lives inside a `<template>`, whose contents are
+  inert, so nothing contacts Google until the visitor clicks "Haritayı yükle". A small inline
+  script then:
+  - clones the iframe into place;
+  - announces "Google Haritalar yüklendi." through a polite live region;
+  - moves focus to the map.
+    Without JavaScript the button stays hidden and the directions link remains.
+- **Structured data** (`BaseLayout`): `founder`, `hasMap` and two `ContactPoint`s added. Opening
+  hours, geo coordinates, `areaServed`, ratings and certifications are deliberately absent.
+- **`verify-dist` (built HTML).** On every page:
+  - no live `<iframe>` (template contents excluded) and no `<form>`;
+  - no third-party `img`, `script`, `source`, `video` or `audio`;
+  - no third-party stylesheet, preload, preconnect or dns-prefetch;
+  - every `tel:`, `wa.me` and `mailto:` link matches the verified data.
+
+  On `/iletisim/` it also requires the load button, the templated iframe and the directions link.
+  Mutation tests confirm that a planted iframe, form, unverified number or tag-manager script each
+  make it fail.

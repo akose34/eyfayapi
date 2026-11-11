@@ -10,8 +10,8 @@ the owner's go-ahead. Nothing is pushed, merged or deployed without explicit app
 | 3     | Homepage                                             | **Done** (see `STAGE_3_REPORT.md`) |
 | 4     | Projects: listing, detail, galleries                 | **Done** (see `STAGE_4_REPORT.md`) |
 | 5     | Corporate pages: About, Services, Activities         | **Done** (see `STAGE_5_REPORT.md`) |
-| 6     | Contact, conversion and SEO                          | **Next**                           |
-| 7     | Quality: accessibility, performance, browser testing | Not started                        |
+| 6     | Contact and conversion                               | **Done** (see `STAGE_6_REPORT.md`) |
+| 7     | SEO and quality: accessibility, performance, testing | **Next**                           |
 | 8     | Release: deployment cut-over and legacy retirement   | Not started (needs owner approval) |
 
 ---
@@ -92,18 +92,25 @@ Delivered (details: `STAGE_5_REPORT.md`):
 - A corporate copy layer (`src/data/corporate.ts`) with provenance: every rewrite lists its
   verbatim basis, and tests forbid new numbers, credentials and biography details.
 
-## Stage 6 — Contact, conversion and SEO
+## Stage 6 — Contact and conversion ✅
 
-- Contact page: click-to-call, WhatsApp with a prefilled Turkish message, mailto with subject, and
-  opening hours if provided.
-- Map: either a privacy-friendly static map image linking to Google Maps, or the iframe behind a
-  click-to-load consent.
-- SEO: per-page copy, JSON-LD refinements (`LocalBusiness` hours, `Project`/`Residence` for
-  confirmed projects), OG images per page, sitemap review, Search Console handover plan.
-- Optional: a contact form only if the owner requests one, via a separately reviewed provider (see
-  DEPLOYMENT_PLAN §6).
+- `/iletisim/` redesigned: WhatsApp and mobile as primary tiles; landline, e-mail (with subject)
+  and Instagram as secondary rows; verified office address; closing channel choice.
+- **No form.** There is no backend, and a form that cannot deliver messages would be dishonest.
+- WhatsApp links carry a polite default message. Project pages carry a project-specific message
+  that uses only the public label ("Proje 06").
+- Map: a local panel; the Google iframe is created only after "Haritayı yükle". A keyless directions
+  link always works. No static map image, coordinates or hours were invented.
+- One typed contact source (`contact` in `src/data/company.ts`) feeds every page.
+- Floating WhatsApp button: **not built** (see `STAGE_6_REPORT.md` §5).
+- Moved to Stage 7: the full SEO pass (OG images, `LocalBusiness` refinements, sitemap review).
+  Opening hours remain unpublished until the owner provides them.
 
-## Stage 7 — Quality
+## Stage 7 — SEO and quality
+
+- SEO (carried over from the original Stage 6 plan): per-page OG images, JSON-LD review
+  (`LocalBusiness` subtype, `Project`/`Residence` only once projects are confirmed), sitemap and
+  robots review, Search Console handover plan.
 
 - Playwright smoke tests (routes, navigation, mobile menu, legacy redirects).
 - axe-core accessibility scans on every route, plus manual keyboard and VoiceOver passes.
@@ -125,7 +132,7 @@ Delivered (details: `STAGE_5_REPORT.md`):
   Resolve the `emlakçi-logo.png` Unicode duplicate (PROJECT_AUDIT §6). Untrack `.DS_Store`. Archive
   `slider-photos/` duplicates. Never delete without a recoverable copy in Git history.
 
-## Open blockers and risks (updated after Stage 5)
+## Open blockers and risks (updated after Stage 6)
 
 1. **Project names and facts are unknown.** Stage 4 cannot publish real project pages until the
    owner answers the checklist.
@@ -137,3 +144,6 @@ Delivered (details: `STAGE_5_REPORT.md`):
    upgrade the default Node.
 5. **Deployment model change.** Pages must switch to an Actions-based deploy. Until then, merging to
    `main` would publish source files instead of the built site.
+6. **Contact details are verified only against the legacy site.** The owner should confirm the
+   numbers, e-mail, address and Google Maps embed are still current before release, and supply
+   opening hours if they should be published.

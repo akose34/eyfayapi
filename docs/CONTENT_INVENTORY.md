@@ -208,3 +208,24 @@ Specific questions:
       without third-party award context?
 - [ ] Theatre evening: was it a company event? If so, a date and a photo without municipal or
       third-party branding.
+
+## 7. Stage 6 updates (contact)
+
+| Item                                                                            | Source                    | Status                                  |
+| ------------------------------------------------------------------------------- | ------------------------- | --------------------------------------- |
+| Mobile and WhatsApp: 0 (532) 686 88 29 / +905326868829                          | Legacy footer and buttons | Verified (legacy); used                 |
+| Landline: 0 216 419 57 81                                                       | Legacy footer             | Verified (legacy); labelled "Sabit hat" |
+| E-mail: info@eyfayapi.net                                                       | Legacy footer             | Verified (legacy); used                 |
+| Address: Abdurrahmangazi Mah. Dağıstan Sk. No: 4/14, 34920 Sultanbeyli/İstanbul | Legacy footer             | Verified (legacy); used                 |
+| Google Maps embed URL                                                           | Legacy page footers       | Verified (legacy); loaded only on click |
+| Instagram @eyfa.yapi                                                            | Legacy footer             | Verified (legacy); used                 |
+| Opening hours, geo coordinates, service area                                    | None                      | **Not published** (no source)           |
+| WhatsApp default and project messages                                           | Editorial                 | New wording; contains no claims         |
+
+### Owner confirmations (Stage 6)
+
+- [ ] Are all phone numbers, the e-mail, the address and the map pin still current?
+- [ ] Is the landline the office line? (The site says "Sabit hat" rather than assume.)
+- [ ] Approve the WhatsApp default message and the project enquiry wording.
+- [ ] Should opening hours be published? If so, provide them.
+- [ ] Is a contact form wanted? It would need a separately reviewed delivery provider.

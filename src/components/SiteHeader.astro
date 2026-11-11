@@ -16,12 +16,11 @@ import BrandLogo from './BrandLogo.astro';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import IconButton from './IconButton.astro';
-import { company } from '@/data/company';
+import { company, contact } from '@/data/company';
 import { contactNav, isCurrentPath, primaryNav } from '@/data/navigation';
-import { mailtoHref, telHref, whatsappHref } from '@/lib/contact';
 
 const pathname = Astro.url.pathname;
-const mobile = company.phones[0];
+const mobile = contact.mobile;
 const current = (href: string) => (isCurrentPath(href, pathname) ? 'page' : undefined);
 ---
 
@@ -58,7 +57,7 @@ const current = (href: string) => (isCurrentPath(href, pathname) ? 'page' : unde
 
     <div class="hidden items-center gap-6 lg:flex">
       <a
-        href={telHref(mobile.e164)}
+        href={mobile.href}
         class="text-ink-muted hover:text-ink hidden items-center gap-2 text-sm font-medium tabular-nums transition-colors xl:inline-flex"
       >
         <Icon name="phone" size={16} class="text-accent-text" />
@@ -131,23 +130,15 @@ const current = (href: string) => (isCurrentPath(href, pathname) ? 'page' : unde
     <div class="px-gutter border-line border-t pt-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
       <p class="eyebrow">İletişim</p>
       <div class="mt-5 grid gap-3 sm:grid-cols-2">
-        <Button href={telHref(mobile.e164)} variant="secondary" leadingIcon="phone" fullWidth>
+        <Button href={mobile.href} variant="secondary" leadingIcon="phone" fullWidth>
           {mobile.display}
         </Button>
-        <Button
-          href={whatsappHref(company.whatsapp.e164)}
-          external
-          leadingIcon="whatsapp"
-          fullWidth
-        >
+        <Button href={contact.whatsapp.href} external leadingIcon="whatsapp" fullWidth>
           WhatsApp
         </Button>
       </div>
-      <a
-        href={mailtoHref(company.email)}
-        class="link-underline text-ink-muted mt-5 inline-block text-sm"
-      >
-        {company.email}
+      <a href={contact.email.href} class="link-underline text-ink-muted mt-5 inline-block text-sm">
+        {contact.email.value}
       </a>
     </div>
   </div>

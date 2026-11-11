@@ -17,6 +17,10 @@
  *    withheld project pages are redirect documents; drawings stay uncropped
  *  - (S5) no unconfirmed founder-biography details or award wording on any
  *    page; withheld activities absent; service anchors present on /hizmetler/
+ *  - (S6) no live <iframe> (only inert <template>), no <form>, no third-party
+ *    src/stylesheet; every tel:/mailto:/wa.me link uses the verified values
+ *    from src/data/company.ts; contact page offers click-to-load map +
+ *    directions link
  *  - (S3) heading levels never skip (h1→h3); every <img> has width/height
  *    (no layout shift); (S4) JS only from first-party /_astro/*.js or inline,
  *    ≤ 8 KB per page;
@@ -257,6 +261,56 @@ for (let n = 1; n <= 11; n++) {
   const servicesPage = readFileSync(join(DIST, 'hizmetler/index.html'), 'utf8');
   for (const id of ['muteahhitlik', 'mimarlik', 'muhendislik', 'emlak']) {
     if (!new RegExp(`\\sid="${id}"`).test(servicesPage)) fail(`hizmetler: missing #${id} anchor`);
+  }
+}
+
+// Stage 6 — contact, privacy and honesty guards.
+{
+  const companySrc = readFileSync(
+    fileURLToPath(new URL('../src/data/company.ts', import.meta.url)),
+    'utf8',
+  );
+  const phones = new Set([...companySrc.matchAll(/e164: '(\+\d+)'/g)].map((m) => m[1]));
+  const email = companySrc.match(/email: '([^']+)'/)?.[1];
+  if (phones.size < 2 || !email) fail('verify-dist: could not read verified contact data');
+
+  for (const f of files.filter((x) => x.endsWith('.html'))) {
+    const name = rel(f);
+    const raw = readFileSync(f, 'utf8');
+    const html = raw.replace(/<template[\s\S]*?<\/template>/g, ''); // inert content
+    if (/<iframe\b/i.test(html))
+      fail(`${name}: live <iframe> (third-party embeds must load on demand)`);
+    if (/<form\b/i.test(raw))
+      fail(`${name}: <form> found — the static site has no backend to receive it`);
+    for (const [, url] of html.matchAll(
+      /<(?:img|script|source|video|audio)\b[^>]*\ssrc="(https?:[^"]+)"/g,
+    )) {
+      fail(`${name}: third-party resource loaded on page view → ${url}`);
+    }
+    for (const [tag] of html.matchAll(
+      /<link\b[^>]*rel="(?:stylesheet|preload|preconnect|dns-prefetch)"[^>]*>/g,
+    )) {
+      if (/href="https?:/.test(tag)) fail(`${name}: third-party <link> → ${tag.slice(0, 80)}`);
+    }
+    for (const [, num] of raw.matchAll(/href="tel:([^"]+)"/g)) {
+      if (!phones.has(num)) fail(`${name}: unverified phone link tel:${num}`);
+    }
+    for (const [, digits] of raw.matchAll(/href="https:\/\/wa\.me\/(\d+)/g)) {
+      if (![...phones].some((p) => p.slice(1) === digits))
+        fail(`${name}: unverified WhatsApp number ${digits}`);
+    }
+    for (const [, addr] of raw.matchAll(/href="mailto:([^"?]+)/g)) {
+      if (addr !== email) fail(`${name}: unverified e-mail link ${addr}`);
+    }
+  }
+
+  const contactPage = readFileSync(join(DIST, 'iletisim/index.html'), 'utf8');
+  if (!/data-map-load/.test(contactPage)) fail('iletisim: missing click-to-load map control');
+  if (!/<template[^>]*data-map-template[\s\S]*?<iframe/.test(contactPage)) {
+    fail('iletisim: map embed must live inside an inert <template>');
+  }
+  if (!/href="https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=/.test(contactPage)) {
+    fail('iletisim: missing Google Maps directions link');
   }
 }
 

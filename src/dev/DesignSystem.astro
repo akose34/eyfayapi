@@ -25,6 +25,7 @@ import ServiceCard from '@/components/ServiceCard.astro';
 import StageNotice from '@/components/StageNotice.astro';
 import TextLink from '@/components/TextLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { contact } from '@/data/company';
 import { projects } from '@/data/projects';
 import { services } from '@/data/services';
 
@@ -153,7 +154,7 @@ const planProject = projects.find((p) => p.cover.kind === 'floor-plan');
           <TextLink href="#ds-buttons" tone="ink">
             Mürekkep tonu
           </TextLink>
-          <TextLink href="https://www.instagram.com/eyfa.yapi/" external>
+          <TextLink href={contact.instagram.url} external>
             Harici
           </TextLink>
           <IconButton icon="close" label="Örnek kapat" variant="outline" />

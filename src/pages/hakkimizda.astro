@@ -27,11 +27,10 @@ import PageHeader from '@/components/PageHeader.astro';
 import Section from '@/components/Section.astro';
 import TextLink from '@/components/TextLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { company, legacyCopy } from '@/data/company';
+import { contact, legacyCopy } from '@/data/company';
 import { about, aboutImages } from '@/data/corporate';
-import { telHref, whatsappHref } from '@/lib/contact';
 
-const mobile = company.phones[0];
+const mobile = contact.mobile;
 ---
 
 <BaseLayout title="Hakkımızda" description={about.hero.lead.text} ogImage={aboutImages.hero.src}>
@@ -199,11 +198,11 @@ const mobile = company.phones[0];
       </h2>
       <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
         {mobile && (
-          <TextLink href={telHref(mobile.e164)} tone="ink" arrow={false}>
+          <TextLink href={mobile.href} tone="ink" arrow={false}>
             {mobile.display}
           </TextLink>
         )}
-        <TextLink href={whatsappHref(company.whatsapp.e164)} external tone="ink">
+        <TextLink href={contact.whatsapp.href} external tone="ink">
           WhatsApp
         </TextLink>
         <TextLink href="/iletisim/">İletişim bilgileri</TextLink>

@@ -1,0 +1,91 @@
+---
+/**
+ * Privacy-first office map (Stage 6).
+ *
+ * Nothing from Google loads with the page. The panel is rendered locally
+ * (CSS only — no map tiles, no invented static image). The visitor can:
+ *   1. open Google Maps directions in a new tab (plain link, always works), or
+ *   2. press "Haritayı yükle" — only then is the Google Maps <iframe> created.
+ *
+ * The embed URL is the company's own legacy embed (verified). Without
+ * JavaScript the load button is hidden and the directions link remains.
+ */
+import Icon from './Icon.astro';
+import { company, contact } from '@/data/company';
+---
+
+<div class="map-consent tone-dark relative overflow-hidden rounded-lg" data-map-consent>
+  <div
+    class="relative flex min-h-[24rem] flex-col justify-between gap-10 p-6 sm:aspect-photo sm:min-h-0 sm:p-10"
+    data-map-panel
+  >
+    <div class="flex items-start gap-4">
+      <span
+        class="border-accent text-accent-text inline-flex size-12 shrink-0 items-center justify-center rounded-full border"
+        aria-hidden="true"
+      >
+        <Icon name="map-pin" size={22} />
+      </span>
+      <div>
+        <p class="font-display text-2xl">{company.brandName}</p>
+        <p class="text-ink-muted mt-1 text-sm">{contact.address.line}</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <p class="text-ink-muted max-w-md text-xs" id="map-consent-note">
+        Haritayı yüklediğinizde Google Haritalar’a bağlanılır ve Google’ın gizlilik koşulları
+        geçerli olur. Yol tarifi bağlantısı Google Haritalar’ı yeni sekmede açar.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="button"
+          class="bg-accent text-on-accent hover:bg-accent-hover hidden min-h-11 items-center gap-2 rounded-md px-5 text-sm font-semibold transition-colors [.js_&]:inline-flex"
+          aria-describedby="map-consent-note"
+          data-map-load
+        >
+          <Icon name="map-pin" size={16} />
+          Haritayı yükle
+        </button>
+        <a
+          href={contact.address.directionsHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="border-ink/70 text-ink hover:bg-ink hover:text-surface inline-flex min-h-11 items-center gap-2 rounded-md border px-5 text-sm font-semibold transition-colors"
+        >
+          Yol tarifi al
+          <Icon name="arrow-up-right" size={16} />
+          <span class="sr-only"> (Google Haritalar, yeni sekmede açılır)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="sr-only" aria-live="polite" data-map-status></p>
+  <template data-map-template>
+    <iframe
+      src={contact.address.embedSrc}
+      title={`${company.brandName} ofis konumu — Google Haritalar`}
+      class="aspect-landscape block w-full border-0 sm:aspect-photo"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen
+    ></iframe>
+  </template>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-map-consent]').forEach((root) => {
+    const button = root.querySelector<HTMLButtonElement>('[data-map-load]');
+    const template = root.querySelector<HTMLTemplateElement>('[data-map-template]');
+    const panel = root.querySelector<HTMLElement>('[data-map-panel]');
+    const status = root.querySelector<HTMLElement>('[data-map-status]');
+    if (!button || !template || !panel || !status) return;
+    button.addEventListener('click', () => {
+      const frame = template.content.firstElementChild?.cloneNode(true);
+      if (!(frame instanceof HTMLIFrameElement)) return;
+      panel.replaceWith(frame);
+      status.textContent = 'Google Haritalar yüklendi.';
+      frame.focus();
+    });
+  });
+</script>

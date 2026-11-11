@@ -17,6 +17,7 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import StageNotice from '@/components/StageNotice.astro';
 import TextLink from '@/components/TextLink.astro';
 import { company } from '@/data/company';
+import { DEFAULT_WHATSAPP_MESSAGE } from '@/lib/contact';
 
 let container: AstroContainer;
 beforeAll(async () => {
@@ -158,7 +159,10 @@ describe('Contact components use only verified company data', () => {
       expect(html).toContain(`href="tel:${phone.e164}"`);
       expect(html).toContain(phone.display);
     }
-    expect(html).toContain(`href="https://wa.me/${company.whatsapp.e164.slice(1)}"`);
+    // Stage 6: the WhatsApp link carries the polite default message.
+    expect(html).toContain(
+      `href="https://wa.me/${company.whatsapp.e164.slice(1)}?text=${encodeURIComponent(DEFAULT_WHATSAPP_MESSAGE)}"`,
+    );
     expect(html).toContain(`href="mailto:${company.email}"`);
     expect(html).toContain(company.social[0].url);
     expect(html).toContain(company.address.street);

@@ -14,6 +14,7 @@
  * to /projeler/ so the URL never 404s and nothing withheld is exposed.
  */
 import type { GetStaticPaths } from 'astro';
+import Button from '@/components/Button.astro';
 import ContactCTA from '@/components/ContactCTA.astro';
 import Lightbox from '@/components/Lightbox.astro';
 import MediaFrame from '@/components/MediaFrame.astro';
@@ -33,6 +34,7 @@ import {
   showsConstruction,
 } from '@/data/projects';
 import type { Project } from '@/types/content';
+import { contact } from '@/data/company';
 
 export const getStaticPaths = (() =>
   projects.map((project) => ({
@@ -48,6 +50,8 @@ const { project } = Astro.props;
 const withheld = project.visibility === 'withheld';
 const title = projectDisplayName(project);
 const confirmed = project.name.status === 'VERIFIED';
+/** WhatsApp enquiry pre-filled with the PUBLIC project label only. */
+const enquiryHref = contact.whatsapp.forProject(title);
 const [hero, ...photos] = projectPhotos(project);
 const plans = projectPlans(project);
 const construction = showsConstruction(project);
@@ -108,9 +112,13 @@ const intro =
         <p class="text-ink-muted max-w-xl text-lg">{intro}</p>
         <p class="text-ink-muted shrink-0 text-sm tracking-(--tracking-ui)">{summary}</p>
       </div>
-      <TextLink href="/iletisim/" class="mt-6">
-        Proje hakkında bilgi alın
-      </TextLink>
+      {/* Project enquiry: asks for information only — never implies availability. */}
+      <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+        <Button href={enquiryHref} external leadingIcon="whatsapp">
+          Bu proje hakkında sorun
+        </Button>
+        <TextLink href="/iletisim/">Tüm iletişim kanalları</TextLink>
+      </div>
     </PageHeader>
 
     {hero && (
@@ -203,8 +211,9 @@ const intro =
     )}
 
     <ContactCTA
-      title="Projelerimiz hakkında bilgi alın"
+      title={`${title} hakkında bilgi alın`}
       lead="Sorularınız için telefon, WhatsApp veya e-posta ile bize doğrudan ulaşabilirsiniz."
+      whatsappHref={enquiryHref}
     />
     <Lightbox />
   </BaseLayout>

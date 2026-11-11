@@ -13,14 +13,17 @@ import Container from './Container.astro';
 import Eyebrow from './Eyebrow.astro';
 import MediaFrame from './MediaFrame.astro';
 import TextLink from './TextLink.astro';
-import { company } from '@/data/company';
-import { mailtoHref, telHref, whatsappHref } from '@/lib/contact';
+import { contact } from '@/data/company';
 
 interface Props {
   title?: string;
   lead?: string;
   headingId?: string;
   image?: { src: string; alt: string; position?: string };
+  /** Pre-built WhatsApp link (e.g. contact.whatsapp.forProject(label)). */
+  whatsappHref?: string;
+  /** Hide the "İletişim sayfası" link (on the contact page itself). */
+  showContactPageLink?: boolean;
 }
 
 const {
@@ -28,8 +31,9 @@ const {
   lead = 'Sorularınız için telefon, WhatsApp veya e-posta ile bize doğrudan ulaşabilirsiniz.',
   headingId = 'iletisim-cta',
   image,
+  whatsappHref = contact.whatsapp.href,
+  showContactPageLink = true,
 } = Astro.props;
-const [mobile, landline] = company.phones;
 ---
 
 <section class="tone-dark border-line relative border-t" aria-labelledby={headingId}>
@@ -70,30 +74,25 @@ const [mobile, landline] = company.phones;
         class:list={['mt-10 flex flex-col gap-6', !image && 'lg:col-span-5 lg:mt-0 lg:items-end']}
       >
         <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <Button
-            href={whatsappHref(company.whatsapp.e164)}
-            external
-            leadingIcon="whatsapp"
-            size="lg"
-          >
+          <Button href={whatsappHref} external leadingIcon="whatsapp" size="lg">
             WhatsApp ile yazın
           </Button>
-          {mobile && (
-            <Button href={telHref(mobile.e164)} variant="secondary" leadingIcon="phone" size="lg">
-              {mobile.display}
+          {contact.mobile && (
+            <Button href={contact.mobile.href} variant="secondary" leadingIcon="phone" size="lg">
+              {contact.mobile.display}
             </Button>
           )}
         </div>
         <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
-          {landline && (
-            <TextLink href={telHref(landline.e164)} tone="ink" arrow={false}>
-              Sabit hat: {landline.display}
+          {contact.landline && (
+            <TextLink href={contact.landline.href} tone="ink" arrow={false}>
+              {contact.landline.label}: {contact.landline.display}
             </TextLink>
           )}
-          <TextLink href={mailtoHref(company.email)} tone="ink" arrow={false}>
-            {company.email}
+          <TextLink href={contact.email.href} tone="ink" arrow={false}>
+            {contact.email.value}
           </TextLink>
-          <TextLink href="/iletisim/">İletişim sayfası</TextLink>
+          {showContactPageLink && <TextLink href="/iletisim/">İletişim sayfası</TextLink>}
         </div>
       </div>
     </div>

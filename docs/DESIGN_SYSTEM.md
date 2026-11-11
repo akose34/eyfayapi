@@ -384,3 +384,29 @@ Patterns:
 - **In-page section nav** (Services header): numbered links. Put `.link-underline` on the label span,
   not the whole link, or the `::after` line overlaps the number and axe cannot resolve contrast
   (found in Stage 5 QA).
+
+## 18. Stage 6 additions
+
+| Component    | Purpose                                                               | Key props |
+| ------------ | --------------------------------------------------------------------- | --------- |
+| `MapConsent` | Local office panel; loads the Google map only after an explicit click | none      |
+
+`ContactCTA` gained two props: `whatsappHref` (for a project-specific message) and
+`showContactPageLink` (turned off on `/iletisim/` itself).
+
+Patterns:
+
+- **Contact tiles** (`/iletisim/`): large raised tiles for the two primary channels. The value is set
+  in Cormorant `text-2xl sm:text-4xl` with `whitespace-nowrap` and `tabular-nums`, so the number never
+  breaks at 320 px. Secondary channels sit in a ruled three-column row.
+- **Accessible names for multi-part links:** put visually hidden `": "` and `", "` separators
+  between the label, value and action spans instead of using an `aria-label`. The name then reads
+  "WhatsApp: +90 (532) 686 88 29, WhatsApp’ta mesaj yazın (yeni sekmede açılır)" and always contains
+  the visible text. An `aria-label` tripped axe's `label-content-name-mismatch` rule.
+- **Project enquiry:** project headers carry a WhatsApp `Button` "Bu proje hakkında sorun" and a
+  `TextLink` to `/iletisim/`.
+- **No floating WhatsApp button.** On phones it would cover the lightbox controls and the last line
+  of content. Contextual CTAs already exist in the header menu, the footer, the closing bands and the
+  project headers.
+- **No decorative CSS gradients behind text:** axe cannot resolve their contrast and reports them as
+  "incomplete".
