@@ -9,8 +9,8 @@ the owner's go-ahead. Nothing is pushed, merged or deployed without explicit app
 | 2     | Premium design system and shared UI                  | **Done** (see `STAGE_2_REPORT.md`) |
 | 3     | Homepage                                             | **Done** (see `STAGE_3_REPORT.md`) |
 | 4     | Projects: listing, detail, galleries                 | **Done** (see `STAGE_4_REPORT.md`) |
-| 5     | Corporate pages: About, Services, Activities         | **Next**                           |
-| 6     | Contact, conversion and SEO                          | Not started                        |
+| 5     | Corporate pages: About, Services, Activities         | **Done** (see `STAGE_5_REPORT.md`) |
+| 6     | Contact, conversion and SEO                          | **Next**                           |
 | 7     | Quality: accessibility, performance, browser testing | Not started                        |
 | 8     | Release: deployment cut-over and legacy retirement   | Not started (needs owner approval) |
 
@@ -78,13 +78,19 @@ Delivered (details: `STAGE_4_REPORT.md`, `PROJECT_MEDIA_REVIEW.md`):
 Still blocked on the owner: names, facts, the gallery 4/6 question, drawing rights, and name-based
 slugs (planned with redirect stubs from `proje-NN`; never published so far).
 
-## Stage 5 — Corporate pages
+## Stage 5 — Corporate pages ✅
 
-- About: company text, mission and vision, confirmed founder biography, and an optional timeline of
-  verified dates only.
-- Services: expanded copy approved by the owner. Optional fourth service (Müteahhitlik/Taahhüt) if
-  confirmed.
-- Activities: SUGİAD and theatre, with permission for identifiable people.
+Delivered (details: `STAGE_5_REPORT.md`):
+
+- `/hakkimizda/`: editorial hero, introduction, a story anchored on the only verified date (2004,
+  with no invented timeline), mission and vision in two distinct compositions, approach, projects
+  transition and a quiet contact row.
+- `/hizmetler/`: four editorial rows. **Müteahhitlik** was added as an editorial service grounded
+  in the company's registered name and about-text, pending owner sign-off. Anchors are preserved.
+- `/faaliyetlerimiz/`: only the SUGİAD membership is public (text only). The theatre activity and
+  both photos are withheld for attribution and rights reasons.
+- A corporate copy layer (`src/data/corporate.ts`) with provenance: every rewrite lists its
+  verbatim basis, and tests forbid new numbers, credentials and biography details.
 
 ## Stage 6 — Contact, conversion and SEO
 
@@ -119,7 +125,7 @@ slugs (planned with redirect stubs from `proje-NN`; never published so far).
   Resolve the `emlakçi-logo.png` Unicode duplicate (PROJECT_AUDIT §6). Untrack `.DS_Store`. Archive
   `slider-photos/` duplicates. Never delete without a recoverable copy in Git history.
 
-## Open blockers and risks (updated after Stage 4)
+## Open blockers and risks (updated after Stage 5)
 
 1. **Project names and facts are unknown.** Stage 4 cannot publish real project pages until the
    owner answers the checklist.

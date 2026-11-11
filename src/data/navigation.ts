@@ -32,6 +32,7 @@ export const footerNav = {
     title: 'Çalışmalarımız',
     links: [
       { label: 'Projelerimiz', href: '/projeler/' },
+      { label: 'Müteahhitlik', href: '/hizmetler/#muteahhitlik' },
       { label: 'Mimarlık', href: '/hizmetler/#mimarlik' },
       { label: 'Mühendislik', href: '/hizmetler/#muhendislik' },
       { label: 'Emlak', href: '/hizmetler/#emlak' },

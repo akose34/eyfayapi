@@ -15,6 +15,8 @@
  *  - (S4) no withheld legacy media (src/data/withheld-media.json) in any form;
  *    every public project page exists and has exactly one image viewer;
  *    withheld project pages are redirect documents; drawings stay uncropped
+ *  - (S5) no unconfirmed founder-biography details or award wording on any
+ *    page; withheld activities absent; service anchors present on /hizmetler/
  *  - (S3) heading levels never skip (h1→h3); every <img> has width/height
  *    (no layout shift); (S4) JS only from first-party /_astro/*.js or inline,
  *    ≤ 8 KB per page;
@@ -230,6 +232,31 @@ for (let n = 1; n <= 11; n++) {
   for (const [, block] of html.matchAll(/data-lightbox-kind="plans"[^>]*>([\s\S]*?)<\/a>/g)) {
     if (!/object-contain/.test(block) || /object-cover/.test(block))
       fail(`${page}: plan thumbnail is cropped`);
+  }
+}
+
+// Stage 5 — corporate content guards (built HTML, visible text only).
+{
+  const visible = (html) =>
+    html
+      .replace(/<script[\s\S]*?<\/script>/g, ' ')
+      .replace(/<style[\s\S]*?<\/style>/g, ' ')
+      .replace(/<[^>]+>/g, ' ');
+  const BIOGRAPHY = /(44 yaşında|Sosyoloji|Gümüşhane|Kelkit|üç çocuk|MÜSİAD|AHİSİAD|6\. dönem)/i;
+  const AWARD = /(ödül|sertifika|\bISO\b|Şentürk)/i;
+  for (const f of files.filter((x) => x.endsWith('.html'))) {
+    const text = visible(readFileSync(f, 'utf8'));
+    const bio = text.match(BIOGRAPHY)?.[0];
+    if (bio) fail(`${rel(f)}: unconfirmed founder-biography detail "${bio}"`);
+    const award = text.match(AWARD)?.[0];
+    if (award) fail(`${rel(f)}: unverified award/credential wording "${award}"`);
+  }
+  const activitiesPage = visible(readFileSync(join(DIST, 'faaliyetlerimiz/index.html'), 'utf8'));
+  if (/Tiyatro/i.test(activitiesPage))
+    fail('faaliyetlerimiz: withheld theatre activity is visible');
+  const servicesPage = readFileSync(join(DIST, 'hizmetler/index.html'), 'utf8');
+  for (const id of ['muteahhitlik', 'mimarlik', 'muhendislik', 'emlak']) {
+    if (!new RegExp(`\\sid="${id}"`).test(servicesPage)) fail(`hizmetler: missing #${id} anchor`);
   }
 }
 

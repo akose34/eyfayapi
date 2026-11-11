@@ -177,3 +177,34 @@ Specific questions:
 - [ ] Are galleries 1 and 3 completed now? If so, are there photos of the finished buildings?
 - [ ] Which projects should the homepage feature? It currently shows 06, 02 and 03, chosen on
       photo quality only.
+
+---
+
+## 6. Stage 5 updates (corporate pages)
+
+### Classification of corporate content
+
+| Content                                                                                                            | Classification                                                                 | Where used                                      |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ----------------------------------------------- |
+| Founding 2004, İstanbul, founder Fatih Yılmaz, "konut ve taahhüt projeleri"                                        | Verified                                                                       | About hero, intro, story                        |
+| Districts (Sultanbeyli, Pendik, Kartal, Çekmeköy)                                                                  | Verified                                                                       | About intro                                     |
+| Fields of work (housing, metro stations / Telekom buildings, Türk Telekom stores, roads and bridges)               | Verified (verbatim)                                                            | About story, Müteahhitlik service               |
+| Mission and vision                                                                                                 | Editorial shortening of verified text                                          | About                                           |
+| Approach themes (önce insan, depreme dayanıklılık, mühendislik, estetik ve işlev)                                  | Editorial, one verified sentence each                                          | About                                           |
+| "Müteahhitlik" service                                                                                             | Editorial, based on the registered name, the homepage intro and about.html     | Services, homepage, footer                      |
+| "köklü", "başarıyla tamamlanmıştır", "bu anlayışıyla öne çıkmıştır"                                                | Self-praise                                                                    | **Dropped or softened** ("sunmayı amaçlar")     |
+| Founder biography (age 44, student status, hometown, family, SUGİAD presidency, MÜSİAD, AHİSİAD, GSG with 6 plays) | Time-sensitive or personal, unconfirmed                                        | **Withheld** (tests and `verify-dist` block it) |
+| SUGİAD membership statement                                                                                        | Verified (company voice on faaliyet.html)                                      | Activities, text only                           |
+| SUGİAD photo (award to a third-party artist)                                                                       | Would imply an award                                                           | **Withheld**                                    |
+| Theatre evening and poster                                                                                         | Attribution conflict (municipal event or founder's group vs. "employee event") | **Withheld**                                    |
+
+### Owner confirmations (Stage 5)
+
+- [ ] Approve **Müteahhitlik** as a listed service, and its description.
+- [ ] Approve the editorial headline "Güvenli yapılar, huzurlu yaşam alanları." and the shortened
+      mission and vision.
+- [ ] Founder biography: provide current wording to publish (or confirm it should stay off the site).
+- [ ] SUGİAD: is the membership the company's or the founder's? Since when (date)? Any photo
+      without third-party award context?
+- [ ] Theatre evening: was it a company event? If so, a date and a photo without municipal or
+      third-party branding.

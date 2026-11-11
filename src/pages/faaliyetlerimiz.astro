@@ -1,32 +1,110 @@
 ---
+/**
+ * Activities (Stage 5). Deliberately sparse: only activities whose attribution
+ * to the company is clear are shown (src/data/activities.ts). Today that is
+ * the SUGİAD membership — text only, because its photo shows an award given
+ * to a third party. The theatre evening is withheld (attribution conflict);
+ * see docs/STAGE_5_REPORT.md §4. No dates are shown: none are verified.
+ *
+ * The layout supports more entries (title, optional verified date, text,
+ * optional public image) without a "news feed" look.
+ */
+import Button from '@/components/Button.astro';
+import Container from '@/components/Container.astro';
+import Eyebrow from '@/components/Eyebrow.astro';
 import MediaFrame from '@/components/MediaFrame.astro';
 import PageHeader from '@/components/PageHeader.astro';
-import Section from '@/components/Section.astro';
+import TextLink from '@/components/TextLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { activities } from '@/data/activities';
+import { publicActivities } from '@/data/activities';
+
+const items = publicActivities();
+/** Expanded association name, verbatim from about.html. */
+const fullNames: Record<string, string> = {
+  sugiad: 'Sultanbeyli Girişimci İş Adamları Derneği',
+};
 ---
 
-<BaseLayout title="Faaliyetlerimiz" description="Eyfa Yapı kurumsal faaliyetleri.">
-  <PageHeader title="Faaliyetlerimiz" eyebrow="Kurumsal" breadcrumbs={[{ label: 'Faaliyetler' }]} />
+<BaseLayout
+  title="Faaliyetlerimiz"
+  description="Eyfa Yapı’nın iş dünyasıyla kurduğu bağlar ve kurumsal faaliyetleri."
+>
+  <PageHeader
+    title="Faaliyetlerimiz"
+    eyebrow="Kurumsal"
+    lead="İş dünyasıyla kurduğumuz bağlar ve kurumsal faaliyetlerimiz."
+    breadcrumbs={[{ label: 'Faaliyetler' }]}
+    width="wide"
+  />
 
-  <Section>
-    <ul class="grid gap-x-(--spacing-grid) gap-y-16 md:grid-cols-2">
-      {activities.map((activity) => (
-        <li class="reveal">
-          <article>
-            <MediaFrame
-              src={activity.image}
-              alt={activity.alt}
-              aspect="square"
-              position="50% 0%"
-              widths={[400, 640, 900]}
-              sizes="(min-width: 768px) 50vw, 100vw"
-            />
-            <h2 class="mt-8 text-3xl">{activity.title}</h2>
-            <p class="text-ink-muted mt-4 max-w-md">{activity.description}</p>
-          </article>
-        </li>
-      ))}
-    </ul>
-  </Section>
+  <section class="py-section" aria-label="Faaliyetler">
+    <Container width="wide">
+      <ul class="grid gap-20">
+        {items.map((activity) => (
+          <li>
+            <article
+              class="grid gap-10 lg:grid-cols-12 lg:gap-(--spacing-grid)"
+              aria-labelledby={`${activity.id}-baslik`}
+            >
+              <div class="lg:col-span-5">
+                {activity.imagePublic ? (
+                  <MediaFrame
+                    src={activity.image}
+                    alt={activity.alt}
+                    aspect="square"
+                    widths={[480, 720, 960]}
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                  />
+                ) : (
+                  <div class="tone-dark flex aspect-landscape flex-col justify-between rounded-lg p-8 lg:aspect-square lg:p-12">
+                    <Eyebrow>Üyelik</Eyebrow>
+                    <div>
+                      <p class="font-display text-accent-text text-5xl" aria-hidden="true">
+                        {activity.title.split(' ')[0]}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div class="flex flex-col justify-center lg:col-span-6 lg:col-start-7">
+                {activity.date.status === 'VERIFIED' && (
+                  <p class="text-ink-muted text-sm">
+                    <time datetime={activity.date.value}>{activity.date.value}</time>
+                  </p>
+                )}
+                <h2 id={`${activity.id}-baslik`} class="text-5xl">
+                  {activity.title}
+                </h2>
+                {fullNames[activity.id] && (
+                  <p class="text-accent-text mt-4 text-sm font-semibold tracking-(--tracking-ui)">
+                    {fullNames[activity.id]}
+                  </p>
+                )}
+                <p class="text-ink-muted mt-6 max-w-xl text-lg">{activity.description}</p>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="bg-ivory-200 border-line border-t" aria-labelledby="faaliyet-gecis">
+    <Container width="wide" class="py-section-sm grid gap-8 lg:grid-cols-12 lg:items-end">
+      <div class="lg:col-span-7">
+        <h2 id="faaliyet-gecis" class="text-3xl">
+          Çalışmalarımızı projelerimizde görün
+        </h2>
+        <p class="text-ink-muted mt-4 max-w-xl">
+          Kurumsal yaklaşımımız ve projelerimiz hakkında daha fazla bilgi.
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-4 lg:col-span-5 lg:justify-end">
+        <TextLink href="/hakkimizda/">Hakkımızda</TextLink>
+        <Button href="/projeler/" variant="secondary" icon="arrow-right">
+          Projelerimiz
+        </Button>
+      </div>
+    </Container>
+  </section>
 </BaseLayout>

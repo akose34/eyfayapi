@@ -364,3 +364,23 @@ Viewer conventions:
 - On phones the prev/next buttons sit at the bottom (44 px). On tablets and desktops they sit at
   the sides.
 - Drawings are shown on a white sheet.
+
+## 17. Stage 5 additions
+
+| Component    | Purpose                                                                                                  | Key props                                |
+| ------------ | -------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `FeatureRow` | Editorial image and text row; alternate with `reverse` for a zigzag. DOM order is always text then image | `image`, `reverse`, `aspect`, `textSpan` |
+
+Patterns:
+
+- **Statement band** (About mission): dark full-width band, eyebrow left, Cormorant `text-3xl`
+  statement spanning 8 columns.
+- **Ruled statement** (About vision): light section, 2 px gold left rule, eyebrow and Cormorant
+  statement.
+- **Date anchor** (About story): one verified year as a large gold Cormorant numeral (decorative,
+  `aria-hidden`; the text says "Kuruluş yılı"). Never build a timeline from unverified dates.
+- **Typographic placeholder for withheld photos** (Activities): a dark panel with the organisation
+  name. It conveys no claim and replaces an image that would mislead.
+- **In-page section nav** (Services header): numbered links. Put `.link-underline` on the label span,
+  not the whole link, or the `::after` line overlaps the number and axe cannot resolve contrast
+  (found in Stage 5 QA).

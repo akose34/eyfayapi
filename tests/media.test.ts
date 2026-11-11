@@ -21,7 +21,10 @@ describe('media registry', () => {
   // Stage 4: withheld legacy images are intentionally NOT registered (see
   // tests/projects.test.ts); every image the public UI shows must be.
   it('resolves every image the public UI shows', () => {
-    const used = [...publicImages().map((g) => g.src), ...activities.map((a) => a.image)];
+    const used = [
+      ...publicImages().map((g) => g.src),
+      ...activities.filter((a) => a.imagePublic).map((a) => a.image),
+    ];
     for (const path of used) {
       expect(hasLegacyImage(path), path).toBe(true);
       expect(legacyImage(path).width).toBeGreaterThan(0);
@@ -31,7 +34,7 @@ describe('media registry', () => {
   it('registers no image that nothing uses (avoids shipping unused originals)', () => {
     const usedByData = new Set([
       ...publicImages().map((g) => g.src),
-      ...activities.map((a) => a.image),
+      ...activities.filter((a) => a.imagePublic).map((a) => a.image),
     ]);
     for (const path of registeredImagePaths()) {
       const used = usedByData.has(path) || allSource.includes(`'${path}'`);

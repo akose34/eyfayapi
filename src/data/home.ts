@@ -44,6 +44,10 @@ export const featuredProjects = [
 
 /** One authentic image per verified service (MEDIA_INVENTORY §7). */
 export const serviceImages: Record<Service['id'], { src: string; alt: string }> = {
+  muteahhitlik: {
+    src: 'projects-img/34.webp',
+    alt: 'Şantiye girişinde EYFA YAPI panosu ve inşaat demirleri',
+  },
   mimarlik: { src: 'projects-img/7795_4-7.webp', alt: 'Renklendirilmiş kat planı çizimi' },
   muhendislik: {
     src: 'projects-img/32.webp',

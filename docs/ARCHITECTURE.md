@@ -216,3 +216,22 @@ manually in a real browser against every production route at 320/768/1280 px (re
   8 KB per page. Measured: 812 B on most pages, 2,709 B on project pages.
 - **Withheld media guard:** `src/data/withheld-media.json`, with negative globs in `media.ts`, a
   unit test and a `dist/` filename scan.
+
+## 12. Corporate content architecture (Stage 5)
+
+- `src/data/corporate.ts` holds About-page copy as `CopyBlock`s (`text`, `provenance`, `basis`) and
+  the curated images for About and Services. `src/data/services.ts` has `provenance` and `basis` per
+  service. `src/data/activities.ts` has `visibility`, `imagePublic` and the reasons.
+- **Grounding tests** (`tests/corporate.test.ts`):
+  - Every basis excerpt must exist verbatim in about, index or faaliyet.
+  - Editorial text may not contain a number missing from its basis.
+  - Credential, award and metric vocabulary is banned, with a self-check that this rule catches
+    invented claims.
+  - Biography details are banned.
+  - Service and About images are distinct, registered and public.
+- **`verify-dist` (built HTML):**
+  - No founder-biography detail and no award or credential wording on any page.
+  - The withheld theatre activity is absent.
+  - All four service anchors exist.
+- To publish a confirmed fact later: add it to the data with `provenance: 'legacy'` or a written
+  source, and update the corresponding test expectation in the same change.

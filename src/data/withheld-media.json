@@ -1,6 +1,8 @@
 {
-  "$comment": "Legacy media that must never reach dist/ (rights or duplication). Kept in sync with the `excluded` lists in src/data/projects.ts by tests/projects.test.ts; scanned by scripts/verify-dist.mjs. Plus the files that are not part of any legacy gallery but must not be published (184_1-*, 6078_11-1).",
+  "$comment": "Legacy media that must never reach dist/ (rights or duplication). Kept in sync with the `excluded` lists in src/data/projects.ts by tests/projects.test.ts; scanned by scripts/verify-dist.mjs. Plus the files that are not part of any legacy gallery but must not be published (184_1-*, 6078_11-1). Stage 5: withheld activity images (src/data/activities.ts).",
   "files": [
+    "Faaliyetler-img/sugiad-resim.webp",
+    "Faaliyetler-img/tiyatro_resim.webp",
     "projects-img/1.webp",
     "projects-img/11.webp",
     "projects-img/16.webp",

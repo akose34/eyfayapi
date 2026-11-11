@@ -3,6 +3,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { activities } from '@/data/activities';
 import { featuredProjects } from '@/data/home';
 import {
   PORTFOLIO_ORDER,
@@ -67,7 +68,9 @@ describe('rights and publication', () => {
       ...Array.from({ length: 6 }, (_, i) => `projects-img/184_1-${i + 1}.webp`),
       'projects-img/6078_11-1.webp',
     ];
-    expect([...withheldManifest].sort()).toEqual([...excluded, ...extra].sort());
+    // Stage 5: activity images withheld for attribution/rights reasons.
+    const activityImages = activities.filter((a) => !a.imagePublic).map((a) => a.image);
+    expect([...withheldManifest].sort()).toEqual([...excluded, ...extra, ...activityImages].sort());
   });
 
   it('withheld media is not registered for the build (cannot reach dist/)', () => {

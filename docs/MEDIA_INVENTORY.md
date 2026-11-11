@@ -152,3 +152,19 @@ Not used, pending owner approval as before: `projects-img/1.webp`, `6078_11-*`, 
   This replaces the Stage 2/3 CSS oversizing trick. The original files are unchanged.
 - The drone stills are 3024 × 1964 with bands at 168 px top and 94 px bottom, cropped to
   3024 × 1698. Plans 2–6 lose their 313–340 px bottom band only.
+
+## 11. Stage 5 — corporate pages
+
+| Page / slot            | File                                                     | Note                                                                                                                          |
+| ---------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| About hero             | `projects-img/23.webp`                                   | Wide city and hills, crop applied                                                                                             |
+| About story            | `32.webp` (frame, portrait) + `15.webp` (finished block) | Construction to completion, shown as two separate photos without claiming the same building                                   |
+| About → projects       | `28.webp`                                                |                                                                                                                               |
+| Services: Müteahhitlik | `33.webp` (portrait, scaffolding)                        | Homepage index uses `34.webp` (EYFA site hoarding)                                                                            |
+| Services: Mimarlık     | `24.webp`                                                | Photo, not drawings (drawing authorship is unconfirmed)                                                                       |
+| Services: Mühendislik  | `14.webp`                                                |                                                                                                                               |
+| Services: Emlak        | `26.webp`                                                |                                                                                                                               |
+| Activities             | _none_                                                   | Both `Faaliyetler-img/*` files withheld (award context; municipal branding). Unregistered and listed in `withheld-media.json` |
+
+No image repeats within a page. New rows reuse the gallery thumbnail widths (480/720/960/1280,
+default quality), so Astro reuses existing derivatives. The build grew only 1.0 MB (33.1 → 34.1 MB).

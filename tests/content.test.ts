@@ -63,11 +63,24 @@ describe('company facts come verbatim from the legacy site', () => {
     expect(legacyCopy.positioning.match(/\d+/g)).toEqual(['2004']);
   });
 
-  it('services and activities are verbatim', () => {
+  it('services and activities are verbatim (or documented editorial)', () => {
+    const legacyAll = `${legacyHome} ${legacyAbout}`;
     for (const s of services) {
-      expect(legacyHome).toContain(s.title);
-      expect(legacyHome).toContain(s.description);
+      if (s.provenance === 'legacy') {
+        expect(legacyHome).toContain(s.title);
+        expect(legacyHome).toContain(s.description);
+      } else {
+        // Editorial service (Stage 5): every basis excerpt must be verbatim legacy text.
+        expect(s.basis?.length ?? 0).toBeGreaterThan(0);
+        for (const excerpt of s.basis ?? []) expect(legacyAll).toContain(excerpt);
+      }
     }
+    // The three legacy services are all still present.
+    expect(services.filter((s) => s.provenance === 'legacy').map((s) => s.id)).toEqual([
+      'mimarlik',
+      'muhendislik',
+      'emlak',
+    ]);
     const legacyActivities = normaliseText(readRoot('faaliyet.html'));
     for (const a of activities) {
       expect(legacyActivities).toContain(a.title);

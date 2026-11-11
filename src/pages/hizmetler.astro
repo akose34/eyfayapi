@@ -1,36 +1,114 @@
 ---
+/**
+ * Services (Stage 5). One editorial row per verified service, alternating
+ * sides, each with its own authentic photograph (no repeats on the page).
+ * Anchor ids (#muteahhitlik, #mimarlik, #muhendislik, #emlak) are linked from
+ * the homepage index and the footer — keep them stable.
+ *
+ * Descriptions are the verified one-liners (legacy) or the documented
+ * editorial service (muteahhitlik, see src/data/services.ts). No regulatory,
+ * certification or turnkey promises are made.
+ */
+import Button from '@/components/Button.astro';
 import ContactCTA from '@/components/ContactCTA.astro';
+import Container from '@/components/Container.astro';
+import FeatureRow from '@/components/FeatureRow.astro';
 import PageHeader from '@/components/PageHeader.astro';
-import Section from '@/components/Section.astro';
-import ServiceCard from '@/components/ServiceCard.astro';
-import StageNotice from '@/components/StageNotice.astro';
+import TextLink from '@/components/TextLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { legacyCopy } from '@/data/company';
+import { serviceFeatureImages } from '@/data/corporate';
 import { services } from '@/data/services';
+
+/** First sentence of the verified homepage introduction. */
+const lead = legacyCopy.homeIntro.split('. ')[0] + '.';
 ---
 
 <BaseLayout
   title="Hizmetlerimiz"
-  description="Eyfa Yapı hizmetleri: mimarlık, mühendislik ve emlak."
+  description="Eyfa Yapı hizmetleri: müteahhitlik, mimarlık, mühendislik ve emlak."
+  ogImage={serviceFeatureImages.muteahhitlik.src}
 >
   <PageHeader
     title="Hizmetlerimiz"
     eyebrow="Uzmanlık alanlarımız"
+    lead={lead}
     breadcrumbs={[{ label: 'Hizmetler' }]}
-  />
+    width="wide"
+  >
+    <nav aria-label="Hizmetler" class="mt-10">
+      <ul class="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+        {services.map((service, index) => (
+          <li>
+            <a
+              href={`#${service.id}`}
+              class="text-ink-muted hover:text-ink inline-flex min-h-11 items-center gap-2 transition-colors"
+            >
+              <span class="text-accent-text text-xs tabular-nums">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span class="link-underline">{service.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </PageHeader>
 
-  <Section>
-    <ul class="grid gap-(--spacing-grid) md:grid-cols-3">
-      {services.map((service, index) => (
-        <li class="reveal">
-          <ServiceCard service={service} index={index} headingLevel="h2" />
-        </li>
-      ))}
-    </ul>
-    <StageNotice class="mt-12 max-w-(--container-prose)">
-      Hizmet açıklamaları mevcut siteden alınmıştır. Genişletilmiş hizmet içerikleri firma onayı ile
-      eklenecektir.
-    </StageNotice>
-  </Section>
+  {services.map((service, index) => (
+    <section
+      id={service.id}
+      aria-labelledby={`${service.id}-baslik`}
+      class:list={[index % 2 === 0 ? 'bg-ivory' : 'bg-white', 'py-section']}
+    >
+      <Container width="wide">
+        <FeatureRow
+          image={serviceFeatureImages[service.id]}
+          reverse={index % 2 === 1}
+          aspect={service.id === 'muteahhitlik' ? 'portrait' : 'photo'}
+        >
+          <p class="text-accent-text text-xs font-semibold tracking-(--tracking-eyebrow) tabular-nums">
+            {String(index + 1).padStart(2, '0')} / {String(services.length).padStart(2, '0')}
+          </p>
+          <h2 id={`${service.id}-baslik`} class="mt-6 text-5xl">
+            {service.title}
+          </h2>
+          <p class="text-ink-muted mt-6 text-lg">{service.description}</p>
+          {service.id === 'muteahhitlik' && (
+            <ul class="border-line mt-8 border-t text-sm">
+              {legacyCopy.activityAreas.map((area) => (
+                <li class="border-line border-b py-3">{area.text}</li>
+              ))}
+            </ul>
+          )}
+          {service.id === 'emlak' && (
+            <div class="mt-8">
+              <TextLink href="/projeler/">Projelerimizi inceleyin</TextLink>
+            </div>
+          )}
+          {service.id === 'mimarlik' && (
+            <div class="mt-8">
+              <TextLink href="/projeler/#proje-cizimleri">Proje çizimlerimiz</TextLink>
+            </div>
+          )}
+        </FeatureRow>
+      </Container>
+    </section>
+  ))}
+
+  <section class="bg-ivory-200" aria-labelledby="hizmet-portfoy">
+    <Container
+      width="wide"
+      class="py-section-sm flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between"
+    >
+      <h2 id="hizmet-portfoy" class="text-3xl">
+        Hizmetlerimizin sonuçlarını projelerimizde görün
+      </h2>
+      <Button href="/projeler/" variant="secondary" icon="arrow-right">
+        Projelerimiz
+      </Button>
+    </Container>
+  </section>
 
   <ContactCTA />
 </BaseLayout>

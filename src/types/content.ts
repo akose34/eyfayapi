@@ -64,12 +64,24 @@ export interface NavItem {
   href: string;
 }
 
+/**
+ * Where a piece of public copy comes from (Stage 5).
+ * - `legacy`: verbatim on the legacy site.
+ * - `editorial`: a rewrite for clarity; `basis` lists the VERBATIM legacy
+ *   excerpts it is built from. It may not add facts, numbers or credentials
+ *   (enforced by tests/corporate.test.ts).
+ */
+export type Provenance = 'legacy' | 'editorial';
+
 export interface Service {
-  id: 'mimarlik' | 'muhendislik' | 'emlak';
+  id: 'muteahhitlik' | 'mimarlik' | 'muhendislik' | 'emlak';
   title: string;
   description: string;
+  provenance: Provenance;
+  /** Verbatim legacy excerpts supporting an editorial service/description. */
+  basis?: readonly string[];
   /** Path of the legacy icon, relative to the repository root. */
-  legacyIcon: string;
+  legacyIcon?: string;
 }
 
 export type ProjectMediaKind = 'photo' | 'aerial' | 'construction' | 'render' | 'floor-plan';
@@ -150,8 +162,16 @@ export interface Activity {
   id: string;
   title: string;
   description: string;
+  /** `withheld`: attribution or rights unclear — not shown publicly. */
+  visibility: 'public' | 'withheld';
+  withheldReason?: string;
+  /** Verified date (ISO) — none known yet. */
+  date: Unverified<string>;
   image: string;
   alt: string;
+  /** Whether the image may be published (independent of the text). */
+  imagePublic: boolean;
+  imageWithheldReason?: string;
 }
 
 export interface LegacyRedirect {
