@@ -1,0 +1,21 @@
+---
+/**
+ * Visible notice used ONLY on Stage 1 placeholder routes and on content that
+ * still awaits owner confirmation. It must never be removed by replacing it
+ * with invented copy — see docs/CONTENT_INVENTORY.md (confirmation checklist).
+ */
+interface Props {
+  title?: string;
+}
+const { title = 'Bu sayfa hazırlanıyor' } = Astro.props;
+---
+
+<aside
+  class="border-champagne bg-ivory-200 text-ink rounded-md border-l-4 px-5 py-4 text-sm"
+  aria-label="Hazırlık notu"
+>
+  <p class="font-semibold">{title}</p>
+  <div class="text-ink-muted mt-1">
+    <slot />
+  </div>
+</aside>

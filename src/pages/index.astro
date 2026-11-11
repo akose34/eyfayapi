@@ -1,0 +1,92 @@
+---
+/**
+ * Stage 1 homepage: real legacy content on the shared layout and tokens.
+ * Not the final visual design (that starts in Stage 2/3 — docs/ROADMAP.md).
+ */
+import { Image } from 'astro:assets';
+import Button from '@/components/Button.astro';
+import Container from '@/components/Container.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { company, legacyCopy } from '@/data/company';
+import { services } from '@/data/services';
+import { whatsappHref } from '@/lib/contact';
+import { legacyImage } from '@/lib/media';
+---
+
+<BaseLayout>
+  <section class="bg-charcoal text-ink-inverse">
+    <Container width="wide" class="py-section grid items-center gap-12 lg:grid-cols-2">
+      <div>
+        <p class="eyebrow text-champagne!">{company.brandName}</p>
+        <h1 class="mt-4 text-(length:--text-5xl)">{legacyCopy.homeHeadline}</h1>
+        <p class="text-ink-inverse-muted mt-6 max-w-xl text-lg">{legacyCopy.homeIntro}</p>
+        <div class="mt-10 flex flex-wrap gap-4">
+          <Button href="/projeler/" size="lg">
+            Projelerimiz
+          </Button>
+          <Button href="/iletisim/" variant="inverse" size="lg">
+            İletişim
+          </Button>
+        </div>
+      </div>
+      <Image
+        src={legacyImage('img/Eyfa-yapi-resim17.png')}
+        alt="Yeşil çatılı, sarı cephe şeritli konut binasının havadan görünümü"
+        widths={[480, 768, 1024, 1440]}
+        width={1440}
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="aspect-[3/2] w-full rounded-lg object-cover"
+      />
+    </Container>
+  </section>
+
+  <section aria-labelledby="hizmetler-baslik" class="py-section">
+    <Container>
+      <p class="eyebrow">Hizmetlerimiz</p>
+      <h2 id="hizmetler-baslik" class="mt-3 text-(length:--text-4xl)">
+        Neler yapıyoruz
+      </h2>
+      <ul class="mt-12 grid gap-6 md:grid-cols-3">
+        {services.map((service) => (
+          <li class="bg-surface-raised border-line rounded-lg border p-8">
+            <h3 class="text-(length:--text-2xl)">{service.title}</h3>
+            <p class="text-ink-muted mt-3">{service.description}</p>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section aria-labelledby="projeler-baslik" class="bg-ivory-200 py-section">
+    <Container class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div>
+        <p class="eyebrow">Projelerimiz</p>
+        <h2 id="projeler-baslik" class="mt-3 text-(length:--text-4xl)">
+          Projelerimiz
+        </h2>
+        <p class="prose-eyfa mt-6">{legacyCopy.projectsIntro}</p>
+      </div>
+      <Button href="/projeler/" variant="secondary">
+        Tüm Projelerimiz
+      </Button>
+    </Container>
+  </section>
+
+  <section aria-labelledby="iletisim-baslik" class="py-section">
+    <Container class="flex flex-col items-start gap-6">
+      <h2 id="iletisim-baslik" class="text-(length:--text-3xl)">
+        Bizimle iletişime geçin
+      </h2>
+      <div class="flex flex-wrap gap-4">
+        <Button href={whatsappHref(company.whatsapp.e164)} external>
+          WhatsApp
+        </Button>
+        <Button href="/iletisim/" variant="secondary">
+          İletişim bilgileri
+        </Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

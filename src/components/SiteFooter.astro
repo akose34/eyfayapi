@@ -1,0 +1,48 @@
+---
+import { company } from '@/data/company';
+import { primaryNav } from '@/data/navigation';
+import ContactLinks from './ContactLinks.astro';
+
+const { street, postalCode, district, city } = company.address;
+---
+
+<footer class="bg-charcoal text-ink-inverse">
+  <div class="px-gutter py-section-sm mx-auto grid max-w-(--container-wide) gap-10 md:grid-cols-3">
+    <div>
+      <p class="font-display text-2xl">{company.brandName}</p>
+      <p class="text-ink-inverse-muted mt-3 text-sm">{company.legalName}</p>
+      <address class="text-ink-inverse-muted mt-4 text-sm not-italic">
+        {street}
+        <br />
+        {postalCode}
+        {district} / {city}
+      </address>
+    </div>
+
+    <nav aria-label="Alt menü">
+      <p class="eyebrow text-champagne!">Sayfalar</p>
+      <ul class="mt-4 space-y-2 text-sm">
+        {primaryNav.map((item) => (
+          <li>
+            <a href={item.href} class="hover:text-champagne">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div>
+      <p class="eyebrow text-champagne!">İletişim</p>
+      <div class="mt-4">
+        <ContactLinks tone="dark" />
+      </div>
+    </div>
+  </div>
+  <div class="border-line-inverse border-t">
+    <p class="px-gutter text-ink-inverse-muted mx-auto max-w-(--container-wide) py-5 text-xs">
+      © {new Date().getFullYear()}
+      {company.legalName}
+    </p>
+  </div>
+</footer>

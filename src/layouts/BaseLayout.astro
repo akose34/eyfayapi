@@ -1,0 +1,97 @@
+---
+import '@/styles/global.css';
+import { getImage } from 'astro:assets';
+import SiteFooter from '@/components/SiteFooter.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import { company, legacyCopy } from '@/data/company';
+import { legacyImage } from '@/lib/media';
+import { SITE_NAME, canonicalUrl, pageTitle } from '@/lib/seo';
+
+interface Props {
+  /** Page title without the brand suffix. Omit on the homepage. */
+  title?: string;
+  description?: string;
+  /** Legacy image path for social previews. */
+  ogImage?: string;
+  /** Keep placeholder / unconfirmed pages out of search indexes. */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = legacyCopy.metaDescription,
+  ogImage = 'img/Eyfa-yapi-resim17.png',
+  noindex = false,
+} = Astro.props;
+
+const site = Astro.site ?? new URL('https://eyfayapi.net');
+const fullTitle = pageTitle(title);
+const canonical = canonicalUrl(Astro.url.pathname, site);
+const og = await getImage({ src: legacyImage(ogImage), width: 1200, format: 'jpeg' });
+const ogUrl = new URL(og.src, site).toString();
+const favicon = await getImage({ src: legacyImage('logos/logo.png'), width: 64, format: 'png' });
+/** JSON for an inline <script>; escapes "<" so data can never close the tag. */
+const safeJson = (data: unknown) => JSON.stringify(data).replace(/</g, '\\u003c');
+const touchIcon = await getImage({ src: legacyImage('logos/logo.png'), width: 180, format: 'png' });
+---
+
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#151C1E" />
+    <link rel="icon" type="image/png" href={favicon.src} />
+    <link rel="apple-touch-icon" href={touchIcon.src} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script
+      type="application/ld+json"
+      set:html={safeJson({
+        '@context': 'https://schema.org',
+        '@type': 'GeneralContractor',
+        name: company.brandName,
+        legalName: company.legalName,
+        url: site.toString(),
+        email: company.email,
+        telephone: company.phones.map((p) => p.e164),
+        foundingDate: String(company.foundedYear.value),
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: company.address.street,
+          postalCode: company.address.postalCode,
+          addressLocality: company.address.district,
+          addressRegion: company.address.city,
+          addressCountry: company.address.country,
+        },
+        sameAs: company.social.map((s) => s.url),
+      })}
+    />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="bg-champagne text-charcoal sr-only z-50 rounded-md px-4 py-3 font-semibold focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      İçeriğe geç
+    </a>
+    <SiteHeader />
+    <main id="main" tabindex="-1" class="flex-1 focus:outline-none">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

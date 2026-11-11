@@ -1,0 +1,51 @@
+---
+import Button from '@/components/Button.astro';
+import ContactLinks from '@/components/ContactLinks.astro';
+import Container from '@/components/Container.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { company } from '@/data/company';
+import { whatsappHref } from '@/lib/contact';
+
+const { street, postalCode, district, city } = company.address;
+---
+
+<BaseLayout
+  title="İletişim"
+  description={`Eyfa Yapı iletişim bilgileri: ${company.phones[0].display}, ${company.email}, ${district}/${city}.`}
+>
+  <Container class="py-section grid gap-12 lg:grid-cols-2">
+    <div>
+      <p class="eyebrow">İletişim</p>
+      <h1 class="mt-3 text-(length:--text-5xl)">Bize ulaşın</h1>
+      <p class="text-ink-muted mt-6 max-w-md">
+        Telefon, WhatsApp veya e-posta ile bize doğrudan ulaşabilirsiniz.
+      </p>
+      <div class="mt-8">
+        <Button href={whatsappHref(company.whatsapp.e164)} external size="lg">
+          WhatsApp ile yazın
+        </Button>
+      </div>
+      <div class="mt-10 grid gap-8 sm:grid-cols-2">
+        <ContactLinks />
+        <div class="text-sm">
+          <span class="text-ink-muted block">Adres</span>
+          <address class="font-medium not-italic">
+            {company.legalName}
+            <br />
+            {street}
+            <br />
+            {postalCode}
+            {district} / {city}
+          </address>
+        </div>
+      </div>
+    </div>
+    <iframe
+      src={company.mapEmbedUrl}
+      title="Eyfa Yapı ofis konumu — Google Haritalar"
+      class="border-line aspect-[4/3] w-full rounded-lg border"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+    ></iframe>
+  </Container>
+</BaseLayout>

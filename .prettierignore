@@ -1,0 +1,19 @@
+# Generated
+dist/
+.astro/
+node_modules/
+package-lock.json
+
+# Legacy static website (preserved verbatim until retirement — see docs/ROADMAP.md)
+/*.html
+/*.css
+/img/
+/projects-img/
+/slider-photos/
+/logos/
+/mini-videos/
+/Faaliyetler-img/
+/CNAME
+
+# Static redirect stubs are hand-written and intentionally minimal
+public/*.html

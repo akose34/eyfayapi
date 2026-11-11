@@ -1,0 +1,71 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
+import Button from '@/components/Button.astro';
+import Container from '@/components/Container.astro';
+import StageNotice from '@/components/StageNotice.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { projectDisplayName, projects } from '@/data/projects';
+import type { Project } from '@/types/content';
+import { legacyImage } from '@/lib/media';
+
+export const getStaticPaths = (() =>
+  projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const title = projectDisplayName(project);
+const confirmed = project.name.status === 'VERIFIED';
+---
+
+<BaseLayout title={title} ogImage={project.cover.src} noindex={!confirmed}>
+  <Container width="wide" class="py-section">
+    <nav aria-label="Sayfa konumu" class="text-ink-muted text-sm">
+      <a href="/projeler/" class="hover:text-accent-strong">
+        Projelerimiz
+      </a>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page">{title}</span>
+    </nav>
+    <h1 class="mt-4 text-(length:--text-5xl)">{title}</h1>
+
+    {!confirmed && (
+      <div class="mt-8 max-w-(--container-prose)">
+        <StageNotice title="Proje bilgileri onay bekliyor">
+          Bu galeri mevcut sitedeki {project.legacyOrder}. proje galerisidir. Proje adı, konumu ve
+          açıklaması firma tarafından onaylandıktan sonra eklenecektir.
+        </StageNotice>
+      </div>
+    )}
+
+    <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {project.gallery.map((image, index) => (
+        <li>
+          <Image
+            src={legacyImage(image.src)}
+            alt={`${image.alt} (${index + 1}/${project.gallery.length})`}
+            widths={[400, 640, 900, 1280]}
+            width={1280}
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            class:list={[
+              'bg-surface-raised aspect-[4/3] w-full rounded-lg',
+              image.kind === 'floor-plan' ? 'object-contain p-2' : 'object-cover',
+            ]}
+          />
+        </li>
+      ))}
+    </ul>
+
+    <div class="mt-12">
+      <Button href="/projeler/" variant="secondary">
+        Tüm projelere dön
+      </Button>
+    </div>
+  </Container>
+</BaseLayout>

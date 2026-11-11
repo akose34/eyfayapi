@@ -1,0 +1,57 @@
+---
+/**
+ * Button / link-button. Renders <a> when `href` is set, otherwise <button>.
+ * Variants are documented in docs/DESIGN_SYSTEM.md#buttons.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+type Variant = 'primary' | 'secondary' | 'ghost' | 'inverse';
+type Size = 'md' | 'lg';
+
+interface Props {
+  variant?: Variant;
+  size?: Size;
+  href?: string;
+  type?: 'button' | 'submit';
+  external?: boolean;
+  class?: string;
+  'aria-label'?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  external = false,
+  class: className,
+  'aria-label': ariaLabel,
+} = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-md font-semibold tracking-wide transition-colors duration-(--duration-base) ease-(--ease-out-quiet) disabled:pointer-events-none disabled:opacity-50';
+const sizes: Record<Size, string> = {
+  md: 'min-h-11 px-5 text-sm', // 44px minimum target (WCAG 2.5.8 / Apple HIG)
+  lg: 'min-h-12 px-7 text-base',
+};
+const variants: Record<Variant, string> = {
+  primary: 'bg-champagne text-charcoal hover:bg-champagne-300',
+  secondary: 'border border-charcoal text-charcoal hover:bg-charcoal hover:text-ivory',
+  ghost: 'text-accent-strong underline-offset-4 hover:underline',
+  inverse: 'border border-ivory/60 text-ivory hover:border-champagne hover:text-champagne',
+};
+const classes = [base, sizes[size], variants[variant], className];
+const externalAttrs: HTMLAttributes<'a'> = external
+  ? { target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+---
+
+{href ? (
+  <a href={href} class:list={classes} aria-label={ariaLabel} {...externalAttrs}>
+    <slot />
+  </a>
+) : (
+  <button type={type} class:list={classes} aria-label={ariaLabel}>
+    <slot />
+  </button>
+)}

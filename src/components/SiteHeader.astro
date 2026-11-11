@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import { company } from '@/data/company';
+import { primaryNav } from '@/data/navigation';
+import { legacyImage } from '@/lib/media';
+
+const current = Astro.url.pathname;
+const isCurrent = (href: string) =>
+  href === '/' ? current === '/' : current === href || current.startsWith(href);
+---
+
+<header class="bg-charcoal text-ink-inverse sticky top-0 z-40">
+  <div class="px-gutter mx-auto flex h-18 max-w-(--container-wide) items-center justify-between">
+    <a href="/" class="flex items-center gap-3" aria-label={`${company.brandName} — Ana Sayfa`}>
+      <Image
+        src={legacyImage('logos/logo.png')}
+        alt=""
+        width={56}
+        height={56}
+        class="size-12"
+        loading="eager"
+      />
+      <span class="font-display text-xl tracking-wide max-sm:sr-only">{company.brandName}</span>
+    </a>
+
+    <button
+      type="button"
+      class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md lg:hidden"
+      aria-controls="primary-nav"
+      aria-expanded="false"
+      data-nav-toggle
+    >
+      <span class="sr-only">Menüyü aç/kapat</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.5"></path>
+      </svg>
+    </button>
+
+    <nav
+      id="primary-nav"
+      aria-label="Ana menü"
+      class="bg-charcoal absolute inset-x-0 top-full hidden lg:static lg:block"
+      data-nav
+    >
+      <ul class="px-gutter flex flex-col gap-1 pb-6 lg:flex-row lg:gap-8 lg:p-0">
+        {primaryNav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+              class="aria-[current=page]:text-champagne hover:text-champagne-300 block py-3 text-sm font-medium tracking-wide transition-colors lg:py-2"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Progressive enhancement: without JS the menu is hidden on small screens,
+  // so the footer repeats every primary link (see SiteFooter.astro).
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  if (toggle && nav) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      nav.classList.toggle('hidden', !open);
+    };
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

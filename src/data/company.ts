@@ -1,0 +1,69 @@
+import type { CompanyInfo } from '@/types/content';
+
+/**
+ * Company facts. Every VERIFIED value below is copied verbatim from the legacy
+ * website (footer, navigation dropdown, about.html). Do not add facts that are
+ * not on the legacy site or confirmed in writing by the owner.
+ * See docs/CONTENT_INVENTORY.md for sources and the confirmation checklist.
+ */
+export const company = {
+  brandName: 'Eyfa Yapı',
+  legalName: 'EYFA MÜTEAHHİTLİK YAPI İNŞAAT SAN. TİC. LTD. ŞTİ.',
+  foundedYear: { status: 'VERIFIED', value: 2004, source: 'about.html' },
+  founder: { status: 'VERIFIED', value: 'Fatih Yılmaz', source: 'about.html' },
+  phones: [
+    { display: '0 (532) 686 88 29', e164: '+905326868829', kind: 'mobile' },
+    { display: '0 216 419 57 81', e164: '+902164195781', kind: 'landline' },
+  ],
+  whatsapp: { display: '+90 (532) 686 88 29', e164: '+905326868829', kind: 'mobile' },
+  email: 'info@eyfayapi.net',
+  address: {
+    street: 'Abdurrahmangazi Mahallesi Dağıstan Sokak No: 4/14',
+    postalCode: '34920',
+    district: 'Sultanbeyli',
+    city: 'İstanbul',
+    country: 'TR',
+  },
+  social: [
+    { platform: 'instagram', handle: '@eyfa.yapi', url: 'https://www.instagram.com/eyfa.yapi/' },
+  ],
+  mapEmbedUrl:
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3012.509946218092!2d29.259706500000004!3d40.9703132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cad06bcaa04bf7%3A0xa4978ffad8f26023!2sEYFA%20YAPI!5e0!3m2!1str!2str!4v1751462853057!5m2!1str!2str',
+} as const satisfies CompanyInfo;
+
+/** Corporate copy taken verbatim from the legacy website. */
+export const legacyCopy = {
+  homeHeadline: 'Eyfa Yapı ile Geleceği İnşa Ediyoruz.',
+  homeIntro:
+    'Mimarlık, mühendislik ve müteahhitlik alanlarında güçlü birikimimizle, modern ve güvenli yapılar inşa ediyoruz. Her projede kalite, estetik ve müşteri memnuniyetini ön planda tutarak, hayallerinizi gerçeğe dönüştürüyoruz.',
+  projectsIntro:
+    "Konut projelerinden ticari yapılara, altyapı çalışmalarından kentsel dönüşüm projelerine kadar geniş bir yelpazede hizmet veriyoruz. İşte Eyfa Yapı'nın başarıyla tamamladığı ve sürdürdüğü projelerden bazıları.",
+  metaDescription:
+    'Eyfa Yapı; inşaat, gayrimenkul ve mimari projelerde güvenilir çözümler sunar. Modern yapılar ve kaliteli yaşam alanları için bizimle iletişime geçin.',
+  /** about.html — company paragraph (verbatim). */
+  aboutCompany: [
+    'EYFA Yapı, 2004 yılında Fatih Yılmaz tarafından İstanbul’da kurulmuş, konut ve taahhüt projeleri alanında faaliyet gösteren köklü bir inşaat firmasıdır. Kuruluşundan bu yana İstanbul’un başta Sultanbeyli, Pendik, Kartal ve Çekmeköy ilçeleri olmak üzere birçok farklı bölgesinde projeler hayata geçirmiştir. Firma, insan hayatını önceleyen bir yaklaşımla; depreme dayanıklı, kaliteli, güvenli ve huzurlu yaşam alanları inşa etmeyi temel ilke edinmiştir.',
+    'Ana faaliyet alanı olan konut inşaatlarının yanı sıra:',
+  ],
+  aboutCompanyList: [
+    'İstanbul’un çeşitli semtlerinde metro istasyonları ve Telekom binaları,',
+    'Türkiye genelinde Türk Telekom mağazalarının yeni konseptlerine uygun olarak yeniden inşası ve tadilatı,',
+    'Yol ve köprü inşaatları',
+  ],
+  aboutCompanyClosing: [
+    'gibi birçok farklı kamu ve özel sektör projesi başarıyla tamamlanmıştır. EYFA Yapı; güçlü mühendislik altyapısı, deneyimli kadrosu ve kalite odaklı iş anlayışıyla, projelerinde estetik, fonksiyonellik ve güvenliği bir arada sunmaktadır. Müşteri memnuniyetini her zaman öncelik kabul eden firma, bugüne dek teslim ettiği her projede bu anlayışıyla öne çıkmıştır. Geçmişten gelen değerlerle, geleceğe güvenli yapılar inşa etmeye devam eden EYFA Yapı, şehirlerin gelişimine katkı sunarken insanların huzurla yaşayabileceği alanlar oluşturmaya kararlıdır.',
+  ],
+  /**
+   * Founder biography (about.html). Contains time-sensitive statements
+   * ("44 yaşında", "4. sınıf öğrencisi") — NEEDS_CONFIRMATION before reuse.
+   */
+  founderBio: {
+    status: 'NEEDS_CONFIRMATION',
+    source: 'about.html',
+    note: 'Contains age and student status that change over time; confirm current wording with the owner.',
+  },
+  mission:
+    'EYFA Yapı olarak, depreme dayanıklı, kaliteli ve estetik yapılar inşa ederek, müşterilerimizin güvenle yaşayabileceği huzurlu yaşam alanları üretmeyi hedefliyoruz. Faaliyet gösterdiğimiz her projede; sürdürülebilirlik, yenilikçi mühendislik çözümleri ve insan odaklı tasarım ilkeleri doğrultusunda hareket ediyor; kalite, güven ve müşteri memnuniyetini önceliğimiz olarak benimsiyoruz. Aynı zamanda topluma ve çevreye duyarlı projeler geliştirerek, bölgemizin sosyal ve ekonomik gelişimine katkıda bulunmayı misyon ediniyoruz.',
+  vision:
+    'Türkiye’nin en saygın ve güvenilir inşaat firmalarından biri olmak; şehirlerin geleceğine değer katan, yenilikçi ve sürdürülebilir yapıların öncüsü olmaktır. İnsana ve doğaya saygılı, modern yaşam standartlarını yansıtan projelerle sektörde liderliği hedeflerken; sosyal sorumluluk bilinciyle toplumun her kesimine dokunan yapılar inşa etmeyi amaçlıyoruz. Geleceğin şehirlerini bugünden tasarlayarak, güven, kalite ve estetikten ödün vermeden kalıcı eserler bırakmak vizyonumuzun temel taşlarıdır.',
+} as const;
