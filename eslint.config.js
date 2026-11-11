@@ -12,6 +12,9 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.strict,
   ...astro.configs.recommended,
+  // Static accessibility linting of .astro templates (jsx-a11y rules via
+  // eslint-plugin-jsx-a11y-x, the ESLint 10-compatible fork).
+  ...astro.configs['jsx-a11y-strict'],
   {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },

@@ -1,0 +1,14 @@
+---
+/** Horizontal rule. `accent` = short gold rule used as an editorial marker. */
+interface Props {
+  variant?: 'line' | 'accent';
+  class?: string | undefined;
+}
+const { variant = 'line', class: className } = Astro.props;
+---
+
+{variant === 'accent' ? (
+  <hr class:list={['bg-accent h-px w-16 border-0', className]} />
+) : (
+  <hr class:list={['border-line border-t', className]} />
+)}

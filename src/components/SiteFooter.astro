@@ -1,48 +1,76 @@
 ---
-import { company } from '@/data/company';
-import { primaryNav } from '@/data/navigation';
+/**
+ * Global footer: brand statement · two link groups · verified contact details ·
+ * legal line. Contains only facts from src/data (verified legacy content).
+ */
+import BrandLogo from './BrandLogo.astro';
 import ContactLinks from './ContactLinks.astro';
+import Icon from './Icon.astro';
+import { company, legacyCopy } from '@/data/company';
+import { footerNav } from '@/data/navigation';
 
-const { street, postalCode, district, city } = company.address;
+const groups = [footerNav.corporate, footerNav.work];
+const year = new Date().getFullYear();
 ---
 
-<footer class="bg-charcoal text-ink-inverse">
-  <div class="px-gutter py-section-sm mx-auto grid max-w-(--container-wide) gap-10 md:grid-cols-3">
-    <div>
-      <p class="font-display text-2xl">{company.brandName}</p>
-      <p class="text-ink-inverse-muted mt-3 text-sm">{company.legalName}</p>
-      <address class="text-ink-inverse-muted mt-4 text-sm not-italic">
-        {street}
-        <br />
-        {postalCode}
-        {district} / {city}
-      </address>
-    </div>
+<footer class="tone-dark border-line border-t" aria-labelledby="footer-title">
+  <h2 id="footer-title" class="sr-only">
+    Site alt bilgisi
+  </h2>
+  <div class="px-gutter mx-auto max-w-(--container-wide)">
+    <div class="grid gap-x-(--spacing-grid) gap-y-14 py-16 lg:grid-cols-12 lg:py-24">
+      <div class="lg:col-span-5">
+        <a
+          href="/"
+          class="-m-1 inline-block rounded-sm p-1"
+          aria-label={`${company.brandName} — Ana Sayfa`}
+        >
+          <BrandLogo height={56} alt="" />
+        </a>
+        <p class="font-display mt-8 max-w-md text-3xl">{legacyCopy.homeHeadline}</p>
+        <p class="text-ink-muted mt-5 max-w-md text-sm">{legacyCopy.positioning}</p>
+      </div>
 
-    <nav aria-label="Alt menü">
-      <p class="eyebrow text-champagne!">Sayfalar</p>
-      <ul class="mt-4 space-y-2 text-sm">
-        {primaryNav.map((item) => (
-          <li>
-            <a href={item.href} class="hover:text-champagne">
-              {item.label}
-            </a>
-          </li>
+      <nav
+        id="footer-nav"
+        aria-label="Alt menü"
+        class="grid grid-cols-2 gap-(--spacing-grid) sm:max-w-md lg:col-span-3 lg:max-w-none lg:grid-cols-1 lg:gap-12"
+      >
+        {groups.map((group) => (
+          <div>
+            <h3 class="eyebrow">{group.title}</h3>
+            <ul class="mt-5 space-y-1">
+              {group.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="link-underline text-ink-muted hover:text-ink inline-flex min-h-11 items-center text-sm transition-colors sm:min-h-9"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
-    </nav>
+      </nav>
 
-    <div>
-      <p class="eyebrow text-champagne!">İletişim</p>
-      <div class="mt-4">
-        <ContactLinks tone="dark" />
+      <div class="lg:col-span-4">
+        <h3 class="eyebrow">İletişim</h3>
+        <ContactLinks address class="mt-5" />
       </div>
     </div>
-  </div>
-  <div class="border-line-inverse border-t">
-    <p class="px-gutter text-ink-inverse-muted mx-auto max-w-(--container-wide) py-5 text-xs">
-      © {new Date().getFullYear()}
-      {company.legalName}
-    </p>
+
+    <div class="border-line text-ink-muted flex flex-col gap-4 border-t py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
+      <p>
+        © {year} {company.legalName}
+      </p>
+      <a
+        href="#top"
+        class="link-underline hover:text-ink inline-flex min-h-11 items-center gap-2 self-start transition-colors sm:self-auto"
+      >
+        Başa dön <Icon name="arrow-up" size={14} />
+      </a>
+    </div>
   </div>
 </footer>

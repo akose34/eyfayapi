@@ -1,52 +1,81 @@
 ---
+/**
+ * Verified contact channels as a definition-style list with icons.
+ * Tone-aware: inherits text colours from the surrounding surface.
+ */
+import Icon, { type IconName } from './Icon.astro';
 import { company } from '@/data/company';
 import { mailtoHref, telHref, whatsappHref } from '@/lib/contact';
 
 interface Props {
-  tone?: 'light' | 'dark';
+  /** Include the postal address row. */
+  address?: boolean;
+  class?: string | undefined;
 }
-const { tone = 'light' } = Astro.props;
-const muted = tone === 'dark' ? 'text-ink-inverse-muted' : 'text-ink-muted';
-const instagram = company.social[0];
+const { address = false, class: className } = Astro.props;
+
+interface Row {
+  icon: IconName;
+  label: string;
+  value: string;
+  href?: string;
+  external?: boolean;
+}
+
+const { street, postalCode, district, city } = company.address;
+const rows: Row[] = [
+  ...company.phones.map((phone) => ({
+    icon: 'phone' as const,
+    label: phone.kind === 'mobile' ? 'Cep' : 'Telefon',
+    value: phone.display,
+    href: telHref(phone.e164),
+  })),
+  {
+    icon: 'whatsapp',
+    label: 'WhatsApp',
+    value: company.whatsapp.display,
+    href: whatsappHref(company.whatsapp.e164),
+    external: true,
+  },
+  { icon: 'mail', label: 'E-posta', value: company.email, href: mailtoHref(company.email) },
+  ...company.social.map((s) => ({
+    icon: 'instagram' as const,
+    label: 'Instagram',
+    value: s.handle,
+    href: s.url,
+    external: true,
+  })),
+  ...(address
+    ? [
+        {
+          icon: 'map-pin' as const,
+          label: 'Adres',
+          value: `${street}, ${postalCode} ${district} / ${city}`,
+        },
+      ]
+    : []),
+];
 ---
 
-<ul class="space-y-3 text-sm">
-  {company.phones.map((phone) => (
-    <li>
-      <span class:list={['block', muted]}>{phone.kind === 'mobile' ? 'Cep' : 'Telefon'}</span>
-      <a href={telHref(phone.e164)} class="hover:text-champagne font-medium">
-        {phone.display}
-      </a>
-    </li>
+<dl class:list={['grid gap-5 text-sm', className]}>
+  {rows.map((row) => (
+    <div class="grid grid-cols-[1.25rem_1fr] gap-x-3">
+      <Icon name={row.icon} size={18} class="text-accent-text mt-0.5" />
+      <dt class="text-ink-muted text-xs tracking-(--tracking-ui)">{row.label}</dt>
+      <dd class="col-start-2 font-medium">
+        {row.href ? (
+          <a
+            href={row.href}
+            class="link-underline hover:text-accent-text transition-colors"
+            {...(row.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {row.value}
+            {row.external && <span class="sr-only"> (yeni sekmede açılır)</span>}
+          </a>
+        ) : (
+          <span>{row.value}</span>
+        )}
+      </dd>
+    </div>
   ))}
-  <li>
-    <span class:list={['block', muted]}>WhatsApp</span>
-    <a
-      href={whatsappHref(company.whatsapp.e164)}
-      class="hover:text-champagne font-medium"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {company.whatsapp.display}
-      <span class="sr-only"> (yeni sekmede açılır)</span>
-    </a>
-  </li>
-  <li>
-    <span class:list={['block', muted]}>E-posta</span>
-    <a href={mailtoHref(company.email)} class="hover:text-champagne font-medium">
-      {company.email}
-    </a>
-  </li>
-  <li>
-    <span class:list={['block', muted]}>Instagram</span>
-    <a
-      href={instagram.url}
-      class="hover:text-champagne font-medium"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {instagram.handle}
-      <span class="sr-only"> (yeni sekmede açılır)</span>
-    </a>
-  </li>
-</ul>
+</dl>

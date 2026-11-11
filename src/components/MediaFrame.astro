@@ -1,0 +1,110 @@
+---
+/**
+ * Responsive image wrapper with a fixed aspect ratio (no layout shift).
+ *
+ * - `src` is a legacy media path ("projects-img/7.webp"). An unknown path
+ *   still FAILS THE BUILD (typo protection, src/lib/media.ts). Pass `null` when
+ *   no image exists yet: a calm placeholder is rendered instead.
+ * - `fit="contain"` for drawings/floor plans (never cropped), `cover` for photos.
+ * - `zoom` scales the image gently while a parent `.group` is hovered.
+ * - `caption` wraps the frame in <figure>/<figcaption>.
+ */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { legacyImage, letterboxOf } from '@/lib/media';
+
+type Aspect = 'landscape' | 'photo' | 'wide' | 'cinema' | 'portrait' | 'square';
+
+interface Props {
+  src: string | null;
+  alt: string;
+  aspect?: Aspect;
+  fit?: 'cover' | 'contain';
+  /** CSS object-position, e.g. "50% 30%". */
+  position?: string;
+  widths?: number[];
+  sizes?: string;
+  priority?: boolean;
+  zoom?: boolean;
+  caption?: string;
+  rounded?: boolean;
+  class?: string | undefined;
+}
+
+const {
+  src,
+  alt,
+  aspect = 'landscape',
+  fit = 'cover',
+  position,
+  widths = [400, 640, 960, 1280],
+  sizes = '100vw',
+  priority = false,
+  zoom = false,
+  caption,
+  rounded = true,
+  class: className,
+} = Astro.props;
+
+const aspects: Record<Aspect, string> = {
+  landscape: 'aspect-landscape',
+  photo: 'aspect-photo',
+  wide: 'aspect-wide',
+  cinema: 'aspect-cinema',
+  portrait: 'aspect-portrait',
+  square: 'aspect-square',
+};
+const image = src ? legacyImage(src) : null;
+const maxWidth = Math.max(...widths);
+const Wrapper = caption ? 'figure' : 'div';
+// Trim baked-in letterbox bars (cover fit only): the image box is made taller
+// than the frame and shifted up, so the bars fall outside `overflow: hidden`.
+const letterbox = image && src && fit === 'cover' ? letterboxOf(src) : undefined;
+const visible = letterbox ? 1 - letterbox.top - letterbox.bottom : 1;
+const innerStyle = letterbox
+  ? `top:${((-letterbox.top / visible) * 100).toFixed(3)}%;height:${(100 / visible).toFixed(3)}%`
+  : 'top:0;height:100%';
+---
+
+<Wrapper class:list={['min-w-0', className]}>
+  <div
+    class:list={[
+      'relative overflow-hidden',
+      aspects[aspect],
+      rounded && 'rounded-lg',
+      fit === 'contain' ? 'bg-white' : 'bg-ivory-200',
+    ]}
+  >
+    {image ? (
+      <div class="absolute inset-x-0" style={innerStyle}>
+        <Image
+          src={image}
+          alt={alt}
+          widths={widths.filter((w) => w <= image.width)}
+          width={Math.min(maxWidth, image.width)}
+          sizes={sizes}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchpriority={priority ? 'high' : 'auto'}
+          decoding="async"
+          style={position ? `object-position:${position}` : undefined}
+          class:list={[
+            'absolute inset-0 size-full',
+            fit === 'contain' ? 'object-contain p-3 sm:p-4' : 'object-cover',
+            zoom &&
+              'transition-transform duration-(--duration-slow) ease-(--ease-out-quiet) group-hover:scale-103',
+          ]}
+        />
+      </div>
+    ) : (
+      <div
+        class="text-ink-muted absolute inset-0 flex flex-col items-center justify-center gap-2 text-xs"
+        role="img"
+        aria-label={alt || 'Görsel hazırlanıyor'}
+      >
+        <Icon name="image-off" size={28} class="text-line-strong" />
+        <span aria-hidden="true">Görsel hazırlanıyor</span>
+      </div>
+    )}
+  </div>
+  {caption && <figcaption class="text-ink-muted mt-3 text-sm">{caption}</figcaption>}
+</Wrapper>

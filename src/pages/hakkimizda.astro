@@ -1,5 +1,7 @@
 ---
-import Container from '@/components/Container.astro';
+import Divider from '@/components/Divider.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Section from '@/components/Section.astro';
 import StageNotice from '@/components/StageNotice.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { legacyCopy } from '@/data/company';
@@ -9,14 +11,19 @@ import { legacyCopy } from '@/data/company';
   title="Hakkımızda"
   description="EYFA Yapı, 2004 yılında İstanbul’da kurulmuş, konut ve taahhüt projeleri alanında faaliyet gösteren bir inşaat firmasıdır."
 >
-  <Container width="prose" class="py-section">
-    <p class="eyebrow">Kurumsal</p>
-    <h1 class="mt-3 text-(length:--text-5xl)">Hakkımızda</h1>
-    <div class="prose-eyfa mt-10">
+  <PageHeader
+    title="Hakkımızda"
+    eyebrow="Kurumsal"
+    lead={legacyCopy.positioning}
+    breadcrumbs={[{ label: 'Hakkımızda' }]}
+  />
+
+  <Section>
+    <div class="prose-eyfa">
       {legacyCopy.aboutCompany.map((paragraph) => (
         <p>{paragraph}</p>
       ))}
-      <ul class="list-disc space-y-1 pl-6">
+      <ul>
         {legacyCopy.aboutCompanyList.map((item) => (
           <li>{item}</li>
         ))}
@@ -25,18 +32,30 @@ import { legacyCopy } from '@/data/company';
         <p>{paragraph}</p>
       ))}
     </div>
+  </Section>
 
-    <h2 class="mt-16 text-(length:--text-3xl)">Misyonumuz</h2>
-    <p class="prose-eyfa mt-4">{legacyCopy.mission}</p>
-
-    <h2 class="mt-12 text-(length:--text-3xl)">Vizyonumuz</h2>
-    <p class="prose-eyfa mt-4">{legacyCopy.vision}</p>
-
-    <div class="mt-16">
-      <StageNotice title="Kurucu biyografisi onay bekliyor">
-        Mevcut sitedeki kurucu biyografisi yaş ve öğrenim durumu gibi zamanla değişen bilgiler
-        içerdiği için, güncel metin firma tarafından onaylandıktan sonra eklenecektir.
-      </StageNotice>
+  <Section tone="sand" labelledby="misyon-vizyon">
+    <h2 id="misyon-vizyon" class="sr-only">
+      Misyon ve vizyon
+    </h2>
+    <div class="grid gap-14 lg:grid-cols-2 lg:gap-(--spacing-grid)">
+      <div class="reveal">
+        <Divider variant="accent" />
+        <h3 class="mt-6 text-4xl">Misyonumuz</h3>
+        <p class="text-ink-muted mt-6 text-lg">{legacyCopy.mission}</p>
+      </div>
+      <div class="reveal">
+        <Divider variant="accent" />
+        <h3 class="mt-6 text-4xl">Vizyonumuz</h3>
+        <p class="text-ink-muted mt-6 text-lg">{legacyCopy.vision}</p>
+      </div>
     </div>
-  </Container>
+  </Section>
+
+  <Section spacing="compact">
+    <StageNotice title="Kurucu biyografisi onay bekliyor" class="max-w-(--container-prose)">
+      Mevcut sitedeki kurucu biyografisi yaş ve öğrenim durumu gibi zamanla değişen bilgiler
+      içerdiği için, güncel metin firma tarafından onaylandıktan sonra eklenecektir.
+    </StageNotice>
+  </Section>
 </BaseLayout>

@@ -1,0 +1,71 @@
+---
+/**
+ * Project card. The whole card is one link (title link stretched with an
+ * ::after overlay) so there is a single tab stop and a meaningful link name.
+ *
+ * Only VERIFIED project facts are displayed. Unconfirmed projects show the
+ * neutral provisional label and a "Bilgiler onay bekliyor" marker.
+ */
+import Icon from './Icon.astro';
+import MediaFrame from './MediaFrame.astro';
+import { projectDisplayName } from '@/data/projects';
+import type { Project } from '@/types/content';
+
+interface Props {
+  project: Project;
+  headingLevel?: 'h2' | 'h3';
+  sizes?: string;
+  priority?: boolean;
+}
+
+const {
+  project,
+  headingLevel = 'h3',
+  sizes = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw',
+  priority = false,
+} = Astro.props;
+const Heading = headingLevel;
+const name = projectDisplayName(project);
+const confirmed = project.name.status === 'VERIFIED';
+const location = project.location.status === 'VERIFIED' ? project.location.value : null;
+const photos = project.gallery.filter((g) => g.kind !== 'floor-plan').length;
+const plans = project.gallery.length - photos;
+const meta = [photos && `${photos} fotoğraf`, plans && `${plans} çizim`]
+  .filter(Boolean)
+  .join(' · ');
+const isPlan = project.cover.kind === 'floor-plan';
+---
+
+<article class="group relative flex flex-col">
+  <MediaFrame
+    src={project.cover.src}
+    alt={project.cover.alt}
+    aspect="landscape"
+    fit={isPlan ? 'contain' : 'cover'}
+    widths={[400, 640, 900]}
+    sizes={sizes}
+    priority={priority}
+    zoom={!isPlan}
+  />
+  <div class="mt-5 flex items-start justify-between gap-4">
+    <div>
+      {location && <p class="eyebrow">{location}</p>}
+      <Heading class="text-2xl transition-colors group-hover:text-accent-text">
+        <a
+          href={`/projeler/${project.slug}/`}
+          class="after:absolute after:inset-0 after:z-(--z-raised) after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-(--color-focus)"
+        >
+          {name}
+        </a>
+      </Heading>
+      <p class="text-ink-muted mt-1 text-sm">{meta}</p>
+      {!confirmed && <p class="text-ink-muted mt-2 text-xs italic">Bilgiler onay bekliyor</p>}
+    </div>
+    <span
+      aria-hidden="true"
+      class="border-line group-hover:border-accent group-hover:bg-accent group-hover:text-on-accent mt-1 inline-flex size-10 shrink-0 items-center justify-center rounded-full border transition-colors duration-(--duration-base)"
+    >
+      <Icon name="arrow-up-right" size={18} />
+    </span>
+  </div>
+</article>

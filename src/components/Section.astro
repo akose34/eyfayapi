@@ -1,0 +1,51 @@
+---
+/**
+ * Page section: background tone + vertical rhythm + container.
+ *
+ *   tone     ivory (default page) | white | sand | dark
+ *   spacing  default (py-section) | compact (py-section-sm) | none
+ *   width    container width token
+ *
+ * Pass `labelledby` with the id of the section's heading so the <section>
+ * becomes a named region for assistive technology.
+ */
+import Container from './Container.astro';
+
+interface Props {
+  tone?: 'ivory' | 'white' | 'sand' | 'dark';
+  spacing?: 'default' | 'compact' | 'none';
+  width?: 'prose' | 'content' | 'wide';
+  id?: string;
+  labelledby?: string;
+  class?: string | undefined;
+  containerClass?: string;
+}
+
+const {
+  tone = 'ivory',
+  spacing = 'default',
+  width = 'content',
+  id,
+  labelledby,
+  class: className,
+  containerClass,
+} = Astro.props;
+
+const tones = {
+  ivory: 'bg-ivory',
+  white: 'bg-white',
+  sand: 'bg-ivory-200',
+  dark: 'tone-dark',
+} as const;
+const spacings = { default: 'py-section', compact: 'py-section-sm', none: '' } as const;
+---
+
+<section
+  id={id}
+  aria-labelledby={labelledby}
+  class:list={[tones[tone], spacings[spacing], className]}
+>
+  <Container width={width} class={containerClass}>
+    <slot />
+  </Container>
+</section>

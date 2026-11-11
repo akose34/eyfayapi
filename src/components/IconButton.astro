@@ -1,0 +1,51 @@
+---
+/**
+ * Icon-only control. `label` is REQUIRED: it becomes the accessible name.
+ * Always ≥44×44px (WCAG 2.5.8). Renders <a> with `href`, else <button>.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import Icon, { type IconName } from './Icon.astro';
+
+type Props = Omit<HTMLAttributes<'button'> & HTMLAttributes<'a'>, 'class' | 'type'> & {
+  icon: IconName;
+  label: string;
+  href?: string;
+  external?: boolean;
+  variant?: 'ghost' | 'outline';
+  class?: string | undefined;
+};
+
+const {
+  icon,
+  label,
+  href,
+  external = false,
+  variant = 'ghost',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = [
+  'inline-flex size-11 items-center justify-center rounded-md text-ink transition-colors duration-(--duration-base) ease-(--ease-out-quiet)',
+  variant === 'outline'
+    ? 'border border-line hover:border-accent hover:text-accent-text'
+    : 'hover:text-accent-text',
+  className,
+];
+---
+
+{href ? (
+  <a
+    href={href}
+    class:list={classes}
+    aria-label={external ? `${label} (yeni sekmede açılır)` : label}
+    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    {...rest}
+  >
+    <Icon name={icon} size={20} />
+  </a>
+) : (
+  <button type="button" class:list={classes} aria-label={label} {...rest}>
+    <Icon name={icon} size={20} />
+  </button>
+)}

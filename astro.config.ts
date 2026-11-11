@@ -2,6 +2,22 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import type { AstroIntegration } from 'astro';
+
+/**
+ * Injects the design-system showcase ONLY for `astro dev`. Production builds
+ * never contain the route (verified by scripts/verify-dist.mjs).
+ */
+export const DEV_SHOWCASE_ROUTE = '/dev/tasarim-sistemi';
+const devShowcase = (): AstroIntegration => ({
+  name: 'eyfa-dev-showcase',
+  hooks: {
+    'astro:config:setup': ({ command, injectRoute }) => {
+      if (command !== 'dev') return;
+      injectRoute({ pattern: DEV_SHOWCASE_ROUTE, entrypoint: './src/dev/DesignSystem.astro' });
+    },
+  },
+});
 
 /**
  * Eyfa Yapı — static site configuration.
@@ -25,6 +41,7 @@ export default defineConfig({
   // Static redirect documents in public/ must stay as-is (e.g. /projeler.html).
   publicDir: './public',
   integrations: [
+    devShowcase(),
     sitemap({
       // Placeholder project detail pages are excluded until names are confirmed.
       filter: (page) => !page.includes('/projeler/proje-'),

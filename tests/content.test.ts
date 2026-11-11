@@ -48,6 +48,21 @@ describe('company facts come verbatim from the legacy site', () => {
     }
   });
 
+  it('footer positioning adds no fact beyond about.html', () => {
+    // Every factual element of the condensed sentence appears in the legacy about text.
+    for (const fact of [
+      '2004 yılında',
+      'İstanbul’da',
+      'kurul',
+      'konut ve taahhüt projeleri',
+      'faaliyet göster',
+    ]) {
+      expect(legacyCopy.positioning).toContain(fact);
+      expect(legacyAbout).toContain(fact);
+    }
+    expect(legacyCopy.positioning.match(/\d+/g)).toEqual(['2004']);
+  });
+
   it('services and activities are verbatim', () => {
     for (const s of services) {
       expect(legacyHome).toContain(s.title);

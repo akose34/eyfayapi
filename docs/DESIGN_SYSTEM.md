@@ -1,177 +1,323 @@
-# Design System — Foundation (Stage 1)
+# Design System
 
-Direction: **Premium Hybrid**. Charcoal, champagne gold, warm off-white, elegant serif display type
-and authentic architectural photography. The aim is restraint: an architecture practice's calm, not
-a real-estate portal's noise. Tokens live in `src/styles/global.css` as a Tailwind CSS v4 `@theme`,
-so every token is both a CSS custom property and a utility class (`bg-charcoal`, `text-ink-muted`,
-`max-w-(--container-content)`, …).
+The direction is **Premium Hybrid**. It pairs a charcoal and champagne-gold palette with warm
+ivory, editorial serif headlines, and authentic architectural photography. The aim is calm and
+restraint, closer to an architecture monograph than a property portal.
 
-Stage 1 defines the foundation only. Components and page compositions are designed from Stage 2.
+- Source of truth: `src/styles/global.css` (Tailwind CSS v4 `@theme static`) and `src/components/`.
+- Visual reference: run `npm run dev` and open **`/dev/tasarim-sistemi/`**. The showcase is
+  development-only and never part of a production build (§12).
+- Stage history: Stage 1 created the foundation and Stage 2 built the full system. Changes from
+  Stage 1 are marked **(S2)**.
 
 ---
 
-## 1. Colour
+## 1. Principles
 
-### Brand palette (approved)
+1. **Quiet confidence.** One accent colour (champagne) used sparingly: a primary button, a short
+   rule and the current page. Gold never decorates for its own sake.
+2. **Editorial hierarchy.** Cormorant Garamond carries headlines and Manrope carries everything
+   functional. Eyebrow labels with a short gold rule introduce sections.
+3. **Architecture first.** Real Eyfa Yapı photography and drawings, crisp 1 px lines and small radii.
+   No stock imagery, glassmorphism, large gradients or illustration.
+4. **Truthful content.** Components render only verified data. Unconfirmed content shows a neutral
+   label or a `StageNotice`, never invented copy.
+5. **Accessible by construction.** Tone-aware tokens keep contrast valid on both light and dark
+   surfaces. Every interactive pattern is keyboard-first.
 
-| Token               | Hex       | Role                                                  |
-| ------------------- | --------- | ----------------------------------------------------- |
-| `--color-charcoal`  | `#151C1E` | Primary dark: header, footer, hero, primary text      |
-| `--color-champagne` | `#C5A46D` | Accent: primary button, highlights, focus ring, rules |
-| `--color-ivory`     | `#F5F2EB` | Page background (warm off-white)                      |
-| `--color-white`     | `#FFFFFF` | Raised surfaces (cards), image mats for floor plans   |
+## 2. Colour tokens
 
-### Supporting tints
+### Brand palette (approved, unchanged)
 
-| Token                  | Hex                               | Why it exists                                                                                              |
-| ---------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `charcoal-800/700/600` | `#1F2729` / `#2B3437` / `#444D50` | Layering on dark sections without pure black                                                               |
-| `champagne-300`        | `#DCC49A`                         | Hover state of the gold button; text selection                                                             |
-| `champagne-700`        | `#7D6233`                         | **Text-safe gold.** Champagne itself is only 2.1:1 on ivory and must never carry text on light backgrounds |
-| `ivory-200`            | `#EBE6DA`                         | Alternate section band, notices                                                                            |
+| Token                  | Hex                               | Role                                                                      |
+| ---------------------- | --------------------------------- | ------------------------------------------------------------------------- |
+| `charcoal`             | `#151C1E`                         | Dark surfaces (header, footer, hero, page headers), primary text on light |
+| `champagne`            | `#C5A46D`                         | Accent fill (primary button, rules, markers). Gold text **on dark only**  |
+| `ivory`                | `#F5F2EB`                         | Default page surface                                                      |
+| `white`                | `#FFFFFF`                         | Raised cards and the floor-plan mat                                       |
+| `champagne-700`        | `#7D6233`                         | Accessible dark gold for small text on light surfaces (≥4.5:1)            |
+| `champagne-300`        | `#DCC49A`                         | Hover of gold fills, text selection                                       |
+| `ivory-200`            | `#EBE6DA`                         | "Sand" alternate band                                                     |
+| `charcoal-800/700/600` | `#1F2729` / `#2B3437` / `#444D50` | Layering on dark                                                          |
 
-### Semantic aliases (use these in components)
+### Semantic tokens (S2): use these in components
 
-`surface`, `surface-raised`, `surface-inverse`, `ink`, `ink-muted` (`#4A5356`), `ink-inverse`,
-`ink-inverse-muted` (`#C9C4B8`), `accent`, `accent-strong`, `line`, `line-inverse`, `focus`,
-`whatsapp`.
+| Token                     | Light tone (default)      | Dark tone (`.tone-dark`) | Use                                                   |
+| ------------------------- | ------------------------- | ------------------------ | ----------------------------------------------------- |
+| `surface`                 | ivory                     | charcoal                 | Section background                                    |
+| `surface-raised`          | white                     | charcoal-800             | Cards                                                 |
+| `surface-sunken`          | ivory-200                 | `#101618`                | Notices, wells                                        |
+| `ink`                     | charcoal                  | ivory                    | Primary text, outlines of secondary buttons           |
+| `ink-muted`               | `#4A5356`                 | `#C9C4B8`                | Secondary text                                        |
+| `accent` / `accent-hover` | champagne / champagne-300 | same                     | Fills                                                 |
+| `on-accent`               | charcoal                  | charcoal                 | Text on gold fills                                    |
+| `accent-text`             | champagne-700             | champagne                | **Gold text**: eyebrows, current nav item, text links |
+| `line`                    | `#D9D2C3`                 | `#3A4447`                | Decorative hairlines, card borders                    |
+| `line-strong`             | `#8C8473`                 | `#6F787B`                | Outlines that carry meaning (≥3:1)                    |
+| `focus`                   | champagne-700             | champagne                | Focus ring (≥3:1 on its surface)                      |
 
-### Verified contrast (WCAG 2.2, automated in `tests/design-tokens.test.ts`)
+**How tones work.** `.tone-dark` (applied by `Section tone="dark"`, the header, the footer,
+`PageHeader` and `ContactCTA`) redefines the semantic custom properties. The same component, for
+example `Button variant="secondary"`, `TextLink` or `ContactLinks`, is therefore correct on ivory
+and on charcoal without a variant prop. **(S2)** This fixed a Stage 1 defect: the champagne focus
+ring was only 2.1:1 on ivory, below the 3:1 non-text contrast requirement (WCAG 1.4.11).
 
-| Foreground / background                 | Ratio               | Allowed use                                         |
-| --------------------------------------- | ------------------- | --------------------------------------------------- |
-| charcoal / ivory                        | 15.4 : 1            | All text                                            |
-| ink-muted / ivory                       | 7.1 : 1             | Body and secondary text                             |
-| ink-muted / ivory-200                   | ≥ 4.5 : 1           | Body text in alternate bands                        |
-| ink-inverse-muted / charcoal            | 9.9 : 1             | Secondary text on dark                              |
-| champagne / charcoal                    | 7.3 : 1             | Gold text, eyebrows and active nav on dark          |
-| charcoal / champagne                    | 7.3 : 1             | Primary button label                                |
-| champagne-700 / ivory, ivory-200, white | 5.1 / 4.6 / 5.7 : 1 | Gold text on light backgrounds (eyebrows, links)    |
-| champagne / ivory                       | 2.1 : 1             | **Decorative only** (rules, icons with text labels) |
+### Verified contrast (automated in `tests/design-tokens.test.ts`)
 
-My first value for `champagne-700` was `#8A6D3B`. The contrast test measured 4.34:1 on
-ivory (below AA), so the token was darkened to `#7D6233`.
+| Pair                                              | Ratio             | Requirement                     |
+| ------------------------------------------------- | ----------------- | ------------------------------- |
+| charcoal / ivory                                  | 15.4:1            | text 4.5:1                      |
+| ink-muted / ivory · ivory-200                     | 7.1 · ≥4.5:1      | text                            |
+| champagne-700 / ivory · ivory-200 · white         | 5.1 · 4.6 · 5.7:1 | text                            |
+| champagne / charcoal                              | 7.3:1             | text                            |
+| charcoal / champagne (button label)               | 7.3:1             | text                            |
+| ink-inverse-muted / charcoal                      | 9.9:1             | text                            |
+| focus / ivory · ivory-200 · white                 | ≥3:1              | non-text                        |
+| line-strong / ivory                               | ≥3:1              | non-text                        |
+| dark tone: ink, ink-muted, accent-text / charcoal | ≥4.5:1            | text                            |
+| dark tone: focus, line-strong / charcoal          | ≥3:1              | non-text                        |
+| champagne / ivory                                 | 2.1:1             | **decorative only, never text** |
 
-## 2. Typography
+axe-core found **no** contrast issues on any production route (§11).
 
-| Role                              | Family                          | Licence     | Weight range              |
-| --------------------------------- | ------------------------------- | ----------- | ------------------------- |
-| Display (h1–h3, numerals in hero) | **Cormorant Garamond Variable** | SIL OFL 1.1 | 300–700 (use 500)         |
-| Text and UI                       | **Manrope Variable**            | SIL OFL 1.1 | 200–800 (use 400/500/600) |
+## 3. Typography
 
-Why: Cormorant gives the high-contrast, architectural elegance the brief asks for at large sizes.
-Manrope is a geometric-humanist sans with excellent small-size legibility and full Turkish support
-(ğ, ı, İ, ş, ç, ö, ü are all in the `latin-ext` subset). Both fonts are self-hosted from npm
-(`@fontsource-variable/*`), with no Google Fonts request, no cookies and no third-party
-dependency at runtime. Variable fonts deliver every weight from one file per subset. A Turkish page
-downloads only the `latin` + `latin-ext` subsets thanks to `unicode-range` (~44 KB Manrope + ~76 KB
-Cormorant, WOFF2). Fallback stacks are system-ui and Georgia-class serifs.
+| Role                                                | Family                            | Weights used    |
+| --------------------------------------------------- | --------------------------------- | --------------- |
+| Editorial headlines (h1–h3, menu items, statements) | Cormorant Garamond Variable (OFL) | 500             |
+| Body, UI, navigation, labels                        | Manrope Variable (OFL)            | 400 / 500 / 600 |
+
+Both are self-hosted (`@fontsource-variable/*`). A Turkish page downloads only the `latin` and
+`latin-ext` WOFF2 subsets, about 44 KB for Manrope and 76 KB for Cormorant. Turkish glyphs
+(ğ ü ş ı İ ö ç) are covered and shown in the showcase.
+
+### Scale (S2: each size now carries its own line-height)
+
+Use the utilities `text-xs … text-5xl` and `text-display`. **Never** use
+`text-(length:--text-…)`, which sets only the size and loses the paired line-height (a bug found
+in Stage 2 QA).
+
+| Utility        | Size (360 → 1440 px) | Line-height | Typical use                                          |
+| -------------- | -------------------- | ----------- | ---------------------------------------------------- |
+| `text-display` | 48 → 92 px           | 1.0         | Homepage hero headline only                          |
+| `text-5xl`     | 40 → 70 px           | 1.04        | Page `<h1>` (PageHeader), CTA headline               |
+| `text-4xl`     | 36 → 52 px           | 1.08        | Section `<h2>`                                       |
+| `text-3xl`     | 30 → 40 px           | 1.12        | Sub-sections, card titles on large cards, menu items |
+| `text-2xl`     | 24 → 30 px           | 1.2         | Project-card titles, empty-state titles              |
+| `text-xl`      | 20 → 23 px           | 1.4         | Lead paragraphs (sparingly)                          |
+| `text-lg`      | 17 → 19 px           | 1.65        | Lead/intro and long-form prose                       |
+| `text-base`    | 16 px                | 1.65        | Body                                                 |
+| `text-sm`      | 14 px                | 1.55        | UI, nav, meta                                        |
+| `text-xs`      | 12 px                | 1.5         | Eyebrows, captions, legal                            |
 
 Rules:
 
-- Cormorant only at ≥ 24 px (`text-2xl` and up); it is too delicate for body copy.
-- Body: Manrope 16–19 px, line-height 1.65, measure ≤ 68ch (`--container-prose`).
-- Eyebrow labels: Manrope 600, 12 px, uppercase, tracking `0.18em`, `accent-strong` on light and
-  `champagne` on dark.
-- Turkish casing: never rely on CSS `text-transform: uppercase` for words containing `i` unless
-  `lang="tr"` is set (it is, on `<html>`), so "i" → "İ" is correct.
+- Cormorant only at `text-2xl` or larger. Headlines use `tracking-display` (−0.015em) and
+  `text-wrap: balance`.
+- Long-form text uses `.prose-eyfa` (17–19 px, line-height 1.7, ≤ 68ch, gold-rule list markers).
+- Eyebrows: Manrope 600, 12 px, uppercase, tracking 0.18em, `accent-text`. `lang="tr"` makes
+  uppercase "i" become "İ".
+- Numbers in UI (phones, indices) use `tabular-nums`.
 
-### Fluid type scale (≈1.25 ratio, 360 → 1440 px)
+## 4. Layout
 
-| Token            | Min → max              |
-| ---------------- | ---------------------- |
-| `--text-xs`      | 12 px                  |
-| `--text-sm`      | 14 px                  |
-| `--text-base`    | 16 px                  |
-| `--text-lg`      | 17 → 19 px             |
-| `--text-xl`      | 20 → 23 px             |
-| `--text-2xl`     | 24 → 30 px             |
-| `--text-3xl`     | 30 → 40 px             |
-| `--text-4xl`     | 36 → 52 px             |
-| `--text-5xl`     | 44 → 70 px             |
-| `--text-display` | 52 → 92 px (hero only) |
+| Token / utility                           | Value                                                                      | Use                                                      |
+| ----------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Breakpoints                               | `sm` 640 · `md` 768 · **`lg` 1024 (desktop nav)** · `xl` 1280 · `2xl` 1536 |                                                          |
+| `--container-prose`                       | 672 px                                                                     | Reading width (inside a content container, left-aligned) |
+| `--container-content`                     | 1152 px                                                                    | Default page width                                       |
+| `--container-wide`                        | 1376 px                                                                    | Header, footer, galleries, wide sections                 |
+| `px-gutter`                               | 16 → 40 px                                                                 | Horizontal page padding (16 px at 320–375 px)            |
+| `py-section` / `py-section-sm`            | 64 → 128 px / 40 → 72 px                                                   | Vertical rhythm between sections                         |
+| `--spacing-grid` (`gap-(--spacing-grid)`) | 16 → 32 px                                                                 | Grid gaps                                                |
+| `h-header` / `h-header-lg`                | 72 px / 88 px                                                              | Header heights (fixed, so no layout shift)               |
 
-## 3. Layout
+Grids are 12 columns on large screens (`lg:grid-cols-12`). Lists of cards use 1 / 2 / 3 columns
+at base / `sm` / `lg`. Inner pages align prose to the content container's left edge, not
+centred, so the PageHeader and body share one edge **(S2)**.
 
-| Token                 | Value                      | Use                                       |
-| --------------------- | -------------------------- | ----------------------------------------- |
-| `--breakpoint-sm`     | 640 px                     | Large phones / small tablets              |
-| `--breakpoint-md`     | 768 px                     | Tablets                                   |
-| `--breakpoint-lg`     | 1024 px                    | Desktop nav appears                       |
-| `--breakpoint-xl`     | 1280 px                    |                                           |
-| `--breakpoint-2xl`    | 1536 px                    |                                           |
-| `--container-prose`   | 42 rem (672 px)            | Long-form text                            |
-| `--container-content` | 72 rem (1152 px)           | Default page width                        |
-| `--container-wide`    | 86 rem (1376 px)           | Galleries, header, footer                 |
-| `px-gutter`           | `clamp(1rem, …, 2.5rem)`   | Horizontal page padding (16 px on phones) |
-| `py-section`          | `clamp(4rem, …, 8rem)`     | Vertical rhythm between sections          |
-| `py-section-sm`       | `clamp(2.5rem, …, 4.5rem)` | Compact sections, footer                  |
+## 5. Shape, borders, elevation, layering
 
-Spacing inside components uses Tailwind's default 4 px scale (`gap-4`, `p-8`, …). There is no
-separate spacing token set, deliberately, to avoid two competing systems.
+| Token                                                                     | Value                      | Use                                                                                         |
+| ------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------- |
+| `rounded-sm` / `md` / `lg`                                                | 2 / 4 / 8 px               | Focus rounding / buttons and notices / cards and media                                      |
+| `border-line` (1 px)                                                      |                            | Default for cards and dividers. Prefer lines to shadows                                     |
+| `shadow-card` / `shadow-raised`                                           | soft charcoal              | Optional raised cards                                                                       |
+| `shadow-header`                                                           | gold hairline + soft shade | Header after scrolling (S2)                                                                 |
+| `--z-raised` 10 · `--z-header` 40 · `--z-overlay` 50 · `--z-skip-link` 60 |                            | **The only z-index values allowed** (`z-(--z-header)` …). Dialogs use the browser top layer |
 
-## 4. Shape and elevation
+## 6. Image aspect ratios (S2)
 
-| Token           | Value                          | Use                                           |
-| --------------- | ------------------------------ | --------------------------------------------- |
-| `--radius-sm`   | 2 px                           | Focus ring rounding, tags                     |
-| `--radius-md`   | 4 px                           | Buttons, inputs, notices                      |
-| `--radius-lg`   | 8 px                           | Cards, images                                 |
-| `--shadow-card` | soft two-layer charcoal shadow | Raised cards only. Prefer 1 px `line` borders |
+| Utility            | Ratio | Use                                          |
+| ------------------ | ----- | -------------------------------------------- |
+| `aspect-landscape` | 4:3   | Project cards and gallery tiles              |
+| `aspect-photo`     | 3:2   | Editorial and hero images                    |
+| `aspect-wide`      | 16:9  | Banners, video                               |
+| `aspect-cinema`    | 21:9  | Full-bleed heroes on large screens (Stage 3) |
+| `aspect-portrait`  | 4:5   | People, vertical construction shots          |
+| `aspect-square`    | 1:1   | Activities, posters                          |
 
-Architecture favours crisp edges, so the radii are deliberately small.
+All media sits in a fixed-ratio box (`MediaFrame`), so images never cause layout shift.
 
-## 5. Buttons (`src/components/Button.astro`)
+**Letterbox trimming (S2).** 27 authentic drone stills have black bars baked into the files: 8.5%
+at the top and about 4.8% at the bottom. `MediaFrame` trims them automatically for `fit="cover"`
+using the measured table in `src/lib/media.ts`, without editing the original files.
+`tests/letterbox.test.ts` re-measures the pixels with sharp to keep the table honest. Floor plans
+(`fit="contain"`) are never cropped.
 
-| Variant     | Look                                                  | Use                                |
-| ----------- | ----------------------------------------------------- | ---------------------------------- |
-| `primary`   | Champagne fill, charcoal label; hover `champagne-300` | One main action per view           |
-| `secondary` | 1 px charcoal outline; hover fills charcoal           | Secondary actions on light         |
-| `inverse`   | Ivory outline on dark; hover gold                     | Secondary actions on dark sections |
-| `ghost`     | Text link in `accent-strong`, underline on hover      | Tertiary actions                   |
+## 7. Motion
 
-Sizes: `md` (min-height 44 px) and `lg` (48 px). Both meet WCAG 2.5.8 target size. The component
-renders `<a>` when `href` is set and otherwise `<button type="button">`. External links get
-`target="_blank" rel="noopener noreferrer"`.
+| Token                               | Value                            | Use                                        |
+| ----------------------------------- | -------------------------------- | ------------------------------------------ |
+| `--duration-fast` / `base` / `slow` | 150 / 250 / 600 ms               | Colour / UI state / image zoom and reveals |
+| `--ease-out-quiet`                  | `cubic-bezier(0.22, 1, 0.36, 1)` | Default                                    |
+| `--ease-in-out-quiet`               | `cubic-bezier(0.65, 0, 0.35, 1)` | Symmetric moves                            |
 
-## 6. Focus states
+Conventions:
 
-A single global `:focus-visible` style: a 2 px champagne outline with a 3 px offset. It is visible
-on both charcoal and ivory (≥ 3:1 against adjacent colours on dark). It appears only for
-keyboard focus and never for mouse clicks. Components must not remove outlines without providing an
-equivalent replacement.
+- Animate only `transform`, `opacity` and colours.
+- Allowed effects: link underline grow (`.link-underline`, a transformed `::after` line); arrow
+  nudge on hover (Button, TextLink, ProjectCard); 3% image scale on card hover; gold rule widening
+  on ServiceCard hover; header shadow after scroll.
+- **Section reveal** (`.reveal`) is pure CSS scroll-driven animation (`animation-timeline: view()`)
+  inside `@supports` and `prefers-reduced-motion: no-preference`. Content is fully visible without
+  JavaScript, without support, and with reduced motion.
+- The mobile menu has **no open or close animation**, deliberately. In QA a `@starting-style` fade
+  left the dialog's computed opacity at 0 in a throttled rendering context. A menu that can stay
+  invisible is unacceptable, so the robust choice wins.
+- `prefers-reduced-motion: reduce` collapses all transitions and animations site-wide and disables
+  smooth scrolling.
+- No parallax, scroll hijacking or animation libraries.
 
-## 7. Accessibility requirements (definition of done for every component)
+## 8. Components
 
-- WCAG 2.2 AA minimum. Contrast pairs come only from the verified table above.
-- One `<h1>` per page, with a logical heading order (checked by `verify-dist`).
-- `lang="tr"`, landmarks (`header`, `nav[aria-label]`, `main#main`, `footer`), and a skip link
-  ("İçeriğe geç").
-- Every `<img>` has an `alt`. Decorative images get `alt=""`. Alt text describes what is visible
-  and never asserts unconfirmed facts (such as project names).
-- Icon-only controls have an accessible name. External links announce "(yeni sekmede açılır)".
-- Interactive targets ≥ 44×44 px. The mobile menu has `aria-expanded`, `aria-controls` and closes
-  on Escape, returning focus to the toggle.
-- No auto-advancing carousels without a pause control. No autoplay video with sound.
-- Content works without JavaScript (navigation is repeated in the footer).
+All components live in `src/components/`. Every `class` prop accepts `undefined` (strict TS).
 
-## 8. Motion
+| Component        | Purpose                                                                                 | Key props                                                                                                                                                             |
+| ---------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`         | Primary actions; `<a>` with `href`, else `<button>`                                     | `variant` primary · secondary · light; `size` sm (44) · md (48) · lg (56 px); `icon`, `leadingIcon`, `external`, `disabled`, `fullWidth`; passes ARIA/data attributes |
+| `TextLink`       | Tertiary action with animated underline and arrow                                       | `tone` accent · ink; `arrow`; `external`                                                                                                                              |
+| `IconButton`     | Icon-only control (menu, close, future lightbox)                                        | `icon`, **`label` (required)**; always 44×44 px                                                                                                                       |
+| `Icon`           | Inline SVG set (12 icons, 1.5 px stroke); brand glyphs from the legacy site             | decorative by default; `label` makes it `role="img"`                                                                                                                  |
+| `BrandLogo`      | Authentic logo, cropped via `object-fit` (asset unmodified)                             | `height`, `lgHeight`, `alt`                                                                                                                                           |
+| `SiteHeader`     | Global header and mobile `<dialog>` menu                                                | none                                                                                                                                                                  |
+| `SiteFooter`     | Global footer                                                                           | none                                                                                                                                                                  |
+| `Container`      | Width wrapper                                                                           | `width` prose · content · wide                                                                                                                                        |
+| `Section`        | Tone + rhythm + container                                                               | `tone` ivory · white · sand · dark; `spacing`; `width`; `labelledby`                                                                                                  |
+| `Eyebrow`        | Uppercase label with gold rule                                                          | `rule`                                                                                                                                                                |
+| `SectionHeading` | Eyebrow · title · lead · `action` slot                                                  | `level` h1–h3; `size` page · section · sub; `align`                                                                                                                   |
+| `PageHeader`     | Inner-page intro on a dark band: breadcrumbs · eyebrow · `<h1>` · lead                  | `breadcrumbs` (required), `width`, default slot                                                                                                                       |
+| `Breadcrumbs`    | WAI-ARIA breadcrumb + BreadcrumbList JSON-LD                                            | `items`, `label`                                                                                                                                                      |
+| `MediaFrame`     | Fixed-ratio responsive image, figure/caption, letterbox trim, missing-image placeholder | `src` (path or `null`), `aspect`, `fit`, `position`, `widths`, `sizes`, `priority`, `zoom`, `caption`                                                                 |
+| `ProjectCard`    | Whole-card link (single tab stop), verified facts only                                  | `project`, `headingLevel`, `priority`                                                                                                                                 |
+| `ServiceCard`    | Numbered service tile                                                                   | `service`, `index`, `headingLevel`                                                                                                                                    |
+| `ContactLinks`   | Verified channels with icons (tone-aware)                                               | `address`                                                                                                                                                             |
+| `ContactCTA`     | Dark contact band: WhatsApp, phone and e-mail                                           | `title`, `lead`, `headingId`                                                                                                                                          |
+| `Divider`        | `<hr>`: hairline or short gold rule                                                     | `variant` line · accent                                                                                                                                               |
+| `EmptyState`     | Calm placeholder for absent content (filters, pending sections)                         | `title`, `description`, `icon`, slot                                                                                                                                  |
+| `StageNotice`    | Visible "awaiting owner confirmation" note                                              | `title`, slot                                                                                                                                                         |
 
-| Token              | Value                            | Use                                     |
-| ------------------ | -------------------------------- | --------------------------------------- |
-| `--duration-fast`  | 150 ms                           | Colour and hover changes                |
-| `--duration-base`  | 250 ms                           | Menus, button states                    |
-| `--duration-slow`  | 600 ms                           | Section reveals, image fades (Stage 3+) |
-| `--ease-out-quiet` | `cubic-bezier(0.22, 1, 0.36, 1)` | Default easing                          |
+### Buttons
 
-Conventions: animate only `opacity` and `transform`. Reveal distances are ≤ 16 px. Nothing loops
-except an optional muted hero video. Under `prefers-reduced-motion: reduce`, all transitions and
-animations collapse to ~0 ms globally, smooth scrolling is disabled, and video should fall back to
-its poster image (Stage 3).
+| Variant     | On light                          | On dark                          | Use                                         |
+| ----------- | --------------------------------- | -------------------------------- | ------------------------------------------- |
+| `primary`   | gold fill, charcoal label         | same                             | One main action per view                    |
+| `secondary` | 1 px ink outline; hover fills ink | ivory outline; hover fills ivory | Secondary actions on any tone               |
+| `light`     | —                                 | ivory fill, charcoal label       | Main action on dark when gold would compete |
 
-## 9. Imagery
+States: hover (colour), active (1 px press), `:focus-visible` (global ring), disabled (45%
+opacity, `cursor: not-allowed`, `<button>` only, since links are never "disabled").
 
-- Authentic Eyfa Yapı photography only (see MEDIA_INVENTORY §7). No stock imagery.
-- Crop baked-in letterbox bars. Use consistent 4:3 cards and 3:2 / 16:9 heroes.
-- Show floor plans with `object-contain` on white so drawings are never cropped.
-- Text is never placed over a photo without a charcoal overlay that keeps it at ≥ 4.5:1.
+### Card link pattern
+
+`ProjectCard` makes the title link cover the card through `::after`. The card is one tab stop with
+a meaningful accessible name, and the focus ring is drawn on the overlay around the whole card.
+
+## 9. Navigation
+
+- **Desktop (≥ 1024 px):** logo · Ana Sayfa · Hakkımızda · Projeler · Hizmetler · Faaliyetler ·
+  phone number (≥ 1280 px) · gold "İletişim" button. The current page uses `aria-current="page"`,
+  gold text and a persistent underline. Hover and focus grow the underline.
+- **Below 1024 px:** logo and a 44 px menu button open a full-screen modal `<dialog>`. The menu
+  has numbered Cormorant links (the current one in gold) and a contact block (phone, WhatsApp,
+  e-mail).
+  - The browser handles focus containment, inert background and Escape.
+  - The script sets `aria-expanded`, closes on link selection, the close button or a desktop
+    resize, and restores focus to the trigger. Page scroll is locked while open (`html:has(dialog[open])`).
+- **Without JavaScript:** the menu button is hidden and a "Menü" link jumps to the footer
+  navigation (`#footer-nav`).
+- **Sticky:** the header is always sticky, with fixed height and no layout shift. Visual testing
+  confirmed it reads well over light and dark sections. After 8 px of scroll only a shadow is added.
+
+## 10. Footer
+
+Dark band in three columns (5 / 3 / 4 of 12):
+
+1. Logo, the verified headline "Eyfa Yapı ile Geleceği İnşa Ediyoruz.", and a one-line positioning
+   condensed from `about.html`. A test proves it adds no fact.
+2. Kurumsal (Hakkımızda, Faaliyetlerimiz, İletişim) and Çalışmalarımız (Projelerimiz, Mimarlık,
+   Mühendislik, Emlak).
+3. İletişim: both phones, WhatsApp, e-mail, Instagram, address.
+
+A legal line (© year + registered name) and "Başa dön" sit at the bottom. On mobile the columns
+stack and the link groups sit side by side, with 44 px targets. There are no certifications,
+awards, figures or legal statements, because none are verified.
+
+## 11. Accessibility decisions
+
+- Skip link "İçeriğe geç" → `main#main`, and `scroll-padding-top` keeps anchors clear of the sticky
+  header.
+- Landmarks are named: "Ana menü", "Mobil menü", "Alt menü", "Sayfa konumu", and the footer region.
+- One `<h1>` per page. Sections are labelled by their headings, and visually hidden headings are
+  added where a visual heading is absent.
+- Focus: one global `:focus-visible` ring with a tone-aware colour (≥ 3:1).
+- Targets: buttons 44–56 px, icon buttons 44 px, footer links 44 px on touch widths.
+- External links announce "(yeni sekmede açılır)".
+- Icons are `aria-hidden`. Icon-only controls need a `label`.
+- Static analysis: `eslint-plugin-astro` jsx-a11y **strict** rules (S2) run in `npm run lint`.
+- Verification performed in Stage 2 (details in `STAGE_2_REPORT.md`):
+  - axe-core 4.14 (WCAG 2.0/2.1/2.2 A/AA plus best practices) on every production route at
+    320, 768 and 1280 px: 0 violations, 0 incomplete.
+  - Manual keyboard tests of the menu and cards.
+- Automated checks do **not** prove full WCAG conformance. A manual screen-reader pass (VoiceOver,
+  NVDA) is still required (Stage 7).
+
+## 12. Design showcase (development only)
+
+`src/dev/DesignSystem.astro`, outside `src/pages`, is injected as `/dev/tasarim-sistemi/` by the
+`eyfa-dev-showcase` integration **only when `command === 'dev'`**. It shows colours, type scale,
+buttons on light and dark, links, icon buttons, navigation states, breadcrumbs, icons, section
+headings, dividers, project and service cards, media ratios (including contain and a missing image),
+empty state, notice, contact links, the spacing scale and the contact CTA. The live header and
+footer frame the page.
+
+Guards: `tests/showcase.test.ts` (no injection for build or preview, file not in `src/pages`) and
+`scripts/verify-dist.mjs` (fails if any `dev/` or `tasarim-sistemi` file, or sitemap entry, appears
+in `dist`).
+
+## 13. How later stages should use the system
+
+- Build every page from `Section`, `SectionHeading`/`PageHeader`, `MediaFrame` and the buttons and
+  links. Don't hand-roll colours, z-indices, radii or font sizes.
+- Dark sections: `Section tone="dark"`. Never hard-code `text-ivory` inside them; use `text-ink`.
+- Gold text: `text-accent-text`, never `text-champagne` on light surfaces.
+- New icons: add to `Icon.astro` (24 px grid, 1.5 px stroke).
+- New images: register the path in `src/lib/media.ts`. If it has letterbox bars, the letterbox test
+  will demand a table entry.
+- New interactive widgets (lightbox, filters): start from `IconButton` and native elements
+  (`<dialog>`, `<button>`, `<fieldset>`); verify with axe and the keyboard.
+
+## 14. Outstanding design decisions
+
+1. **Logo master.** Only a 1024 px PNG exists (gold artwork, transparent). A vector or SVG master
+   is needed for crisp rendering, a monochrome variant, and any light-background use.
+2. **Hero treatment (Stage 3).** Still photo (current) or a short muted loop from `mini-videos/`
+   with a poster image.
+3. **Service imagery.** Typographic tiles are used now. The owner may prefer photos per service
+   (MEDIA_INVENTORY §7).
+4. **Floor plans with black bottom bars** (`projects-img/2–6.webp`). These are not trimmed (contain
+   fit). Decide in Stage 4 whether to request clean exports.
+5. **Map embed** on `/iletisim/` loads Google on page view. A click-to-load or static-map decision is
+   due in Stage 6.
+6. **Footer/CTA copy.** "Projeniz hakkında konuşalım" is neutral UI copy. The owner may want their
+   own wording.

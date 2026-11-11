@@ -2,17 +2,17 @@
 
 ## 1. Summary
 
-| Concern                   | Choice                                                                                                              |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Framework                 | **Astro 7.4.10**, `output: 'static'` (pure static site generation)                                                  |
-| Language                  | TypeScript 6.0.3, `astro/tsconfigs/strictest` (strict, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, …) |
-| Styling                   | **Tailwind CSS 4.3.5** through the official `@tailwindcss/vite` plugin. Tokens are in a CSS `@theme`                |
-| Fonts                     | Self-hosted `@fontsource-variable/manrope` and `cormorant-garamond` (OFL)                                           |
-| Images                    | `astro:assets` (sharp) at build time: resized WebP with `srcset`, originals never shipped                           |
-| SEO                       | Per-page title/description/canonical, Open Graph, JSON-LD `GeneralContractor`, `@astrojs/sitemap`, `robots.txt`     |
-| Runtime JS                | One small inline module (mobile menu toggle). No framework runtime                                                  |
-| Backend / DB / CMS / auth | **None**                                                                                                            |
-| Runtime                   | Node ≥ 22.23.4 (`.nvmrc` → 24) for development and build only                                                       |
+| Concern                   | Choice                                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Framework                 | **Astro 7.4.10**, `output: 'static'` (pure static site generation)                                                                         |
+| Language                  | TypeScript 6.0.3, `astro/tsconfigs/strictest` (strict, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, …)                        |
+| Styling                   | **Tailwind CSS 4.3.5** through the official `@tailwindcss/vite` plugin. Tokens are in a CSS `@theme`                                       |
+| Fonts                     | Self-hosted `@fontsource-variable/manrope` and `cormorant-garamond` (OFL)                                                                  |
+| Images                    | `astro:assets` (sharp) at build time: resized WebP with `srcset`, originals never shipped                                                  |
+| SEO                       | Per-page title/description/canonical, Open Graph, JSON-LD `GeneralContractor`, `@astrojs/sitemap`, `robots.txt`                            |
+| Runtime JS                | One small module (mobile `<dialog>` menu wiring + header scroll shadow, ~1 KB) and a one-line inline `js` class flag. No framework runtime |
+| Backend / DB / CMS / auth | **None**                                                                                                                                   |
+| Runtime                   | Node ≥ 22.23.4 (`.nvmrc` → 24) for development and build only                                                                              |
 
 Dependencies are pinned to exact versions (`--save-exact`) and a lockfile is committed.
 
@@ -20,17 +20,18 @@ Dependencies are pinned to exact versions (`--save-exact`) and a lockfile is com
 
 ```
 .
-├── astro.config.ts          Static output, site URL, sitemap, Tailwind Vite plugin
+├── astro.config.ts          Static output, site URL, sitemap, Tailwind Vite plugin, dev-only showcase integration
 ├── src/
 │   ├── layouts/             BaseLayout.astro: <head> SEO, skip link, header, main, footer
-│   ├── components/          Container, Button, SiteHeader, SiteFooter, ContactLinks, StageNotice
+│   ├── components/          Design-system components (21) — catalogue in DESIGN_SYSTEM.md §8
+│   ├── dev/                 DesignSystem.astro — showcase, injected ONLY for `astro dev` (§9)
 │   ├── pages/               File-based routes (see §3)
 │   ├── data/                Typed content: company, navigation, services, projects, activities, legacy-redirects
 │   ├── types/content.ts     Content model, incl. Unverified<T> (VERIFIED | NEEDS_CONFIRMATION | UNKNOWN)
 │   ├── lib/                 media.ts (image/video registry), contact.ts (tel/mailto/WhatsApp), seo.ts
 │   └── styles/global.css    Tailwind import, @theme design tokens, base layer
 ├── public/                  Copied verbatim: legacy redirect stubs, robots.txt
-├── tests/                   Vitest: content integrity, redirects, media, tokens, helpers
+├── tests/                   Vitest: content, redirects, navigation, components, media, letterbox, tokens, showcase
 ├── scripts/verify-dist.mjs  Post-build static output verification
 ├── docs/                    This documentation
 └── (legacy site, unchanged) index.html, anaEkran.html, about.html, projeler.html, faaliyet.html,
@@ -140,16 +141,35 @@ reviewed option.
 
 ## 8. Quality gates
 
-| Command                | What it checks                                                                                                                      |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run format:check` | Prettier (with Astro and Tailwind class-sorting plugins)                                                                            |
-| `npm run lint`         | ESLint 10 flat config: `@eslint/js`, `typescript-eslint` strict, `eslint-plugin-astro`                                              |
-| `npm run check`        | `astro check`: type-checks `.astro` and `.ts`                                                                                       |
-| `npm run typecheck`    | `astro check` + `tsc --noEmit`                                                                                                      |
-| `npm test`             | Vitest: content integrity, redirects, media registry, design-token contrast, contact/SEO helpers                                    |
-| `npm run build`        | Static production build                                                                                                             |
-| `npm run verify:dist`  | Required routes, `lang="tr"`, title, description, exactly one `<h1>`, `<main>`, no broken internal links or `srcset`s, size budgets |
-| `npm run validate`     | All of the above in sequence                                                                                                        |
+| Command                | What it checks                                                                                                                                                                                                                                                                                                                         |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run format:check` | Prettier (with Astro and Tailwind class-sorting plugins)                                                                                                                                                                                                                                                                               |
+| `npm run lint`         | ESLint 10 flat config: `@eslint/js`, `typescript-eslint` strict, `eslint-plugin-astro` + **jsx-a11y strict** (S2)                                                                                                                                                                                                                      |
+| `npm run check`        | `astro check`: type-checks `.astro` and `.ts`                                                                                                                                                                                                                                                                                          |
+| `npm run typecheck`    | `astro check` + `tsc --noEmit`                                                                                                                                                                                                                                                                                                         |
+| `npm test`             | Vitest (113 tests): content integrity, redirects, navigation destinations, components via Astro Container API, media registry, letterbox pixels, token contrast (light + dark tone), showcase exclusion, helpers                                                                                                                       |
+| `npm run build`        | Static production build                                                                                                                                                                                                                                                                                                                |
+| `npm run verify:dist`  | Required routes, `lang="tr"`, title, description, exactly one `<h1>`, `<main>`, no broken internal links or `srcset`s, size budgets; (S2) skip link, header, primary nav, menu trigger ARIA → existing `<dialog>`, footer nav, unique ids, `alt` on every image, `rel=noopener` on new-tab links, no dev showcase in output or sitemap |
+| `npm run validate`     | All of the above in sequence                                                                                                                                                                                                                                                                                                           |
 
-There are no browser or Lighthouse tests yet. They are planned for Stage 7 (Playwright + axe +
-Lighthouse CI).
+Browser checks are not yet part of `npm run validate`. In Stage 2, axe-core (devDependency) was run
+manually in a real browser against every production route at 320/768/1280 px (results in
+`docs/STAGE_2_REPORT.md`). Automating that (Playwright + axe + Lighthouse CI) is Stage 7.
+
+## 9. Shared UI architecture (Stage 2)
+
+- **Tokens → semantic tokens → tones.** `@theme static` emits every token as a CSS custom
+  property; components use semantic names (`text-ink`, `border-line`, `text-accent-text`); the
+  `.tone-dark` class remaps them, so one component works on light and dark surfaces.
+- **Layout primitives.** `Section` (tone + rhythm + container), `PageHeader` (inner-page intro),
+  `SectionHeading`; pages compose these instead of ad-hoc wrappers.
+- **Header menu = native `<dialog>.showModal()`**: focus containment, inert background, Escape and
+  top-layer stacking come from the browser; ~40 lines of script handle `aria-expanded`, closing on
+  link selection/resize and focus restoration. Progressive enhancement: without JS the trigger is
+  hidden (`html.js` flag set inline before paint) and a "Menü" link targets the footer navigation.
+- **Media.** `MediaFrame` wraps `astro:assets` `<Image>` in a fixed-ratio box (no CLS), trims baked-in
+  letterbox bars from a measured table, and renders a neutral placeholder for `src={null}`; unknown
+  paths still fail the build.
+- **Design showcase.** `src/dev/DesignSystem.astro` is outside `src/pages`; the
+  `eyfa-dev-showcase` integration in `astro.config.ts` calls `injectRoute('/dev/tasarim-sistemi')`
+  only when `command === 'dev'`. Production exclusion is enforced twice (unit test + dist check).

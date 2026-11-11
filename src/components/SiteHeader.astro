@@ -1,54 +1,53 @@
 ---
-import { Image } from 'astro:assets';
+/**
+ * Global site header.
+ *
+ * Desktop (≥1024px): logo · primary links · phone (≥1280px) · "İletişim" CTA.
+ * Mobile/tablet: logo · menu button that opens a full-screen modal <dialog>.
+ *
+ * Why <dialog>.showModal(): the browser makes the rest of the page inert,
+ * traps focus inside the menu, closes it on Escape and puts it in the top
+ * layer — no hand-written focus trap. Script below only wires aria-expanded,
+ * closes on link selection / desktop resize, and restores focus to the
+ * trigger. Without JavaScript the menu button is hidden and a plain link to
+ * the footer navigation is shown instead (see <noscript>).
+ */
+import BrandLogo from './BrandLogo.astro';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import IconButton from './IconButton.astro';
 import { company } from '@/data/company';
-import { primaryNav } from '@/data/navigation';
-import { legacyImage } from '@/lib/media';
+import { contactNav, isCurrentPath, primaryNav } from '@/data/navigation';
+import { mailtoHref, telHref, whatsappHref } from '@/lib/contact';
 
-const current = Astro.url.pathname;
-const isCurrent = (href: string) =>
-  href === '/' ? current === '/' : current === href || current.startsWith(href);
+const pathname = Astro.url.pathname;
+const mobile = company.phones[0];
+const current = (href: string) => (isCurrentPath(href, pathname) ? 'page' : undefined);
 ---
 
-<header class="bg-charcoal text-ink-inverse sticky top-0 z-40">
-  <div class="px-gutter mx-auto flex h-18 max-w-(--container-wide) items-center justify-between">
-    <a href="/" class="flex items-center gap-3" aria-label={`${company.brandName} — Ana Sayfa`}>
-      <Image
-        src={legacyImage('logos/logo.png')}
-        alt=""
-        width={56}
-        height={56}
-        class="size-12"
-        loading="eager"
-      />
-      <span class="font-display text-xl tracking-wide max-sm:sr-only">{company.brandName}</span>
+<header
+  id="top"
+  class="tone-dark sticky top-0 z-(--z-header) transition-shadow duration-(--duration-base) data-[scrolled]:shadow-(--shadow-header)"
+  data-site-header
+>
+  <div class="px-gutter mx-auto flex h-header max-w-(--container-wide) items-center justify-between gap-6 lg:h-header-lg">
+    <a
+      href="/"
+      class="-m-1 rounded-sm p-1"
+      aria-label={`${company.brandName} — Ana Sayfa`}
+      aria-current={current('/') ?? undefined}
+    >
+      <BrandLogo height={40} lgHeight={48} alt="" eager />
     </a>
 
-    <button
-      type="button"
-      class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md lg:hidden"
-      aria-controls="primary-nav"
-      aria-expanded="false"
-      data-nav-toggle
-    >
-      <span class="sr-only">Menüyü aç/kapat</span>
-      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none">
-        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.5"></path>
-      </svg>
-    </button>
-
-    <nav
-      id="primary-nav"
-      aria-label="Ana menü"
-      class="bg-charcoal absolute inset-x-0 top-full hidden lg:static lg:block"
-      data-nav
-    >
-      <ul class="px-gutter flex flex-col gap-1 pb-6 lg:flex-row lg:gap-8 lg:p-0">
+    <nav aria-label="Ana menü" class="hidden lg:block">
+      <ul class="flex items-center gap-8 xl:gap-10">
         {primaryNav.map((item) => (
           <li>
             <a
               href={item.href}
-              aria-current={isCurrent(item.href) ? 'page' : undefined}
-              class="aria-[current=page]:text-champagne hover:text-champagne-300 block py-3 text-sm font-medium tracking-wide transition-colors lg:py-2"
+              aria-current={current(item.href)}
+              class="link-underline text-ink-muted hover:text-ink aria-[current=page]:text-accent-text py-2 text-sm font-medium tracking-(--tracking-ui) transition-colors"
             >
               {item.label}
             </a>
@@ -56,27 +55,165 @@ const isCurrent = (href: string) =>
         ))}
       </ul>
     </nav>
+
+    <div class="hidden items-center gap-6 lg:flex">
+      <a
+        href={telHref(mobile.e164)}
+        class="text-ink-muted hover:text-ink hidden items-center gap-2 text-sm font-medium tabular-nums transition-colors xl:inline-flex"
+      >
+        <Icon name="phone" size={16} class="text-accent-text" />
+        {mobile.display}
+      </a>
+      <Button
+        href={contactNav.href}
+        size="sm"
+        icon="arrow-right"
+        aria-current={current(contactNav.href)}
+      >
+        {contactNav.label}
+      </Button>
+    </div>
+
+    <div class="-mr-2 hidden max-lg:[.js_&]:block">
+      <IconButton
+        icon="menu"
+        label="Menüyü aç"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        data-menu-open
+      />
+    </div>
+    <noscript>
+      <a href="#footer-nav" class="text-sm font-semibold lg:hidden">
+        Menü
+      </a>
+    </noscript>
   </div>
 </header>
 
+<dialog
+  id="mobile-menu"
+  aria-label="Site menüsü"
+  class="mobile-menu tone-dark m-0 h-dvh max-h-none w-full max-w-none p-0 lg:hidden"
+  data-scroll-lock
+>
+  <div class="flex h-full flex-col overflow-y-auto">
+    <div class="px-gutter flex h-header shrink-0 items-center justify-between">
+      <BrandLogo height={40} />
+      <IconButton icon="close" label="Menüyü kapat" class="-mr-2" data-menu-close />
+    </div>
+
+    <nav aria-label="Mobil menü" class="px-gutter flex-1 pt-6 pb-10">
+      <ol class="border-line border-t">
+        {[...primaryNav, contactNav].map((item, index) => (
+          <li class="border-line border-b">
+            <a
+              href={item.href}
+              aria-current={current(item.href)}
+              class="group/item aria-[current=page]:text-accent-text flex min-h-16 items-center gap-5 py-3"
+              data-menu-link
+            >
+              <span class="text-accent-text w-6 text-xs font-semibold tabular-nums">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span class="font-display flex-1 text-3xl">{item.label}</span>
+              <Icon
+                name="arrow-right"
+                size={20}
+                class="text-ink-muted transition-transform group-hover/item:translate-x-1"
+              />
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="px-gutter border-line border-t pt-8 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <p class="eyebrow">İletişim</p>
+      <div class="mt-5 grid gap-3 sm:grid-cols-2">
+        <Button href={telHref(mobile.e164)} variant="secondary" leadingIcon="phone" fullWidth>
+          {mobile.display}
+        </Button>
+        <Button
+          href={whatsappHref(company.whatsapp.e164)}
+          external
+          leadingIcon="whatsapp"
+          fullWidth
+        >
+          WhatsApp
+        </Button>
+      </div>
+      <a
+        href={mailtoHref(company.email)}
+        class="link-underline text-ink-muted mt-5 inline-block text-sm"
+      >
+        {company.email}
+      </a>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* No open/close animation on purpose: the menu must never be able to stay
+     invisible because a transition was throttled or skipped. */
+  .mobile-menu {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+  }
+  .mobile-menu::backdrop {
+    background: transparent;
+  }
+</style>
+
 <script>
-  // Progressive enhancement: without JS the menu is hidden on small screens,
-  // so the footer repeats every primary link (see SiteFooter.astro).
-  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
-  const nav = document.querySelector<HTMLElement>('[data-nav]');
-  if (toggle && nav) {
-    const setOpen = (open: boolean) => {
-      toggle.setAttribute('aria-expanded', String(open));
-      nav.classList.toggle('hidden', !open);
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const dialog = document.querySelector<HTMLDialogElement>('#mobile-menu');
+  const openButton = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+
+  // Header elevation after scrolling: toggles a shadow only (no size change → no layout shift).
+  if (header) {
+    let ticking = false;
+    const update = () => {
+      header.toggleAttribute('data-scrolled', window.scrollY > 8);
+      ticking = false;
     };
-    toggle.addEventListener('click', () => {
-      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+
+  if (dialog && openButton) {
+    const close = () => {
+      if (dialog.open) dialog.close();
+    };
+
+    openButton.addEventListener('click', () => {
+      dialog.showModal();
+      openButton.setAttribute('aria-expanded', 'true');
     });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
-        setOpen(false);
-        toggle.focus();
-      }
+
+    // Fires for Escape, the close button and link selection alike.
+    dialog.addEventListener('close', () => {
+      openButton.setAttribute('aria-expanded', 'false');
+      openButton.focus();
+    });
+
+    dialog.querySelector('[data-menu-close]')?.addEventListener('click', close);
+    dialog.querySelectorAll('[data-menu-link]').forEach((link) => {
+      link.addEventListener('click', close);
+    });
+
+    // If the viewport grows to desktop width, the dialog is no longer needed.
+    window.matchMedia('(min-width: 64rem)').addEventListener('change', (event) => {
+      if (event.matches) close();
     });
   }
 </script>

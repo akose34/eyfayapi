@@ -8,6 +8,10 @@
  *  - each HTML page has lang="tr", a <title>, a meta description and one <h1>
  *  - every internal href/src in generated pages resolves to a file in dist/
  *  - asset size budgets (single file and total)
+ *  - shared chrome on every page: skip link → #main, site header, primary nav,
+ *    mobile-menu trigger whose aria-controls points at an existing <dialog>,
+ *    footer; unique ids; alt on every <img>; rel="noopener" on target=_blank
+ *  - the development-only design showcase is NOT in the production output
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -72,6 +76,17 @@ const resolveInternal = (url, fromFile) => {
     : existsSync(join(target, 'index.html'));
 };
 
+// The design showcase is injected only for `astro dev` (astro.config.ts).
+for (const f of files) {
+  if (rel(f).startsWith('dev/') || /tasarim-sistemi/.test(rel(f))) {
+    fail(`development-only showcase leaked into production output: ${rel(f)}`);
+  }
+}
+if (existsSync(join(DIST, 'sitemap-0.xml'))) {
+  const sitemap = readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8');
+  if (/tasarim-sistemi|\/dev\//.test(sitemap)) fail('sitemap lists the development showcase');
+}
+
 const redirectStubs = new Set(['about.html', 'anaEkran.html', 'faaliyet.html', 'projeler.html']);
 
 for (const f of files.filter((x) => x.endsWith('.html'))) {
@@ -85,6 +100,39 @@ for (const f of files.filter((x) => x.endsWith('.html'))) {
     const h1 = (html.match(/<h1[\s>]/g) ?? []).length;
     if (h1 !== 1) fail(`${name}: expected exactly one <h1>, found ${h1}`);
     if (!/<main id="main"/.test(html)) fail(`${name}: missing <main id="main">`);
+
+    // Shared chrome
+    if (!/<a href="#main"[^>]*>\s*İçeriğe geç/.test(html))
+      fail(`${name}: missing skip link to #main`);
+    if (!/<header[^>]+data-site-header/.test(html)) fail(`${name}: missing site header`);
+    if (!/<nav aria-label="Ana menü"/.test(html)) fail(`${name}: missing primary navigation`);
+    if (!/<footer[^>]*>/.test(html) || !/id="footer-nav"/.test(html))
+      fail(`${name}: missing footer navigation`);
+    const trigger = html.match(/<button[^>]*data-menu-open[^>]*>/)?.[0] ?? '';
+    const controls = trigger.match(/aria-controls="([^"]+)"/)?.[1];
+    if (
+      !controls ||
+      !/aria-expanded="false"/.test(trigger) ||
+      !/aria-label="[^"]+"/.test(trigger)
+    ) {
+      fail(`${name}: mobile menu trigger lacks aria-controls / aria-expanded / aria-label`);
+    } else if (!new RegExp(`<dialog[^>]+id="${controls}"`).test(html)) {
+      fail(`${name}: aria-controls="${controls}" does not reference a <dialog>`);
+    }
+
+    // Unique ids
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+    const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+    if (dupes.length) fail(`${name}: duplicate id(s): ${[...new Set(dupes)].join(', ')}`);
+
+    // Images need alt; new-tab links need rel=noopener
+    for (const [tag] of html.matchAll(/<img\b[^>]*>/g)) {
+      // `alt` may be serialised bare (= alt="", decorative) — both are valid.
+      if (!/\salt(=|[\s/>])/.test(tag)) fail(`${name}: <img> without alt → ${tag.slice(0, 80)}`);
+    }
+    for (const [tag] of html.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)) {
+      if (!/rel="[^"]*noopener/.test(tag)) fail(`${name}: target=_blank without rel=noopener`);
+    }
   }
   for (const [, attr, url] of html.matchAll(/\s(href|src|srcset)="([^"]+)"/g)) {
     const urls = attr === 'srcset' ? url.split(',').map((s) => s.trim().split(/\s+/)[0]) : [url];

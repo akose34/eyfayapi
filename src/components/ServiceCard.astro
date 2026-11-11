@@ -1,0 +1,31 @@
+---
+/**
+ * Service tile: index number · title · verified description. Used on the
+ * homepage and /hizmetler/. The legacy PNG icons are intentionally not used
+ * (inconsistent sizes/styles — see docs/MEDIA_INVENTORY.md §1).
+ */
+import type { Service } from '@/types/content';
+
+interface Props {
+  service: Service;
+  index: number;
+  headingLevel?: 'h2' | 'h3';
+}
+const { service, index, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<article
+  id={service.id}
+  class="bg-surface-raised border-line group hover:border-accent relative flex h-full flex-col rounded-lg border p-8 transition-colors duration-(--duration-base) lg:p-10"
+>
+  <span class="text-accent-text text-xs font-semibold tracking-(--tracking-eyebrow) tabular-nums">
+    {String(index + 1).padStart(2, '0')}
+  </span>
+  <span
+    aria-hidden="true"
+    class="bg-accent mt-6 h-px w-10 transition-[width] duration-(--duration-slow) ease-(--ease-out-quiet) group-hover:w-16"
+  ></span>
+  <Heading class="mt-6 text-3xl">{service.title}</Heading>
+  <p class="text-ink-muted mt-4">{service.description}</p>
+</article>

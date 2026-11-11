@@ -2,7 +2,7 @@
 /** Horizontal page container. Widths map to --container-* tokens. */
 interface Props {
   width?: 'prose' | 'content' | 'wide';
-  class?: string;
+  class?: string | undefined;
 }
 const { width = 'content', class: className } = Astro.props;
 const widths = {

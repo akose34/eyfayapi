@@ -1,0 +1,323 @@
+---
+/**
+ * DEVELOPMENT-ONLY design system showcase.
+ *
+ * This file lives outside src/pages/ and is injected as /dev/tasarim-sistemi/
+ * by the `eyfa-dev-showcase` integration in astro.config.ts ONLY when running
+ * `astro dev`. It is never part of `astro build` output — verified by
+ * scripts/verify-dist.mjs and tests/showcase.test.ts.
+ */
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Button from '@/components/Button.astro';
+import ContactCTA from '@/components/ContactCTA.astro';
+import ContactLinks from '@/components/ContactLinks.astro';
+import Divider from '@/components/Divider.astro';
+import EmptyState from '@/components/EmptyState.astro';
+import Eyebrow from '@/components/Eyebrow.astro';
+import Icon, { type IconName } from '@/components/Icon.astro';
+import IconButton from '@/components/IconButton.astro';
+import MediaFrame from '@/components/MediaFrame.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import Section from '@/components/Section.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import ServiceCard from '@/components/ServiceCard.astro';
+import StageNotice from '@/components/StageNotice.astro';
+import TextLink from '@/components/TextLink.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { projects } from '@/data/projects';
+import { services } from '@/data/services';
+
+const colors = [
+  ['charcoal', '#151C1E', 'Ana koyu yüzey, metin'],
+  ['champagne', '#C5A46D', 'Vurgu dolgusu, koyu zeminde altın metin'],
+  ['champagne-700', '#7D6233', 'Açık zeminde altın metin'],
+  ['champagne-300', '#DCC49A', 'Altın buton hover'],
+  ['ivory', '#F5F2EB', 'Sayfa zemini'],
+  ['ivory-200', '#EBE6DA', 'Kum bandı'],
+  ['white', '#FFFFFF', 'Kart, çizim zemini'],
+  ['charcoal-800', '#1F2729', 'Koyu yükseltilmiş yüzey'],
+] as const;
+
+const typeScale = [
+  ['display', '--text-display'],
+  ['5xl', '--text-5xl'],
+  ['4xl', '--text-4xl'],
+  ['3xl', '--text-3xl'],
+  ['2xl', '--text-2xl'],
+] as const;
+
+const icons: IconName[] = [
+  'arrow-right',
+  'arrow-up-right',
+  'arrow-up',
+  'chevron-right',
+  'menu',
+  'close',
+  'phone',
+  'mail',
+  'map-pin',
+  'image-off',
+  'whatsapp',
+  'instagram',
+];
+const spacing = [1, 2, 3, 4, 6, 8, 10, 12, 16, 24];
+const sample = projects.slice(0, 3);
+const planProject = projects.find((p) => p.cover.kind === 'floor-plan');
+---
+
+<BaseLayout title="Tasarım sistemi (geliştirme)" noindex>
+  <PageHeader
+    title="Tasarım sistemi"
+    eyebrow="Yalnızca geliştirme ortamı"
+    lead="Bileşenlerin ve token’ların görsel inceleme sayfası. Üretim çıktısına dahil edilmez."
+    breadcrumbs={[{ label: 'Tasarım sistemi' }]}
+    width="wide"
+  />
+
+  <Section width="wide" labelledby="ds-colors">
+    <SectionHeading eyebrow="01" title="Renkler" id="ds-colors" size="sub" />
+    <ul class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {colors.map(([name, hex, use]) => (
+        <li class="border-line overflow-hidden rounded-lg border bg-white">
+          <div class="h-24" style={`background:${hex}`}></div>
+          <div class="p-4 text-sm">
+            <p class="font-semibold">{name}</p>
+            <p class="text-ink-muted font-mono text-xs">{hex}</p>
+            <p class="text-ink-muted mt-2 text-xs">{use}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section width="wide" tone="white" labelledby="ds-type">
+    <SectionHeading eyebrow="02" title="Tipografi" id="ds-type" size="sub" />
+    <div class="mt-10 grid gap-8">
+      {typeScale.map(([label, token]) => (
+        <div class="border-line grid gap-2 border-b pb-6 md:grid-cols-[8rem_1fr] md:items-baseline">
+          <p class="text-ink-muted font-mono text-xs">{label}</p>
+          <p
+            class="font-display"
+            style={`font-size:var(${token});line-height:var(${token}--line-height)`}
+          >
+            Geleceği İnşa Ediyoruz — ĞÜŞİÖÇ ğüşıöç
+          </p>
+        </div>
+      ))}
+      <div class="grid gap-6 md:grid-cols-[8rem_1fr]">
+        <p class="text-ink-muted font-mono text-xs">gövde</p>
+        <div class="prose-eyfa">
+          <p>
+            Manrope gövde metni (17–19px, satır yüksekliği 1.7, en fazla ~68 karakter). Türkçe
+            karakterler: ğ, ü, ş, ı, İ, ö, ç — Iğdır, İstanbul, Şişli, Üsküdar, Çekmeköy.
+          </p>
+          <ul>
+            <li>Liste öğesi altın çizgi işaretiyle</li>
+            <li>İkinci liste öğesi</li>
+          </ul>
+        </div>
+      </div>
+      <div class="grid gap-6 md:grid-cols-[8rem_1fr]">
+        <p class="text-ink-muted font-mono text-xs">eyebrow</p>
+        <div class="flex flex-wrap gap-8">
+          <Eyebrow>Kurumsal</Eyebrow>
+          <Eyebrow rule={false}>Çizgisiz etiket</Eyebrow>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section width="wide" labelledby="ds-buttons">
+    <SectionHeading eyebrow="03" title="Butonlar ve bağlantılar" id="ds-buttons" size="sub" />
+    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+      <div class="border-line rounded-lg border bg-white p-8">
+        <p class="eyebrow">Açık zemin</p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <Button icon="arrow-right">Birincil</Button>
+          <Button variant="secondary">İkincil</Button>
+          <Button leadingIcon="phone" variant="secondary">
+            Telefon
+          </Button>
+          <Button disabled>Devre dışı</Button>
+        </div>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <Button size="sm">Küçük</Button>
+          <Button size="md">Orta</Button>
+          <Button size="lg" icon="arrow-right">
+            Büyük
+          </Button>
+        </div>
+        <div class="mt-6 flex flex-wrap items-center gap-6">
+          <TextLink href="#ds-buttons">Metin bağlantısı</TextLink>
+          <TextLink href="#ds-buttons" tone="ink">
+            Mürekkep tonu
+          </TextLink>
+          <TextLink href="https://www.instagram.com/eyfa.yapi/" external>
+            Harici
+          </TextLink>
+          <IconButton icon="close" label="Örnek kapat" variant="outline" />
+          <IconButton icon="menu" label="Örnek menü" />
+        </div>
+      </div>
+      <div class="tone-dark rounded-lg p-8">
+        <p class="eyebrow">Koyu zemin</p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <Button icon="arrow-right">Birincil</Button>
+          <Button variant="secondary">İkincil</Button>
+          <Button variant="light">Açık</Button>
+          <Button disabled variant="secondary">
+            Devre dışı
+          </Button>
+        </div>
+        <div class="mt-6 flex flex-wrap items-center gap-6">
+          <TextLink href="#ds-buttons">Metin bağlantısı</TextLink>
+          <TextLink href="#ds-buttons" tone="ink">
+            Mürekkep tonu
+          </TextLink>
+          <IconButton icon="close" label="Örnek kapat (koyu)" variant="outline" />
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section width="wide" tone="white" labelledby="ds-nav">
+    <SectionHeading
+      eyebrow="04"
+      title="Gezinme durumları"
+      id="ds-nav"
+      size="sub"
+      lead="Üst menünün kendisi bu sayfanın başlığında canlıdır; aşağıda durumlar yan yana gösterilir."
+    />
+    <div class="tone-dark mt-10 flex flex-wrap items-center gap-8 rounded-lg px-8 py-6 text-sm font-medium">
+      <span class="link-underline text-ink-muted">Varsayılan</span>
+      <span class="link-underline is-underlined text-ink">Hover / odak</span>
+      <span class="link-underline is-underlined text-accent-text">Geçerli sayfa</span>
+    </div>
+    <div class="mt-8">
+      <p class="eyebrow">Sayfa konumu</p>
+      <Breadcrumbs
+        class="mt-4"
+        label="Örnek sayfa konumu"
+        items={[{ label: 'Projeler', href: '/projeler/' }, { label: 'Proje 01' }]}
+      />
+    </div>
+    <div class="mt-8">
+      <p class="eyebrow">İkonlar</p>
+      <ul class="mt-4 flex flex-wrap gap-6">
+        {icons.map((name) => (
+          <li class="text-ink-muted flex flex-col items-center gap-2 text-xs">
+            <Icon name={name} size={24} class="text-ink" />
+            {name}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Section>
+
+  <Section width="wide" labelledby="ds-sections">
+    <SectionHeading eyebrow="05" title="Bölüm başlıkları" id="ds-sections" size="sub" />
+    <div class="mt-10 grid gap-14">
+      <SectionHeading
+        eyebrow="Projelerimiz"
+        title="Bölüm başlığı, eylem ile"
+        lead="Bölüm girişi en fazla ~68 karakter genişliğinde, sakin bir ritimle."
+        level="h3"
+      >
+        <TextLink slot="action" href="/projeler/">
+          Tüm projeler
+        </TextLink>
+      </SectionHeading>
+      <SectionHeading
+        eyebrow="Ortalanmış"
+        title="Ortalanmış başlık"
+        align="center"
+        level="h3"
+        size="sub"
+      />
+      <Divider />
+      <Divider variant="accent" />
+    </div>
+  </Section>
+
+  <Section width="wide" tone="sand" labelledby="ds-cards">
+    <SectionHeading eyebrow="06" title="Kartlar ve görseller" id="ds-cards" size="sub" />
+    <ul class="mt-10 grid gap-x-(--spacing-grid) gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+      {sample.map((project) => (
+        <li>
+          <ProjectCard project={project} />
+        </li>
+      ))}
+    </ul>
+    <ul class="mt-14 grid gap-(--spacing-grid) md:grid-cols-3">
+      {services.map((service, index) => (
+        <li>
+          <ServiceCard service={service} index={index} />
+        </li>
+      ))}
+    </ul>
+    <div class="mt-14 grid gap-(--spacing-grid) sm:grid-cols-2 lg:grid-cols-4">
+      <MediaFrame
+        src="projects-img/24.webp"
+        alt="Örnek fotoğraf"
+        aspect="portrait"
+        caption="portrait · 4:5"
+        sizes="25vw"
+      />
+      <MediaFrame
+        src="projects-img/27.webp"
+        alt="Örnek fotoğraf"
+        aspect="photo"
+        caption="photo · 3:2"
+        sizes="25vw"
+      />
+      {planProject && (
+        <MediaFrame
+          src={planProject.cover.src}
+          alt="Örnek çizim"
+          fit="contain"
+          caption="contain · çizimler"
+          sizes="25vw"
+        />
+      )}
+      <MediaFrame src={null} alt="Görsel henüz yok" caption="eksik görsel" />
+    </div>
+  </Section>
+
+  <Section width="wide" labelledby="ds-utility">
+    <SectionHeading eyebrow="07" title="Yardımcı bileşenler" id="ds-utility" size="sub" />
+    <div class="mt-10 grid gap-(--spacing-grid) lg:grid-cols-3">
+      <EmptyState
+        title="Sonuç bulunamadı"
+        description="Seçili filtreye uygun proje yok."
+        icon="image-off"
+      />
+      <StageNotice title="Onay bekleyen içerik">
+        Bu kutu yalnızca doğrulanmamış içerik için kullanılır.
+      </StageNotice>
+      <ContactLinks address />
+    </div>
+  </Section>
+
+  <Section width="wide" tone="white" labelledby="ds-spacing">
+    <SectionHeading
+      eyebrow="08"
+      title="Boşluk ölçeği"
+      id="ds-spacing"
+      size="sub"
+      lead="Tailwind 4px temel ölçeği; bölüm ritmi py-section / py-section-sm ile."
+    />
+    <ul class="mt-10 grid gap-3">
+      {spacing.map((n) => (
+        <li class="flex items-center gap-4 text-xs">
+          <span class="text-ink-muted w-16 font-mono">
+            {n} · {n * 4}px
+          </span>
+          <span class="bg-accent h-3" style={`width:${n * 4}px`}></span>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <ContactCTA headingId="ds-cta" />
+</BaseLayout>

@@ -40,6 +40,10 @@ const touchIcon = await getImage({ src: legacyImage('logos/logo.png'), width: 18
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Marks JS availability before first paint (progressive enhancement of the mobile menu). -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -81,10 +85,10 @@ const touchIcon = await getImage({ src: legacyImage('logos/logo.png'), width: 18
       })}
     />
   </head>
-  <body class="flex min-h-dvh flex-col">
+  <body class="bg-surface text-ink flex min-h-dvh flex-col">
     <a
       href="#main"
-      class="bg-champagne text-charcoal sr-only z-50 rounded-md px-4 py-3 font-semibold focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      class="bg-accent text-on-accent sr-only z-(--z-skip-link) rounded-md px-5 py-3 text-sm font-semibold focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
     >
       İçeriğe geç
     </a>

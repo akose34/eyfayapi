@@ -69,3 +69,30 @@ export function legacyVideo(path: string): string {
   if (!url) throw new Error(`[media] Unknown legacy video "${path}".`);
   return url;
 }
+
+/**
+ * Black letterbox bars baked into drone stills (exported video frames), as a
+ * fraction of image height. Measured from the pixels; re-verified by
+ * tests/letterbox.test.ts. MediaFrame trims them for cover-fit images so the
+ * authentic files never need to be edited. Values are rounded UP slightly.
+ */
+const DRONE_STILL = { top: 0.09, bottom: 0.05 } as const;
+const DRONE_STILLS = [
+  'img/Eyfa-yapi-resim17.png',
+  ...[
+    7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    34,
+  ].map((n) => `projects-img/${n}.webp`),
+];
+
+export interface Letterbox {
+  top: number;
+  bottom: number;
+}
+
+export const LETTERBOX: Readonly<Record<string, Letterbox>> = Object.fromEntries(
+  DRONE_STILLS.map((path) => [path, DRONE_STILL]),
+);
+
+export const letterboxOf = (path: string): Letterbox | undefined =>
+  LETTERBOX[path.replace(/^\/+/, '')];

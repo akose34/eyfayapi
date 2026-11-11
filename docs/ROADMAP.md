@@ -5,9 +5,9 @@ the owner's go-ahead. Nothing is pushed, merged or deployed without explicit app
 
 | Stage | Title                                                | Status                                           |
 | ----- | ---------------------------------------------------- | ------------------------------------------------ |
-| 1     | Project foundation and migration audit               | **Done (this commit)**                           |
-| 2     | Shared UI system                                     | Not started                                      |
-| 3     | Homepage                                             | Not started                                      |
+| 1     | Project foundation and migration audit               | **Done** (`06f997d`)                             |
+| 2     | Premium design system and shared UI                  | **Done** (see `STAGE_2_REPORT.md`)               |
+| 3     | Homepage                                             | **Next**                                         |
 | 4     | Projects: listing, detail, galleries                 | Not started (blocked on owner content for names) |
 | 5     | Corporate pages: About, Services, Activities         | Not started                                      |
 | 6     | Contact, conversion and SEO                          | Not started                                      |
@@ -22,27 +22,34 @@ Astro + TS strict + Tailwind v4 static scaffold. Typed data containing only veri
 content. Design tokens. Shared layout. Route placeholders. Legacy redirect stubs. Tooling (Prettier,
 ESLint, astro check, Vitest, dist verification). Full documentation set.
 
-## Stage 2 — Shared UI system
+## Stage 2 — Premium design system and shared UI ✅
 
-- Final header: transparent-over-hero variant, scroll state, accessible mobile menu panel with
-  focus trap.
-- Footer composition, a contact strip and a floating WhatsApp button (with a respectful position and
-  a reduced-motion variant).
-- Section primitives: `Section`, `SectionHeading` (eyebrow + title + lead), `Divider`, `Stat`
-  (only with verified numbers).
-- Media primitives: `ResponsiveImage` (letterbox crop, art direction), `Figure`, `Lightbox`
-  (vanilla, keyboard and swipe, `aria-modal`).
-- Card patterns: project card, service card, activity card.
-- An icon set (inline SVG, single stroke weight) to replace the inconsistent PNG service icons.
-- Logo: request an SVG/transparent master from the owner and create a monochrome variant.
-- A component catalogue page (`/_styleguide`, excluded from build output in production).
-- Exit criteria: every component passes keyboard and screen-reader checks and is documented in
-  `DESIGN_SYSTEM.md`.
+Delivered (details: `DESIGN_SYSTEM.md`, `STAGE_2_REPORT.md`):
+
+- Tone-aware semantic tokens, a fluid type scale with paired line-heights, aspect, z-index and
+  motion tokens.
+- Sticky header with desktop nav, a phone link and a contact CTA. Accessible full-screen `<dialog>`
+  mobile menu.
+- Redesigned footer. A component library of 21 components. Letterbox trimming for drone stills.
+- All routes migrated to `PageHeader`, `Section` and the shared components.
+- Dev-only design showcase at `/dev/tasarim-sistemi/`, excluded from production.
+- jsx-a11y lint. Component, navigation, letterbox, showcase and dark-tone contrast tests.
+  Extended dist verification.
+
+Deferred from the original Stage 2 sketch, deliberately:
+
+- **Lightbox**: built in Stage 4, where the gallery needs it.
+- **Floating WhatsApp button**: decide in Stage 6. It covers content on small screens.
+- **Stat component**: there are no verified figures.
+- **Transparent-over-hero header variant**: Stage 3, together with the hero.
 
 ## Stage 3 — Homepage
 
-- Hero: authentic photo (`img/Eyfa-yapi-resim17.png`, cropped) or one short muted loop with a
-  poster image. Reduced motion shows the poster only.
+- Hero: authentic photo (`img/Eyfa-yapi-resim17.png`; letterbox already trimmed by `MediaFrame`)
+  or one short muted loop with a poster image. Reduced motion shows the poster only. Decide
+  whether the header becomes transparent over the hero.
+- Use `Section`, `SectionHeading`, `MediaFrame`, `ProjectCard`, `ServiceCard`, `ContactCTA` and
+  `TextLink`/`Button` from Stage 2. No new one-off styling.
 - Sections: introduction (legacy copy), services, featured projects (only confirmed ones), a
   corporate band, and a contact CTA.
 - No auto-advancing carousels without pause controls.
@@ -100,12 +107,12 @@ ESLint, astro check, Vitest, dist verification). Full documentation set.
   Resolve the `emlakçi-logo.png` Unicode duplicate (PROJECT_AUDIT §6). Untrack `.DS_Store`. Archive
   `slider-photos/` duplicates. Never delete without a recoverable copy in Git history.
 
-## Pre-Stage-2 blockers and risks
+## Open blockers and risks (updated after Stage 2)
 
 1. **Project names and facts are unknown.** Stage 4 cannot publish real project pages until the
    owner answers the checklist.
-2. **The logo exists only as a 1024 px PNG on black.** A vector or transparent master is needed for
-   a premium header.
+2. **The logo exists only as a 1024 px transparent PNG.** It works on dark surfaces through a CSS
+   crop. A vector master is still needed for sharpness, a monochrome variant and any light-surface use.
 3. **Media licensing** (Autodesk educational watermark, THERMOsiding, ARTRIA/GOKTUG branding,
    YILMAZ İNŞAAT signage) must be cleared before those files are used.
 4. **Node ≥ 22.23.4 is required.** On this Mac use `/opt/homebrew/opt/node@24/bin` (keg-only) or

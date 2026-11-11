@@ -38,6 +38,13 @@ export const legacyCopy = {
     'Mimarlık, mühendislik ve müteahhitlik alanlarında güçlü birikimimizle, modern ve güvenli yapılar inşa ediyoruz. Her projede kalite, estetik ve müşteri memnuniyetini ön planda tutarak, hayallerinizi gerçeğe dönüştürüyoruz.',
   projectsIntro:
     "Konut projelerinden ticari yapılara, altyapı çalışmalarından kentsel dönüşüm projelerine kadar geniş bir yelpazede hizmet veriyoruz. İşte Eyfa Yapı'nın başarıyla tamamladığı ve sürdürdüğü projelerden bazıları.",
+  /**
+   * One-line positioning for the footer. Condensed from aboutCompany[0]
+   * (about.html) without adding any fact: founding year, city and field of
+   * activity are unchanged. Verified by tests/content.test.ts.
+   */
+  positioning:
+    '2004 yılında İstanbul’da kurulan EYFA Yapı, konut ve taahhüt projeleri alanında faaliyet göstermektedir.',
   metaDescription:
     'Eyfa Yapı; inşaat, gayrimenkul ve mimari projelerde güvenilir çözümler sunar. Modern yapılar ve kaliteli yaşam alanları için bizimle iletişime geçin.',
   /** about.html — company paragraph (verbatim). */

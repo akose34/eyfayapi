@@ -1,19 +1,26 @@
 ---
 import Button from '@/components/Button.astro';
-import Container from '@/components/Container.astro';
+import Eyebrow from '@/components/Eyebrow.astro';
+import Section from '@/components/Section.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Sayfa bulunamadı" noindex>
-  <Container width="prose" class="py-section text-center">
-    <p class="eyebrow">404</p>
-    <h1 class="mt-3 text-(length:--text-5xl)">Sayfa bulunamadı</h1>
-    <p class="text-ink-muted mt-6">Aradığınız sayfa taşınmış veya kaldırılmış olabilir.</p>
-    <div class="mt-10 flex flex-wrap justify-center gap-4">
-      <Button href="/">Ana sayfaya dön</Button>
-      <Button href="/projeler/" variant="secondary">
-        Projelerimiz
-      </Button>
+  <Section tone="dark" width="prose" class="border-line border-t">
+    <div class="flex flex-col items-center py-8 text-center">
+      <Eyebrow rule={false}>Hata 404</Eyebrow>
+      <h1 class="mt-5 text-5xl">Sayfa bulunamadı</h1>
+      <p class="text-ink-muted mt-6 max-w-md text-lg">
+        Aradığınız sayfa taşınmış veya kaldırılmış olabilir.
+      </p>
+      <div class="mt-10 flex flex-wrap justify-center gap-3">
+        <Button href="/" icon="arrow-right">
+          Ana sayfaya dön
+        </Button>
+        <Button href="/projeler/" variant="secondary">
+          Projelerimiz
+        </Button>
+      </div>
     </div>
-  </Container>
+  </Section>
 </BaseLayout>
