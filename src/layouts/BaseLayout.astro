@@ -42,8 +42,6 @@ const canonical = canonicalUrl(Astro.url.pathname, site);
 const robots = robotsContent({ noindex: noindex || indexingDisabled() });
 const ogUrl = new URL(ogImagePath(og), site).toString();
 const ogImageAlt = ogAlt(og);
-const favicon = await getImage({ src: legacyImage('logos/logo.png'), width: 64, format: 'png' });
-const touchIcon = await getImage({ src: legacyImage('logos/logo.png'), width: 180, format: 'png' });
 const logo = await getImage({ src: legacyImage('logos/logo.png'), width: 512, format: 'png' });
 const orgId = new URL('/#organization', site).toString();
 ---
@@ -62,8 +60,13 @@ const orgId = new URL('/#organization', site).toString();
     {hasCanonical && <link rel="canonical" href={canonical} />}
     {robots && <meta name="robots" content={robots} />}
     <meta name="theme-color" content="#151C1E" />
-    <link rel="icon" type="image/png" href={favicon.src} />
-    <link rel="apple-touch-icon" href={touchIcon.src} />
+    <!-- Favicons: stable root URLs generated from the official logo
+         (scripts/generate-favicons.mjs). /favicon.ico is also the crawler fallback. -->
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content="website" />
