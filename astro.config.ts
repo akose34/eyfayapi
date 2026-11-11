@@ -84,8 +84,12 @@ export default defineConfig({
   integrations: [
     devShowcase(),
     sitemap({
-      // Placeholder project detail pages are excluded until names are confirmed.
-      filter: (page) => !page.includes('/projeler/proje-'),
+      // Placeholder project detail pages are excluded until names are confirmed;
+      // retired routes are redirect documents (src/data/legacy-redirects.ts).
+      filter: (page) =>
+        !page.includes('/projeler/proje-') &&
+        !page.endsWith('/faaliyetlerimiz/') &&
+        !page.endsWith('/faaliyetler/'),
     }),
   ],
   vite: {

@@ -107,8 +107,10 @@ describe('about imagery', () => {
 });
 
 describe('activities attribution', () => {
-  it('shows only clearly attributable activities', () => {
-    expect(publicActivities().map((a) => a.id)).toEqual(['sugiad']);
+  it('shows only clearly attributable activities (none since owner decision C2)', () => {
+    // SUGİAD is the founder's personal membership (owner, 2026-11-11): never public.
+    expect(publicActivities()).toEqual([]);
+    expect(activities.find((a) => a.id === 'sugiad')?.visibility).toBe('withheld');
   });
 
   it('withheld items and images explain why', () => {

@@ -12,8 +12,8 @@ export const primaryNav = [
   { label: 'Hakkımızda', href: '/hakkimizda/' },
   { label: 'Projeler', href: '/projeler/' },
   { label: 'Hizmetler', href: '/hizmetler/' },
-  // Pre-launch: Faaliyetler moved to the footer ("Faaliyetlerimiz") — the page has one
-  // verified item. The route, its footer link and /faaliyet.html redirect are unchanged.
+  // Activities retired (owner decision C2, 2026-11-11): no verified corporate activity;
+  // /faaliyetlerimiz/ redirects to /hakkimizda/ (src/data/legacy-redirects.ts).
 ] as const satisfies readonly NavItem[];
 
 /** The contact route is presented as the header's call-to-action button. */
@@ -25,7 +25,6 @@ export const footerNav = {
     title: 'Kurumsal',
     links: [
       { label: 'Hakkımızda', href: '/hakkimizda/' },
-      { label: 'Faaliyetlerimiz', href: '/faaliyetlerimiz/' },
       { label: 'İletişim', href: '/iletisim/' },
     ],
   },

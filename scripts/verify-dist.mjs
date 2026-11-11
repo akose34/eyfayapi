@@ -55,7 +55,8 @@ const REQUIRED = [
   'hizmetler/index.html',
   'projeler/index.html',
   'projeler/proje-01/index.html',
-  'faaliyetlerimiz/index.html',
+  'faaliyetlerimiz/index.html', // retired → redirect document (owner decision C2)
+  'faaliyetler/index.html', // retired short form → redirect document
   'iletisim/index.html',
   // legacy URL redirect documents
   'about.html',
@@ -371,6 +372,38 @@ for (let n = 1; n <= 11; n++) {
   for (const slug of ['proje-07', 'proje-09', 'proje-10', 'proje-11']) {
     const html = readFileSync(join(DIST, `projeler/${slug}/index.html`), 'utf8');
     if (!isRedirectStub(html)) fail(`${slug}: drawing-only project must be a redirect document`);
+  }
+
+  // Owner decision C2 (2026-11-11): SUGİAD is the founder's personal membership.
+  // It must not appear anywhere on the site (text, alt, meta, JSON-LD), and the
+  // retired Activities routes must be noindex redirect documents to About that
+  // nothing links to.
+  for (const f of files.filter((x) => x.endsWith('.html'))) {
+    const raw = readFileSync(f, 'utf8');
+    if (/SUG[İI]AD/i.test(raw))
+      fail(`${rel(f)}: mentions SUGİAD (personal membership, not corporate)`);
+  }
+  const RETIRED = {
+    'faaliyetlerimiz/index.html': '/hakkimizda/',
+    'faaliyetler/index.html': '/hakkimizda/',
+  };
+  for (const [file, to] of Object.entries(RETIRED)) {
+    const html = readFileSync(join(DIST, file), 'utf8');
+    if (!html.includes(`<meta http-equiv="refresh" content="0; url=${to}">`))
+      fail(`${file}: retired route must redirect to ${to}`);
+    if (!html.includes('<meta name="robots" content="noindex">'))
+      fail(`${file}: retired route must be noindex`);
+    if (!html.includes(`<link rel="canonical" href="https://eyfayapi.net${to}">`))
+      fail(`${file}: canonical must point to ${to}`);
+  }
+  const legacyActivities = readFileSync(join(DIST, 'faaliyet.html'), 'utf8');
+  if (!legacyActivities.includes('url=/hakkimizda/'))
+    fail('faaliyet.html must redirect to /hakkimizda/');
+  for (const f of files.filter((x) => x.endsWith('.html'))) {
+    const name = rel(f);
+    if (Object.hasOwn(RETIRED, name)) continue;
+    if (/href="\/faaliyetler(imiz)?\/?"/.test(readFileSync(f, 'utf8')))
+      fail(`${name}: links to a retired Activities route`);
   }
 }
 

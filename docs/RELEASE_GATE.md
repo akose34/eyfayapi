@@ -131,3 +131,17 @@ results below.
 - **GitHub settings** (still unchanged): the `github-pages` environment has no reviewer. Add
   `akose34` and leave "Prevent self-review" off (sole collaborator). For `main` protection, require
   the CI check but not approvals.
+
+## 7. Final update (2026-11-11): content approvals complete
+
+- **C1 approved** (founding statement kept). **C3 approved** (slogan kept).
+- **C2:** the SUGİAD membership is personal. The corporate attribution is removed, and Activities
+  is retired.
+  - `/faaliyetlerimiz/` and `/faaliyetler/` are `noindex` redirect documents to `/hakkimizda/`.
+  - `/faaliyet.html` now goes straight to `/hakkimizda/`.
+  - The footer link is removed, and the sitemap has 5 pages.
+- **CI fix:** CI failed on `6954bbf`. The cause was a timeout, not an assertion: the
+  pixel-measurement test took 5.26 s against Vitest's 5 s default. It now has an explicit 60 s
+  budget, with the assertion unchanged.
+- **Content blockers: 0.** Remaining: deployment actions only (`RELEASE_RUNBOOK.md` §0), starting
+  with the owner's explicit production release authorization.

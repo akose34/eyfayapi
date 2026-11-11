@@ -1,18 +1,29 @@
 # Final Owner Approval
 
-**Status (2026-11-11): READY FOR FINAL PUBLICATION AUTHORIZATION.** The owner's confirmations of
-2026-11-11 are incorporated (`PRELAUNCH_FINAL_STATUS.md`). No hard content blocker remains.
+**Status (2026-11-11, final): content approvals COMPLETE. AWAITING EXPLICIT PRODUCTION RELEASE
+AUTHORIZATION.**
 
-What is left:
+- C1 and C3 are approved, and C2 is resolved by removing the corporate attribution (below).
+- What remains is the owner's production release authorization (§5.0) and the release-time GitHub
+  settings.
+- The site is not live; the legacy site on `main` is unchanged.
 
-- the final authorization in §5, which includes confirming three retained legacy statements
-  (C1–C3);
-- three release-time settings.
+Boxes ticked below record what the owner **explicitly** confirmed. Publication authorization is
+**not** ticked.
 
-The site is not live; the legacy site on `main` is unchanged.
+## Final content decisions (owner, 2026-11-11)
 
-Boxes ticked below record what the owner **explicitly** confirmed on 2026-11-11. Nothing else is
-ticked on the owner's behalf.
+| #   | Decision                                                                             | Implementation                                                                                                                                                                                                                                                                                                                         |
+| --- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C1  | **Approved:** "Eyfa Yapı, 2004 yılında İstanbul'da Fatih Yılmaz tarafından kuruldu." | Kept: About introduction, "2004’ten bu yana" eyebrow, positioning line, JSON-LD `foundingDate` and `founder`. Not a licence for the founder's photo or biography (both stay unpublished)                                                                                                                                               |
+| C2  | **Rejected as a company membership:** SUGİAD is the founder's personal membership    | Resolved: the SUGİAD entry is withheld (data kept). Activities has no verified corporate content left, so the page is **retired**. `/faaliyetlerimiz/`, `/faaliyetler/` and legacy `/faaliyet.html` redirect to `/hakkimizda/`. The footer link is removed and the page is out of the sitemap. A build check rejects "SUGİAD" anywhere |
+| C3  | **Approved:** "Eyfa Yapı ile Geleceği İnşa Ediyoruz."                                | Kept: homepage h1, footer statement, homepage title context                                                                                                                                                                                                                                                                            |
+
+Recorded in code as `ownerConfirmations.finalDecisions` (`src/data/company.ts`).
+
+**Content approvals are complete.** Publication itself is **not** authorized: merging, the Pages
+source switch and deployment each need the owner's separate, explicit production release
+authorization.
 
 ---
 
@@ -37,34 +48,34 @@ ticked on the owner's behalf.
 Legacy-site information is treated as "stated on the old site", not as confirmed current fact,
 unless the owner confirmed it.
 
-| #    | Item                                                                      | Status (2026-11-11)                                                                                                                                                                               | Blocks publication    |
-| ---- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| 2.1  | Project names                                                             | **Resolved:** unavailable (owner); the site shows neutral identifiers and implies no name                                                                                                         | No                    |
-| 2.2  | Locations / types / years                                                 | **Resolved:** unavailable (owner); not displayed                                                                                                                                                  | No                    |
-| 2.3  | Project descriptions                                                      | Neutral, factual ("Eyfa Yapı arşivinden, projeye ait fotoğraflar.")                                                                                                                               | No                    |
-| 2.4  | Proje 04 / 06 possibly the same building                                  | **Resolved (conservative):** the photos indicate two buildings with the same façade design (different ground floors and surroundings); no text claims either way (`PRELAUNCH_FINAL_STATUS.md` §3) | No                    |
-| 2.5  | Construction status                                                       | Only "İnşaat sürecinden" where the photos show construction; completion and sale wording is blocked by a build check                                                                              | No                    |
-| 2.6  | Floor-plan ownership                                                      | **Resolved by exclusion:** all 21 drawings withheld; Proje 07, 09, 10, 11 removed from the public site (originals kept)                                                                           | No                    |
-| 2.7  | Gallery 1 ↔ 10 relation                                                   | Moot: Proje 10 is withheld                                                                                                                                                                        | No                    |
-| 2.8  | Mobile / WhatsApp 0 (532) 686 88 29                                       | **Owner-confirmed**                                                                                                                                                                               | No                    |
-| 2.9  | Landline 0 216 419 57 81                                                  | **Owner-confirmed** (labelled "Sabit hat")                                                                                                                                                        | No                    |
-| 2.10 | E-mail info@eyfayapi.net                                                  | **Owner-confirmed**                                                                                                                                                                               | No                    |
-| 2.11 | Address                                                                   | **Owner-confirmed**. The map embed is the company's own legacy embed (loaded only on click)                                                                                                       | No                    |
-| 2.12 | Instagram @eyfa.yapi                                                      | Legacy; low risk                                                                                                                                                                                  | No                    |
-| 2.13 | Müteahhitlik as a service                                                 | **Resolved by evidence:** registered name "EYFA MÜTEAHHİTLİK…" plus "konut ve taahhüt projeleri"                                                                                                  | No                    |
-| 2.14 | "başarıyla tamamladığı"                                                   | **Rewritten** (removed)                                                                                                                                                                           | No                    |
-| 2.15 | "öne çıkmıştır"                                                           | **Rewritten** ("Müşteri memnuniyetini her zaman öncelik kabul ederiz.")                                                                                                                           | No                    |
-| 2.16 | "güvenilir çözümler" (meta)                                               | **Rewritten**                                                                                                                                                                                     | No                    |
-| 2.17 | "Uzman mimarlarla", "Alanında yetkin", "güçlü birikim", "deneyimli kadro" | **Rewritten** (claims removed); "Doğru projeleri, doğru yatırımcılarla" kept (no measurable claim)                                                                                                | No                    |
-| 2.18 | Slogan                                                                    | **Confirm in §5 (C3)**; fallback documented                                                                                                                                                       | Part of authorization |
-| 2.19 | Founder Fatih Yılmaz / 2004                                               | **Confirm in §5 (C1)**; fallback documented                                                                                                                                                       | Part of authorization |
-| 2.20 | Founder biography                                                         | Withheld                                                                                                                                                                                          | No                    |
-| 2.21 | SUGİAD as a company activity                                              | **Confirm in §5 (C2)**; fallback documented                                                                                                                                                       | Part of authorization |
-| 2.22 | Theatre evening                                                           | Withheld                                                                                                                                                                                          | No                    |
-| 2.23 | Opening hours                                                             | Not published                                                                                                                                                                                     | No                    |
-| 2.24 | Brand casing                                                              | Optional consistency pass after launch                                                                                                                                                            | No                    |
-| 2.25 | WhatsApp messages                                                         | Neutral, information-only wording                                                                                                                                                                 | No                    |
-| 2.26 | Editorial About/Services copy                                             | Grounded in legacy text (tested); claims removed                                                                                                                                                  | No                    |
+| #    | Item                                                                      | Status (2026-11-11)                                                                                                                                                                               | Blocks publication |
+| ---- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| 2.1  | Project names                                                             | **Resolved:** unavailable (owner); the site shows neutral identifiers and implies no name                                                                                                         | No                 |
+| 2.2  | Locations / types / years                                                 | **Resolved:** unavailable (owner); not displayed                                                                                                                                                  | No                 |
+| 2.3  | Project descriptions                                                      | Neutral, factual ("Eyfa Yapı arşivinden, projeye ait fotoğraflar.")                                                                                                                               | No                 |
+| 2.4  | Proje 04 / 06 possibly the same building                                  | **Resolved (conservative):** the photos indicate two buildings with the same façade design (different ground floors and surroundings); no text claims either way (`PRELAUNCH_FINAL_STATUS.md` §3) | No                 |
+| 2.5  | Construction status                                                       | Only "İnşaat sürecinden" where the photos show construction; completion and sale wording is blocked by a build check                                                                              | No                 |
+| 2.6  | Floor-plan ownership                                                      | **Resolved by exclusion:** all 21 drawings withheld; Proje 07, 09, 10, 11 removed from the public site (originals kept)                                                                           | No                 |
+| 2.7  | Gallery 1 ↔ 10 relation                                                   | Moot: Proje 10 is withheld                                                                                                                                                                        | No                 |
+| 2.8  | Mobile / WhatsApp 0 (532) 686 88 29                                       | **Owner-confirmed**                                                                                                                                                                               | No                 |
+| 2.9  | Landline 0 216 419 57 81                                                  | **Owner-confirmed** (labelled "Sabit hat")                                                                                                                                                        | No                 |
+| 2.10 | E-mail info@eyfayapi.net                                                  | **Owner-confirmed**                                                                                                                                                                               | No                 |
+| 2.11 | Address                                                                   | **Owner-confirmed**. The map embed is the company's own legacy embed (loaded only on click)                                                                                                       | No                 |
+| 2.12 | Instagram @eyfa.yapi                                                      | Legacy; low risk                                                                                                                                                                                  | No                 |
+| 2.13 | Müteahhitlik as a service                                                 | **Resolved by evidence:** registered name "EYFA MÜTEAHHİTLİK…" plus "konut ve taahhüt projeleri"                                                                                                  | No                 |
+| 2.14 | "başarıyla tamamladığı"                                                   | **Rewritten** (removed)                                                                                                                                                                           | No                 |
+| 2.15 | "öne çıkmıştır"                                                           | **Rewritten** ("Müşteri memnuniyetini her zaman öncelik kabul ederiz.")                                                                                                                           | No                 |
+| 2.16 | "güvenilir çözümler" (meta)                                               | **Rewritten**                                                                                                                                                                                     | No                 |
+| 2.17 | "Uzman mimarlarla", "Alanında yetkin", "güçlü birikim", "deneyimli kadro" | **Rewritten** (claims removed); "Doğru projeleri, doğru yatırımcılarla" kept (no measurable claim)                                                                                                | No                 |
+| 2.18 | Slogan                                                                    | **Approved (C3)**: slogan kept                                                                                                                                                                    | No                 |
+| 2.19 | Founder Fatih Yılmaz / 2004                                               | **Approved (C1)**: founding statement kept                                                                                                                                                        | No                 |
+| 2.20 | Founder biography                                                         | Withheld                                                                                                                                                                                          | No                 |
+| 2.21 | SUGİAD as a company activity                                              | **Resolved (C2)**: personal membership, so it is not published; Activities retired, redirects to About                                                                                            | No                 |
+| 2.22 | Theatre evening                                                           | Withheld                                                                                                                                                                                          | No                 |
+| 2.23 | Opening hours                                                             | Not published                                                                                                                                                                                     | No                 |
+| 2.24 | Brand casing                                                              | Optional consistency pass after launch                                                                                                                                                            | No                 |
+| 2.25 | WhatsApp messages                                                         | Neutral, information-only wording                                                                                                                                                                 | No                 |
+| 2.26 | Editorial About/Services copy                                             | Grounded in legacy text (tested); claims removed                                                                                                                                                  | No                 |
 
 **Recalculated: 0 hard blockers** (was 12).
 
@@ -75,7 +86,9 @@ unless the owner confirmed it.
 - **Rewritten:** 2.14–2.17 and 2.26.
 - **Moved into the final authorization:** 2.18, 2.19 and 2.21 (C1–C3).
 
-### Navigation (implemented)
+### Navigation (implemented; superseded by C2)
+
+Activities is now **retired** (C2): no header or footer link, and `/faaliyetlerimiz/` redirects to `/hakkimizda/`. Earlier note:
 
 Activities ("Faaliyetlerimiz") moved from the header to the footer. The page, its route, the
 sitemap entry and the `/faaliyet.html` redirect are unchanged, and tests cover reachability.
@@ -110,11 +123,11 @@ sitemap entry and the `/faaliyet.html` redirect are unchanged, and tests cover r
 Tick all four to authorize publication. If C1, C2 or C3 can't be confirmed, say which: the
 documented fallback (`PRELAUNCH_FINAL_STATUS.md` §5) is applied first and re-verified.
 
-- [ ] **C1** "EYFA Yapı was founded in 2004 in İstanbul by Fatih Yılmaz" may stay on the site.
-- [ ] **C2** The SUGİAD membership statement is the **company's** activity.
-- [ ] **C3** "Eyfa Yapı ile Geleceği İnşa Ediyoruz." is still the company slogan.
-- [ ] I authorize merging PR #1 and the production deployment of eyfayapi.net following
-      `RELEASE_RUNBOOK.md`.
+- [x] **C1** Approved 2026-11-11: "Eyfa Yapı, 2004 yılında İstanbul'da Fatih Yılmaz tarafından kuruldu."
+- [x] **C2** Resolved 2026-11-11: SUGİAD is the founder's personal membership → corporate attribution removed, Activities retired.
+- [x] **C3** Approved 2026-11-11: slogan kept.
+- [ ] **Production release authorization (not given):** I authorize merging PR #1 and the
+      production deployment of eyfayapi.net following `RELEASE_RUNBOOK.md`.
 
 ### 5.1 Steps (each needs that authorization)
 

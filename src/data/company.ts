@@ -66,6 +66,15 @@ export const ownerConfirmations = {
   },
   /** Project names, locations, years and specifications: currently unavailable. */
   projectMetadataAvailable: false,
+  /** Final content decisions (2026-11-11). */
+  finalDecisions: {
+    /** C1 approved: "Eyfa Yapı, 2004 yılında İstanbul'da Fatih Yılmaz tarafından kuruldu." */
+    founding: { approved: true, founder: company.founder.value, year: company.foundedYear.value },
+    /** C2: SUGİAD membership is the founder's personal membership → never attributed to the company. */
+    sugiadIsCorporate: false,
+    /** C3 approved: the current slogan stays. */
+    slogan: { approved: true, text: 'Eyfa Yapı ile Geleceği İnşa Ediyoruz.' },
+  },
 } as const;
 
 /** Corporate copy taken verbatim from the legacy website. */

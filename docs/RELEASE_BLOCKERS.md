@@ -1,5 +1,11 @@
 # Release Blockers
 
+> **Final (2026-11-11): 0 content blockers. C1 and C3 are approved, and C2 is resolved by removing
+> the SUGİAD attribution and retiring Activities.** What remains are deployment actions only, each
+> requiring the owner's explicit production release authorization: environment reviewer, merge,
+> Pages source switch, deploy, then Enforce HTTPS. See `PRELAUNCH_FINAL_STATUS.md` §7 and
+> `RELEASE_RUNBOOK.md` §0.
+
 > **2026-11-11 (pre-launch cleanup): 0 hard blockers.**
 >
 > - B1 (project names): resolved. They're unavailable and the site doesn't display or imply them.

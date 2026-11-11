@@ -62,7 +62,9 @@ describe('crop table matches the pixels', () => {
     for (let y = 0; y < crop.measuredTop; y++) expect(img.mean(y)).toBeLessThanOrEqual(BLACK);
   });
 
-  it('is up to date with the measurement script', () => {
+  // Re-measures every crop source with sharp in a child process: ~5 s on a GitHub
+  // runner (it exceeded Vitest's 5 s default in CI on 6954bbf). Assertion unchanged.
+  it('is up to date with the measurement script', { timeout: 60_000 }, () => {
     const out = execFileSync(process.execPath, ['scripts/measure-letterbox.mjs', '--check'], {
       cwd: ROOT,
       encoding: 'utf8',

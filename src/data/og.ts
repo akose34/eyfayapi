@@ -35,7 +35,6 @@ export const ogImages: Record<string, OgEntry> = {
   about: { photo: aboutImages.hero },
   services: { photo: serviceFeatureImages.muteahhitlik },
   projects: { photo: firstPortfolioPhoto },
-  activities: brand,
   contact: brand,
   default: brand,
   ...Object.fromEntries(

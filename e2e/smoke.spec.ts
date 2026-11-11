@@ -72,14 +72,18 @@ test.describe('desktop header', () => {
   });
 });
 
-test('Activities is reached from the footer on every form factor', async ({ page }) => {
-  await page.goto('/');
-  await expect(
-    page.getByRole('navigation', { name: 'Ana menü' }).getByRole('link', { name: 'Faaliyetler' }),
-  ).toHaveCount(0);
-  await page.locator('#footer-nav').getByRole('link', { name: 'Faaliyetlerimiz' }).click();
-  await expect(page).toHaveURL('/faaliyetlerimiz/');
-  await expect(page.locator('h1')).toHaveText('Faaliyetlerimiz');
+test('Activities is retired: no link anywhere, no SUGİAD claim (owner decision C2)', async ({
+  page,
+}) => {
+  for (const route of ['/', '/hakkimizda/', '/hizmetler/', '/projeler/', '/iletisim/']) {
+    await page.goto(route);
+    await expect(page.locator('a[href^="/faaliyet"]')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText(/SUG[İI]AD/i);
+  }
+  if (await page.getByRole('button', { name: 'Menüyü aç' }).isVisible()) {
+    await page.getByRole('button', { name: 'Menüyü aç' }).click();
+    await expect(page.locator('dialog#mobile-menu a[href^="/faaliyet"]')).toHaveCount(0);
+  }
 });
 
 test.describe('mobile menu', () => {
@@ -266,7 +270,9 @@ test.describe('contact', () => {
 test.describe('legacy URLs and errors', () => {
   for (const [from, to] of [
     ['/about.html', '/hakkimizda/'],
-    ['/faaliyet.html', '/faaliyetlerimiz/'],
+    ['/faaliyet.html', '/hakkimizda/'],
+    ['/faaliyetlerimiz/', '/hakkimizda/'],
+    ['/faaliyetler/', '/hakkimizda/'],
     ['/projeler.html', '/projeler/'],
     ['/anaEkran.html', '/'],
     ['/index.html', '/index.html'],

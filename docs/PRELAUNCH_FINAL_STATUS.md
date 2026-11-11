@@ -8,7 +8,8 @@
 - `main` is unchanged (`5da2426`), and the live site still serves the legacy pages.
 - Nothing has been merged or deployed, and no GitHub setting has been changed.
 
-**Readiness: READY FOR FINAL PUBLICATION AUTHORIZATION.** No hard release blocker remains. The
+**Readiness (final): content approvals complete — AWAITING EXPLICIT PRODUCTION RELEASE
+AUTHORIZATION.** C1 and C3 approved, C2 resolved (§5). Earlier wording, kept for history: No hard release blocker remains. The
 final authorization (`FINAL_OWNER_APPROVAL.md` §5) includes three explicit confirmations of
 retained legacy statements (§5 below). Each has a documented fallback if the owner declines.
 
@@ -104,7 +105,21 @@ No file was deleted. Every withheld file is listed in `src/data/withheld-media.j
 from the image registry, and checked absent from `dist/` by `verify-dist`. The build went from
 31.2 MB to 22.5 MB.
 
-## 5. Outstanding corporate-content decisions
+## Final content decisions (owner, 2026-11-11)
+
+| #   | Decision                                                                             | Implementation                                                                                                                                                                                                                                                                                                                         |
+| --- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C1  | **Approved:** "Eyfa Yapı, 2004 yılında İstanbul'da Fatih Yılmaz tarafından kuruldu." | Kept: About introduction, "2004’ten bu yana" eyebrow, positioning line, JSON-LD `foundingDate` and `founder`. Not a licence for the founder's photo or biography (both stay unpublished)                                                                                                                                               |
+| C2  | **Rejected as a company membership:** SUGİAD is the founder's personal membership    | Resolved: the SUGİAD entry is withheld (data kept). Activities has no verified corporate content left, so the page is **retired**. `/faaliyetlerimiz/`, `/faaliyetler/` and legacy `/faaliyet.html` redirect to `/hakkimizda/`. The footer link is removed and the page is out of the sitemap. A build check rejects "SUGİAD" anywhere |
+| C3  | **Approved:** "Eyfa Yapı ile Geleceği İnşa Ediyoruz."                                | Kept: homepage h1, footer statement, homepage title context                                                                                                                                                                                                                                                                            |
+
+Recorded in code as `ownerConfirmations.finalDecisions` (`src/data/company.ts`).
+
+**Content approvals are complete.** Publication itself is **not** authorized: merging, the Pages
+source switch and deployment each need the owner's separate, explicit production release
+authorization.
+
+## 5. Corporate-content review (history)
 
 **Rewritten** (restrained, nothing added):
 
@@ -147,7 +162,11 @@ website; not covered by the photo/contact confirmations):
 
 The fallbacks are documented, not applied. Each is a small, testable change.
 
-## 6. Navigation
+## 6. Navigation (superseded by C2: Activities retired)
+
+Final state: the header has Ana Sayfa · Hakkımızda · Projeler · Hizmetler · [İletişim], and the
+footer has no Activities link. `/faaliyetlerimiz/`, `/faaliyetler/` and `/faaliyet.html` redirect
+to `/hakkimizda/`. Earlier note:
 
 Activities moved from the header to the footer only ("Faaliyetlerimiz" under Kurumsal).
 
@@ -167,7 +186,8 @@ company.
 | --------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Content (hard)        | **0** | All 12 earlier blocking items are resolved by confirmation, exclusion or evidence (`FINAL_OWNER_APPROVAL.md` §2)                  |
 | Technical             | **0** | validate, typecheck and browser tests pass; CI green (see the PR)                                                                 |
-| Authorization         | 1     | The owner's final publication authorization, including C1–C3 above                                                                |
+| Content decisions     | **0** | C1 and C3 approved, C2 resolved (2026-11-11)                                                                                      |
+| Authorization         | 1     | The owner's explicit **production release** authorization (not given)                                                             |
 | Release-time settings | 3     | Add a required reviewer to `github-pages`; switch the Pages source at cut-over; Enforce HTTPS after deploy (`RELEASE_RUNBOOK.md`) |
 
 ## 8. Deployment protection (read via the API; nothing changed)

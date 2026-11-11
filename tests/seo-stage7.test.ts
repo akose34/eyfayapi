@@ -81,7 +81,7 @@ describe('sharing images', () => {
   });
 
   it('exist for every public project and the main pages', () => {
-    for (const key of ['home', 'about', 'services', 'projects', 'activities', 'contact']) {
+    for (const key of ['home', 'about', 'services', 'projects', 'contact']) {
       expect(ogImages[key], key).toBeDefined();
     }
     for (const project of publicProjects()) expect(ogImages[project.slug]).toBeDefined();

@@ -13,13 +13,21 @@ import type { Activity } from '@/types/content';
  *   the founder's own theatre group (GSG) — this contradicts the legacy
  *   caption "çalışanlarımızla … organize ettiğimiz". Attribution unclear →
  *   activity withheld until the owner confirms.
+ *
+ * Final owner decision (2026-11-11, C2): the SUGİAD membership is the founder's
+ * PERSONAL membership, not the company's → withheld, and never repurposed as a
+ * corporate achievement. With no verified corporate activity left, the public
+ * Activities page is retired: /faaliyetlerimiz/, /faaliyetler/ and the legacy
+ * /faaliyet.html redirect to /hakkimizda/ (src/data/legacy-redirects.ts).
  */
 export const activities: readonly Activity[] = [
   {
     id: 'sugiad',
     title: 'SUGİAD Üyeliği',
     description: 'SUGİAD ile iş dünyasına katkı sağlıyor, sektörel iş birliklerine önem veriyoruz.',
-    visibility: 'public',
+    visibility: 'withheld',
+    withheldReason:
+      'Sahip onayı (2026-11-11): SUGİAD üyeliği kurucunun kişisel üyeliğidir, şirkete ait değildir.',
     date: { status: 'UNKNOWN', value: null },
     image: 'Faaliyetler-img/sugiad-resim.webp',
     alt: 'SUGİAD ödül töreninden fotoğraf',

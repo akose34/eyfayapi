@@ -22,7 +22,6 @@ export const pageRoutes = [
   '/',
   '/hakkimizda/',
   '/hizmetler/',
-  '/faaliyetlerimiz/',
   '/projeler/',
   '/iletisim/',
   ...projectRoutes,

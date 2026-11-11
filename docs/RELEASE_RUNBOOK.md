@@ -20,6 +20,39 @@ Facts this runbook relies on:
 
 ---
 
+## 0. Final release sequence (content approvals complete, 2026-11-11)
+
+Done (no further owner input needed):
+
+- content approvals C1–C3;
+- local validation and the browser suite;
+- PR #1 updated, with CI green on its head commit.
+
+**⛔ Authorization point.** Nothing below happens without the owner's explicit **production release
+authorization** (`FINAL_OWNER_APPROVAL.md` §5.0, last box). After it is given, in this order:
+
+1. 🔒 Settings → Environments → `github-pages`:
+   - add `akose34` as **required reviewer**;
+   - keep deployment branches `main` only;
+   - leave **"Prevent self-review" off**. You are the only collaborator, so self-approval is the
+     only possible approval.
+2. 🔒 (Recommended) Settings → Branches → protect `main`:
+   - require the "Validate, test, build" check;
+   - block force pushes and deletions;
+   - **no** required approvals.
+3. 🔒 Create and push the rollback tag `legacy-site-final` → `5da2426` (§3.3).
+4. 🔒 Merge PR #1. The legacy site keeps serving: `.nojekyll`, branch build.
+5. 🔒 Settings → Pages → Source: **GitHub Actions**.
+6. 🔒 Actions → "Deploy to GitHub Pages" → Run on `main` with `eyfayapi.net` → approve the
+   environment.
+7. 🔒 Pages: confirm the custom domain `eyfayapi.net`, then **Enforce HTTPS** once the certificate
+   is active.
+8. Post-release smoke tests (§5), including `/faaliyet.html`, `/faaliyetlerimiz/` and
+   `/faaliyetler/` → `/hakkimizda/`.
+
+Rollback at any point after step 5: `ROLLBACK_RUNBOOK.md` §1 (switch the source back to "Deploy
+from a branch: `main` /").
+
 ## 1. Preflight (local, no authorization needed)
 
 ```bash
@@ -144,7 +177,8 @@ Run on desktop and on a phone (mobile data, not office Wi-Fi):
 - [ ] Routes: `/hakkimizda/`, `/hizmetler/`, `/projeler/`, `/projeler/proje-06/`,
       `/faaliyetlerimiz/`, `/iletisim/`.
 - [ ] Legacy URLs redirect: `/about.html` → `/hakkimizda/`, `/projeler.html` → `/projeler/`,
-      `/faaliyet.html` → `/faaliyetlerimiz/`, `/anaEkran.html` → `/`, `/index.html` → home.
+      `/faaliyet.html` → `/hakkimizda/`, `/anaEkran.html` → `/`, `/index.html` → home.
+- [ ] Retired routes redirect: `/faaliyetlerimiz/` and `/faaliyetler/` → `/hakkimizda/`.
 - [ ] Extension-less variants (`/about`, `/projeler`) and trailing-slash-less directories
       (`/hakkimizda`) land on the right page.
 - [ ] An unknown path (`/yok/`) shows the Turkish 404 page with HTTP 404:

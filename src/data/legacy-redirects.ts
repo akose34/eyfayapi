@@ -10,5 +10,16 @@ export const legacyRedirects = [
   { from: '/anaEkran.html', to: '/' },
   { from: '/about.html', to: '/hakkimizda/' },
   { from: '/projeler.html', to: '/projeler/' },
-  { from: '/faaliyet.html', to: '/faaliyetlerimiz/' },
+  // Activities retired (owner decision C2, 2026-11-11): straight to About, no double hop.
+  { from: '/faaliyet.html', to: '/hakkimizda/' },
+] as const satisfies readonly LegacyRedirect[];
+
+/**
+ * Retired routes of the redesign. Each is generated as a static redirect document
+ * (noindex, canonical to the target, instant meta refresh) — the only redirect
+ * GitHub Pages can serve — and is excluded from the sitemap (astro.config.ts).
+ */
+export const retiredRoutes = [
+  { from: '/faaliyetlerimiz/', to: '/hakkimizda/' },
+  { from: '/faaliyetler/', to: '/hakkimizda/' },
 ] as const satisfies readonly LegacyRedirect[];

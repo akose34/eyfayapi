@@ -36,7 +36,6 @@ export const PAGES = [
   ['project-detail', '/projeler/proje-06/'],
   ['about', '/hakkimizda/'],
   ['services', '/hizmetler/'],
-  ['activities', '/faaliyetlerimiz/'],
   ['contact', '/iletisim/'],
 ];
 
