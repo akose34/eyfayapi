@@ -151,3 +151,15 @@ describe('maps and central contact source', () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe('owner confirmations (2026-11-11)', () => {
+  it('every published phone, WhatsApp, e-mail and address value is owner-confirmed', async () => {
+    const { company, contact, ownerConfirmations } = await import('@/data/company');
+    expect(ownerConfirmations.phones).toEqual(company.phones.map((p) => p.e164));
+    expect(ownerConfirmations.phones).toContain(company.whatsapp.e164);
+    expect(contact.mobile.href).toBe(`tel:${ownerConfirmations.phones[0]}`);
+    expect(contact.landline.href).toBe(`tel:${ownerConfirmations.phones[1]}`);
+    expect(contact.email.value).toBe(ownerConfirmations.email);
+    expect(contact.address.line).toBe(ownerConfirmations.address);
+  });
+});

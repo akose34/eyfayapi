@@ -39,6 +39,35 @@ export const company = {
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3012.509946218092!2d29.259706500000004!3d40.9703132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cad06bcaa04bf7%3A0xa4978ffad8f26023!2sEYFA%20YAPI!5e0!3m2!1str!2str!4v1751462853057!5m2!1str!2str',
 } as const satisfies CompanyInfo;
 
+/**
+ * Explicit owner confirmations (2026-11-11). Scope is exactly what the owner
+ * stated; nothing else is implied (docs/PRELAUNCH_FINAL_STATUS.md §1).
+ */
+export const ownerConfirmations = {
+  date: '2026-11-11',
+  /** "All existing company telephone numbers are correct and current." */
+  phones: company.phones.map((p) => p.e164),
+  /** The WhatsApp number is the confirmed mobile number. */
+  whatsapp: company.whatsapp.e164,
+  /** "The company email address is correct." */
+  email: company.email,
+  /** "The office address is correct." */
+  address: `${company.address.street}, ${company.address.postalCode} ${company.address.district}/${company.address.city}`,
+  /**
+   * Project photographs: genuine Eyfa Yapı projects, personally taken by the owner,
+   * authorized for website use. Does NOT cover drawings, renders, third-party
+   * artwork, the founder portrait or any project metadata.
+   */
+  projectPhotographs: {
+    genuineProjects: true,
+    takenByOwner: true,
+    websiteUseAuthorized: true,
+    coversKinds: ['photo', 'aerial', 'construction'] as const,
+  },
+  /** Project names, locations, years and specifications: currently unavailable. */
+  projectMetadataAvailable: false,
+} as const;
+
 /** Corporate copy taken verbatim from the legacy website. */
 export const legacyCopy = {
   homeHeadline: 'Eyfa Yapı ile Geleceği İnşa Ediyoruz.',

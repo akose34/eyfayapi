@@ -20,6 +20,7 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import TextLink from '@/components/TextLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { company, legacyCopy } from '@/data/company';
+import { publishedCopy } from '@/data/published-copy';
 import {
   featuredProjects,
   homeClosingImage,
@@ -31,9 +32,9 @@ import { getProjectBySlug, portfolio } from '@/data/projects';
 import { services } from '@/data/services';
 
 /** First sentence of the verified homepage introduction. */
-const heroLead = legacyCopy.homeIntro.split('. ')[0] + '.';
+const heroLead = publishedCopy.heroLead.text;
 /** First sentence of the verified projects introduction. */
-const projectsLead = legacyCopy.projectsIntro.split('. ')[0] + '.';
+const projectsLead = publishedCopy.projectsIntro.text.split('. ')[0] + '.';
 
 const featured = featuredProjects.map(({ slug, image }) => {
   const project = getProjectBySlug(slug);
@@ -189,7 +190,7 @@ const [lead, ...rest] = featured;
 
   {/* D — Services as an editorial index (rows, not cards). */}
   <Section tone="white" width="wide" labelledby="hizmetler-baslik">
-    <SectionHeading eyebrow="Hizmetlerimiz" title="Uzmanlık alanlarımız" id="hizmetler-baslik">
+    <SectionHeading eyebrow="Hizmetlerimiz" title="Hizmet alanlarımız" id="hizmetler-baslik">
       <TextLink slot="action" href="/hizmetler/">
         Hizmetler sayfası
       </TextLink>
@@ -260,7 +261,7 @@ const [lead, ...rest] = featured;
         </figure>
       </div>
       <ol class="grid gap-10 lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
-        {legacyCopy.principles.map((principle, index) => (
+        {publishedCopy.principles.map((principle, index) => (
           <li class="reveal border-line grid grid-cols-[2.5rem_1fr] gap-x-4 border-t pt-8">
             <span
               class="text-accent-text pt-2 text-xs font-semibold tabular-nums"
@@ -270,7 +271,7 @@ const [lead, ...rest] = featured;
             </span>
             <div>
               <h3 class="text-2xl">{principle.title}</h3>
-              <p class="text-ink-muted mt-3">{principle.text}</p>
+              <p class="text-ink-muted mt-3">{principle.body.text}</p>
             </div>
           </li>
         ))}

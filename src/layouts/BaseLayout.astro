@@ -3,7 +3,8 @@ import '@/styles/global.css';
 import { getImage } from 'astro:assets';
 import SiteFooter from '@/components/SiteFooter.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
-import { company, contact, legacyCopy } from '@/data/company';
+import { company, contact } from '@/data/company';
+import { publishedCopy } from '@/data/published-copy';
 import { OG_HEIGHT, OG_WIDTH, ogAlt, ogImagePath, type OgKey } from '@/data/og';
 import { legacyImage } from '@/lib/media';
 import {
@@ -29,7 +30,7 @@ interface Props {
 
 const {
   title,
-  description = legacyCopy.metaDescription,
+  description = publishedCopy.metaDescription.text,
   og = 'default',
   noindex = false,
   canonical: hasCanonical = true,

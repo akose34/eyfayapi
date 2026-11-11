@@ -75,7 +75,7 @@ export const about = {
       ],
     ),
     closing: editorial(
-      'Güçlü mühendislik altyapısı, deneyimli kadrosu ve kalite odaklı iş anlayışıyla EYFA Yapı; projelerinde estetik, fonksiyonellik ve güvenliği bir arada sunmayı amaçlar.',
+      'Kalite odaklı bir iş anlayışıyla EYFA Yapı; projelerinde estetik, fonksiyonellik ve güvenliği bir arada sunmayı amaçlar.',
       [
         'EYFA Yapı; güçlü mühendislik altyapısı, deneyimli kadrosu ve kalite odaklı iş anlayışıyla, projelerinde estetik, fonksiyonellik ve güvenliği bir arada sunmaktadır.',
       ],
@@ -114,9 +114,9 @@ export const about = {
       ]),
     },
     {
-      title: 'Mühendislik disiplini',
-      body: editorial('Güçlü mühendislik altyapısı ve kalite odaklı iş anlayışıyla çalışırız.', [
-        'güçlü mühendislik altyapısı, deneyimli kadrosu ve kalite odaklı iş anlayışıyla',
+      title: 'Kalite odaklı çalışma',
+      body: editorial('Kalite odaklı bir iş anlayışıyla çalışırız.', [
+        'kalite odaklı iş anlayışıyla',
       ]),
     },
     {

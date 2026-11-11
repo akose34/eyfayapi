@@ -12,7 +12,8 @@ export const primaryNav = [
   { label: 'Hakkımızda', href: '/hakkimizda/' },
   { label: 'Projeler', href: '/projeler/' },
   { label: 'Hizmetler', href: '/hizmetler/' },
-  { label: 'Faaliyetler', href: '/faaliyetlerimiz/' },
+  // Pre-launch: Faaliyetler moved to the footer ("Faaliyetlerimiz") — the page has one
+  // verified item. The route, its footer link and /faaliyet.html redirect are unchanged.
 ] as const satisfies readonly NavItem[];
 
 /** The contact route is presented as the header's call-to-action button. */

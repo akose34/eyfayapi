@@ -31,15 +31,19 @@ export const services = [
   {
     id: 'mimarlik',
     title: 'Mimarlık',
-    description: 'Uzman mimarlarla birlikte estetik ve işlevsel yapılar tasarlıyoruz.',
-    provenance: 'legacy',
+    // Pre-launch: "Uzman mimarlarla birlikte" (unsupported expertise claim) removed.
+    description: 'Estetik ve işlevsel yapılar tasarlıyoruz.',
+    provenance: 'editorial',
+    basis: ['estetik ve işlevsel yapılar tasarlıyoruz.'],
     legacyIcon: 'logos/mimarlik-logo.png',
   },
   {
     id: 'muhendislik',
     title: 'Mühendislik',
-    description: 'Alanında yetkin mühendislerle sağlam ve güvenli yapılar inşa ediyoruz.',
-    provenance: 'legacy',
+    // Pre-launch: "Alanında yetkin mühendislerle" (unsupported expertise claim) removed.
+    description: 'Sağlam ve güvenli yapılar inşa ediyoruz.',
+    provenance: 'editorial',
+    basis: ['sağlam ve güvenli yapılar inşa ediyoruz.'],
     legacyIcon: 'logos/muhendislik-logo.png',
   },
   {

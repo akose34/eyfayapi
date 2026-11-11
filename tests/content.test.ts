@@ -75,12 +75,19 @@ describe('company facts come verbatim from the legacy site', () => {
         for (const excerpt of s.basis ?? []) expect(legacyAll).toContain(excerpt);
       }
     }
-    // The three legacy services are all still present.
-    expect(services.filter((s) => s.provenance === 'legacy').map((s) => s.id)).toEqual([
-      'mimarlik',
-      'muhendislik',
-      'emlak',
-    ]);
+    // The three legacy services are all still present (by title, verbatim).
+    for (const id of ['mimarlik', 'muhendislik', 'emlak']) {
+      const s = services.find((x) => x.id === id);
+      expect(s, id).toBeDefined();
+      expect(legacyHome).toContain(s?.title);
+    }
+    // Pre-launch: Mimarlık and Mühendislik descriptions became editorial — the
+    // legacy expertise claims ("Uzman mimarlarla", "Alanında yetkin") were removed,
+    // not replaced. Only Emlak is still verbatim.
+    expect(services.filter((s) => s.provenance === 'legacy').map((s) => s.id)).toEqual(['emlak']);
+    for (const s of services) {
+      expect(s.description).not.toMatch(/uzman|yetkin|deneyimli|güçlü|başarıyla|öne çıkmış|köklü/i);
+    }
     const legacyActivities = normaliseText(readRoot('faaliyet.html'));
     for (const a of activities) {
       expect(legacyActivities).toContain(a.title);

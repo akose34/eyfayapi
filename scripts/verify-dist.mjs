@@ -25,6 +25,8 @@
  *    (no layout shift); (S4) JS only from first-party /_astro/*.js or inline,
  *    ≤ 8 KB per page;
  *    homepage: exactly one eager, high-priority hero image, all others lazy
+ *  - (pre-launch) no unsupported legacy claims, no completion/sale wording (text
+ *    and alt/meta), no drawings section, drawing-only projects are redirects
  *  - (S7) SEO: indexable pages have a unique title and description, a
  *    self-referencing absolute canonical, complete og:/twitter: tags whose
  *    image exists at 1200×630; noindex pages use "noindex, follow"; the sitemap
@@ -338,6 +340,38 @@ for (let n = 1; n <= 11; n++) {
   // hero + header logo are the only above-the-fold images
   if (eager.length > 2)
     fail(`index.html: ${eager.length} eager images (expected hero + header logo)`);
+}
+
+// Pre-launch (2026-11-11) — removed claims, project-status honesty, drawings.
+{
+  const text = (html) =>
+    html
+      .replace(/<script[\s\S]*?<\/script>/g, ' ')
+      .replace(/<style[\s\S]*?<\/style>/g, ' ')
+      // keep alt/title/description/og texts: they are published too
+      .replace(/<[^>]*?\s(?:alt|title|content|aria-label)="([^"]*)"[^>]*>/g, ' $1 ')
+      .replace(/<[^>]+>/g, ' ');
+  // Unsupported legacy claims rewritten before launch (src/data/published-copy.ts).
+  const CLAIMS =
+    /(güçlü birikim|güçlü mühendislik|deneyimli kadro|uzman mimar|yetkin mühendis|başarıyla|öne çıkmış|köklü|güvenilir çözüm)/i;
+  // Completion / sale are unconfirmed for every project.
+  const STATUS = /(tamamlanmış|tamamlandı|teslim edildi|satılık|satışta|satışa)/i;
+  for (const f of files.filter((x) => x.endsWith('.html'))) {
+    const t = text(readFileSync(f, 'utf8'));
+    const claim = t.match(CLAIMS)?.[0];
+    if (claim) fail(`${rel(f)}: unsupported claim "${claim}"`);
+    const status = t.match(STATUS)?.[0];
+    if (status) fail(`${rel(f)}: unconfirmed project status wording "${status}"`);
+  }
+  // Architectural drawings are withheld (rights unverified): no drawing section or
+  // drawing-only project page may be published.
+  const projectsIndex = readFileSync(join(DIST, 'projeler/index.html'), 'utf8');
+  if (/id="proje-cizimleri"/.test(projectsIndex))
+    fail('projeler: drawings section published while drawing rights are unverified');
+  for (const slug of ['proje-07', 'proje-09', 'proje-10', 'proje-11']) {
+    const html = readFileSync(join(DIST, `projeler/${slug}/index.html`), 'utf8');
+    if (!isRedirectStub(html)) fail(`${slug}: drawing-only project must be a redirect document`);
+  }
 }
 
 // Stage 7 — SEO metadata, sitemap, robots, structured data, CSP, output hygiene.

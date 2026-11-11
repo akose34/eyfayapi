@@ -1,4 +1,16 @@
-# Release Blockers (Stage 7)
+# Release Blockers
+
+> **2026-11-11 (pre-launch cleanup): 0 hard blockers.**
+>
+> - B1 (project names): resolved. They're unavailable and the site doesn't display or imply them.
+> - B2 (contact details): resolved by owner confirmation.
+> - B3 (legacy claims): resolved by rewriting.
+> - B4 (media rights): photographs authorized by the owner; drawings withheld.
+> - B5 (Proje 04/06, floor plans): resolved conservatively or by exclusion.
+>
+> What remains is the owner's final authorization, which includes confirming C1 founder/2004,
+> C2 SUGİAD and C3 slogan, plus three release-time settings. See `PRELAUNCH_FINAL_STATUS.md` §7.
+> The text below is kept for history.
 
 **Stage 8 classification: READY FOR OWNER APPROVAL, publication BLOCKED BY CONTENT.** The
 technical work is complete, and the deployment workflow and runbooks are prepared. Every open

@@ -262,3 +262,31 @@ Specific questions:
 Checked and consistent: phone numbers, address, e-mail and Instagram (single source, tested); the
 year 2004 (only verified date); no ratings, awards or certifications anywhere (JSON-LD and text
 scans).
+
+## 9. Pre-launch update (2026-11-11)
+
+**Owner-confirmed:**
+
+- phones (mobile/WhatsApp, landline), e-mail and office address;
+- project photographs: genuine projects, taken by the owner, authorized for website use;
+- project names, locations, years and specifications are **unavailable**.
+
+**Rewritten** (claims removed, nothing added; `src/data/published-copy.ts`, tested):
+
+- the hero and Services lead ("güçlü birikim");
+- the Projects lead ("başarıyla tamamladığı");
+- the default meta description ("güvenilir çözümler");
+- principles 2 and 3 ("güçlü mühendislik altyapısı, deneyimli kadrosu", "öne çıkmıştır");
+- the About closing and the approach item;
+- Mimarlık and Mühendislik ("Uzman", "Alanında yetkin");
+- headings "Uzmanlık alanlarımız" → "Hizmet alanlarımız";
+- a homepage alt text that said "Tamamlanmış".
+
+**Retained, to confirm in the final authorization:**
+
+- C1 founder Fatih Yılmaz / 2004;
+- C2 SUGİAD as a company activity;
+- C3 the slogan.
+
+**Withheld:** all architectural drawings (author and permission unverified). See
+`PRELAUNCH_FINAL_STATUS.md`.

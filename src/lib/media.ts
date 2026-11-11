@@ -34,6 +34,10 @@ const imageModules = import.meta.glob<{ default: ImageMetadata }>(
     '!/projects-img/6078_11-*.webp', // Autodesk educational watermark / other-company signage
     '!/projects-img/1.webp', // THERMOsiding branding
     '!/projects-img/{8,11,16,29,30}.webp', // near-duplicates of shown shots
+    // Pre-launch (2026-11-11): architectural drawings withheld — author and publication
+    // permission unverified; the owner's authorization covers only the owner's photographs.
+    '!/projects-img/{7109_4,158_8,7795_4}-*.webp',
+    '!/projects-img/{2,3,4,5,6}.webp',
     // Corporate activity images: both withheld in Stage 5 (src/data/activities.ts)
     // → intentionally not registered, so they can never reach dist/.
     // Brand mark (header, favicon).

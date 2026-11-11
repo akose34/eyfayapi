@@ -17,11 +17,12 @@ import PageHeader from '@/components/PageHeader.astro';
 import TextLink from '@/components/TextLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { legacyCopy } from '@/data/company';
+import { publishedCopy } from '@/data/published-copy';
 import { serviceFeatureImages } from '@/data/corporate';
 import { services } from '@/data/services';
 
 /** First sentence of the verified homepage introduction. */
-const lead = legacyCopy.homeIntro.split('. ')[0] + '.';
+const lead = publishedCopy.heroLead.text;
 ---
 
 <BaseLayout
@@ -31,7 +32,7 @@ const lead = legacyCopy.homeIntro.split('. ')[0] + '.';
 >
   <PageHeader
     title="Hizmetlerimiz"
-    eyebrow="Uzmanlık alanlarımız"
+    eyebrow="Hizmet alanlarımız"
     lead={lead}
     breadcrumbs={[{ label: 'Hizmetler' }]}
     width="wide"
@@ -86,11 +87,7 @@ const lead = legacyCopy.homeIntro.split('. ')[0] + '.';
               <TextLink href="/projeler/">Projelerimizi inceleyin</TextLink>
             </div>
           )}
-          {service.id === 'mimarlik' && (
-            <div class="mt-8">
-              <TextLink href="/projeler/#proje-cizimleri">Proje çizimlerimiz</TextLink>
-            </div>
-          )}
+          {/* Pre-launch: the "Proje çizimlerimiz" link was removed with the withheld drawings. */}
         </FeatureRow>
       </Container>
     </section>

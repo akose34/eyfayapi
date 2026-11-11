@@ -25,8 +25,13 @@ describe('navigation destinations', () => {
     }
   });
 
-  it('covers every main route in the header (no orphan pages)', () => {
-    const headerHrefs = new Set<string>([...primaryNav, contactNav].map((l) => l.href));
+  it('every main route is reachable from the site chrome on every page (no orphan pages)', () => {
+    // Header and footer are on every page; a route may live in either.
+    const chromeHrefs = new Set<string>(
+      [...primaryNav, contactNav, ...footerNav.corporate.links, ...footerNav.work.links].map(
+        (l) => l.href,
+      ),
+    );
     for (const route of [
       '/',
       '/hakkimizda/',
@@ -35,8 +40,16 @@ describe('navigation destinations', () => {
       '/faaliyetlerimiz/',
       '/iletisim/',
     ]) {
-      expect(headerHrefs.has(route)).toBe(true);
+      expect(chromeHrefs.has(route), route).toBe(true);
     }
+  });
+
+  it('keeps the primary destinations in the header and Activities in the footer', () => {
+    const headerHrefs = [...primaryNav, contactNav].map((l) => l.href);
+    for (const route of ['/', '/hakkimizda/', '/projeler/', '/hizmetler/', '/iletisim/']) {
+      expect(headerHrefs).toContain(route);
+    }
+    expect(footerNav.corporate.links.map((l) => l.href)).toContain('/faaliyetlerimiz/');
   });
 });
 

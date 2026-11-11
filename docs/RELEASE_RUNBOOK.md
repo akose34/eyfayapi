@@ -103,9 +103,18 @@ recommended unless the owner wants real HTTP headers.
    first time Pages uses Actions; if it isn't listed yet, do this right after §4.2.
    - **Required reviewers:** the owner.
    - **Deployment branches and tags:** "Selected branches" → `main` only.
-   - Optional: "Prevent self-review".
+   - **Do not** enable "Prevent self-review". `akose34` is the only collaborator, so the owner must
+     approve their own deployment (verified 2026-11-11). Required reviewers are available for
+     public repositories on every plan.
+   - Admins can bypass environment rules (`can_admins_bypass: true`). That's acceptable here: the
+     typed confirmation and `main`-only rule still apply.
 5. Owner → Settings → Actions → General → Workflow permissions: **Read repository contents**. Each
    workflow requests only what it needs.
+
+6. Owner (recommended) → Settings → Branches → add a rule for `main`:
+   - require the status check **"Validate, test, build"**;
+   - block force pushes and deletions;
+   - **do not** require pull-request approvals (a sole owner cannot approve their own PR).
 
 ## 4. Cut-over (🔒, owner present, low-traffic time; expect about 15 minutes)
 

@@ -2,7 +2,14 @@
  * Route, navigation, project and contact smoke tests (Stage 7).
  * Runs on desktop (1280×800) and mobile (Pixel 7) Chromium.
  */
-import { expect, pageRoutes, projectRoutes, scrollThrough, test } from './fixtures';
+import {
+  expect,
+  pageRoutes,
+  projectRoutes,
+  scrollThrough,
+  test,
+  withheldProjectRoutes,
+} from './fixtures';
 import { contact } from '../src/data/company';
 
 test.describe('every public route', () => {
@@ -50,7 +57,6 @@ test.describe('desktop header', () => {
       ['Hakkımızda', '/hakkimizda/'],
       ['Projeler', '/projeler/'],
       ['Hizmetler', '/hizmetler/'],
-      ['Faaliyetler', '/faaliyetlerimiz/'],
       ['Ana Sayfa', '/'],
     ] as const) {
       await nav.getByRole('link', { name, exact: true }).click();
@@ -64,6 +70,16 @@ test.describe('desktop header', () => {
     await page.getByRole('banner').getByRole('link', { name: 'İletişim' }).click();
     await expect(page).toHaveURL('/iletisim/');
   });
+});
+
+test('Activities is reached from the footer on every form factor', async ({ page }) => {
+  await page.goto('/');
+  await expect(
+    page.getByRole('navigation', { name: 'Ana menü' }).getByRole('link', { name: 'Faaliyetler' }),
+  ).toHaveCount(0);
+  await page.locator('#footer-nav').getByRole('link', { name: 'Faaliyetlerimiz' }).click();
+  await expect(page).toHaveURL('/faaliyetlerimiz/');
+  await expect(page.locator('h1')).toHaveText('Faaliyetlerimiz');
 });
 
 test.describe('mobile menu', () => {
@@ -104,15 +120,26 @@ test.describe('projects', () => {
     for (const route of projectRoutes) {
       await expect(page.locator(`main a[href="${route}"]`).first()).toBeAttached();
     }
-    await expect(page.locator('main a[href="/projeler/proje-08/"]')).toHaveCount(0);
     await page.locator('main a[href="/projeler/proje-06/"]').first().click();
     await expect(page).toHaveURL('/projeler/proje-06/');
     await expect(page.locator('h1')).toHaveText('Proje 06');
   });
 
-  test('withheld project 08 redirects to the portfolio', async ({ page }) => {
-    await page.goto('/projeler/proje-08/');
-    await expect(page).toHaveURL('/projeler/');
+  test('withheld projects redirect to the portfolio and are never linked', async ({ page }) => {
+    // 08 (educational watermark) + 07, 09, 10, 11 (drawing rights, pre-launch).
+    expect(withheldProjectRoutes).toEqual([
+      '/projeler/proje-07/',
+      '/projeler/proje-08/',
+      '/projeler/proje-09/',
+      '/projeler/proje-10/',
+      '/projeler/proje-11/',
+    ]);
+    for (const route of withheldProjectRoutes) {
+      await page.goto('/projeler/');
+      await expect(page.locator(`a[href="${route}"]`)).toHaveCount(0);
+      await page.goto(route);
+      await expect(page).toHaveURL('/projeler/');
+    }
   });
 
   test('project enquiry uses the public label only', async ({ page }) => {

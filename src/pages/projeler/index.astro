@@ -17,7 +17,7 @@ import ProjectCard from '@/components/ProjectCard.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { legacyCopy } from '@/data/company';
+import { publishedCopy } from '@/data/published-copy';
 import { portfolio } from '@/data/projects';
 
 const all = portfolio();
@@ -41,19 +41,19 @@ const slot = (i: number) => layout[i % layout.length] ?? fallback;
  * without the "başarıyla tamamladığı" claim.
  */
 const metaDescription =
-  'Eyfa Yapı projeleri: konut, ticari yapı, altyapı ve kentsel dönüşüm alanlarındaki çalışmalarımızdan fotoğraflar ve çizimler.';
+  'Eyfa Yapı projeleri: konut, ticari yapı, altyapı ve kentsel dönüşüm alanlarındaki çalışmalarımızdan fotoğraflar.';
 ---
 
 <BaseLayout title="Projelerimiz" description={metaDescription} og="projects">
   <PageHeader
     title="Projelerimiz"
     eyebrow="Portföy"
-    lead={legacyCopy.projectsIntro}
+    lead={publishedCopy.projectsIntro.text}
     breadcrumbs={[{ label: 'Projeler' }]}
     width="wide"
   >
     <p class="text-ink-muted mt-8 text-sm tracking-(--tracking-ui)">
-      {photographed.length} fotoğraflı proje · {drawings.length} proje çizimi
+      {photographed.length} proje{drawings.length > 0 && ` · ${drawings.length} proje çizimi`}
     </p>
   </PageHeader>
 

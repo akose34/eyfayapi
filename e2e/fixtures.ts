@@ -1,11 +1,22 @@
-import { readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { test as base, expect, type Page } from '@playwright/test';
 
-/** Every published project detail page in the build (withheld 08 is a redirect stub). */
-export const projectRoutes = readdirSync('dist/projeler', { withFileTypes: true })
-  .filter((d) => d.isDirectory() && d.name !== 'proje-08')
-  .map((d) => `/projeler/${d.name}/`)
+const projectDirs = readdirSync('dist/projeler', { withFileTypes: true })
+  .filter((d) => d.isDirectory())
+  .map((d) => d.name)
   .sort();
+const isRedirectStub = (dir: string) =>
+  /<meta http-equiv="refresh"/.test(readFileSync(`dist/projeler/${dir}/index.html`, 'utf8'));
+
+/** Every published project detail page in the build. */
+export const projectRoutes = projectDirs
+  .filter((d) => !isRedirectStub(d))
+  .map((d) => `/projeler/${d}/`);
+
+/** Withheld projects: redirect documents to /projeler/ (rights or editorial hold). */
+export const withheldProjectRoutes = projectDirs
+  .filter(isRedirectStub)
+  .map((d) => `/projeler/${d}/`);
 
 export const pageRoutes = [
   '/',

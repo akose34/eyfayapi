@@ -100,6 +100,17 @@ function project(
   };
 }
 
+const drawingRights = (files: string[]) =>
+  files.map((src) => ({
+    src,
+    reason: 'unverified-drawing-rights' as const,
+    note: 'Çizimin hazırlayanı ve yayın izni doğrulanmadı; sahibin fotoğraf izni çizimleri kapsamıyor',
+  }));
+
+/** Pre-launch (2026-11-11): drawing-only projects are withheld until drawing rights are confirmed. */
+const DRAWINGS_WITHHELD =
+  'Yalnızca mimari çizimlerden oluşuyor; çizimlerin hazırlayanı ve yayın izni doğrulanmadı (sahibin izni yalnızca kendi çektiği fotoğrafları kapsıyor).';
+
 const parcel = (code: string, files: string, note?: string) =>
   ({
     status: 'NEEDS_CONFIRMATION',
@@ -237,8 +248,12 @@ export const projects: readonly Project[] = [
   project(
     7,
     imgs('floor-plan', series('7109_4', 1, 6)),
-    { hero: null, photos: [], plans: series('7109_4', 1, 6).map(p), excluded: [] },
-    { fileCode: parcel('7109/4', '7109_4-*.webp') },
+    { hero: null, photos: [], plans: [], excluded: drawingRights(series('7109_4', 1, 6).map(p)) },
+    {
+      visibility: 'withheld',
+      withheldReason: DRAWINGS_WITHHELD,
+      fileCode: parcel('7109/4', '7109_4-*.webp'),
+    },
   ),
   project(
     8,
@@ -267,14 +282,20 @@ export const projects: readonly Project[] = [
   project(
     9,
     imgs('floor-plan', series('158_8', 1, 3)),
-    { hero: null, photos: [], plans: series('158_8', 1, 3).map(p), excluded: [] },
-    { fileCode: parcel('158/8', '158_8-*.webp') },
+    { hero: null, photos: [], plans: [], excluded: drawingRights(series('158_8', 1, 3).map(p)) },
+    {
+      visibility: 'withheld',
+      withheldReason: DRAWINGS_WITHHELD,
+      fileCode: parcel('158/8', '158_8-*.webp'),
+    },
   ),
   project(
     10,
     imgs('floor-plan', series('7795_4', 1, 7)),
-    { hero: null, photos: [], plans: series('7795_4', 1, 7).map(p), excluded: [] },
+    { hero: null, photos: [], plans: [], excluded: drawingRights(series('7795_4', 1, 7).map(p)) },
     {
+      visibility: 'withheld',
+      withheldReason: DRAWINGS_WITHHELD,
       fileCode: parcel(
         '7795/4',
         '7795_4-*.webp',
@@ -288,24 +309,27 @@ export const projects: readonly Project[] = [
     {
       hero: null,
       photos: [],
-      // Order: residential floors first, then the ground-floor shop plans.
-      plans: [p('3.webp'), p('6.webp'), p('2.webp'), p('4.webp'), p('5.webp')],
+      // Pre-launch: plans withheld (drawing rights). Editorial order kept for later:
+      // 3, 6, 2, 4, 5 (residential floors first, then the ground-floor shop plans).
+      plans: [],
       excluded: [
         {
           src: p('1.webp'),
           reason: 'third-party-branding',
           note: 'Görselde THERMOsiding logosu ve web adresi var',
         },
+        ...drawingRights([p('3.webp'), p('6.webp'), p('2.webp'), p('4.webp'), p('5.webp')]),
       ],
-      alt: {
-        [p('3.webp')]: 'Mobilyalı, renklendirilmiş normal kat planı',
-        [p('6.webp')]: 'Mobilyalı, renklendirilmiş normal kat planı (varyant)',
-        [p('2.webp')]: 'Teraslı çatı katı planı',
-        [p('4.webp')]: 'Zemin kat dükkân ve depo planı',
-        [p('5.webp')]: 'Zemin kat dükkân planı',
-      },
+      // Curated alt texts, kept for when the plans can be restored:
+      //   3.webp 'Mobilyalı, renklendirilmiş normal kat planı'
+      //   6.webp 'Mobilyalı, renklendirilmiş normal kat planı (varyant)'
+      //   2.webp 'Teraslı çatı katı planı'
+      //   4.webp 'Zemin kat dükkân ve depo planı'
+      //   5.webp 'Zemin kat dükkân planı'
     },
     {
+      visibility: 'withheld',
+      withheldReason: DRAWINGS_WITHHELD,
       ownerQuestions: [
         '1.webp cephe görselinde üçüncü taraf "THERMOsiding" logosu ve web adresi var. Yayınlanabilir mi?',
         '4.webp ve 5.webp planlarında "DÜKKAN" (ticari birim) yazıyor. Proje karma kullanımlı mı?',
@@ -325,8 +349,9 @@ export const projectDisplayName = (p: Project): string =>
 export const publicProjects = (): Project[] => projects.filter((p) => p.visibility === 'public');
 
 /**
- * Portfolio order (editorial): photographed projects first — completed-looking
- * blocks, then construction stories — then drawing-only projects.
+ * Portfolio order (editorial): completed-looking blocks first, then construction
+ * stories. All published images are the owner's own photographs (authorized
+ * 2026-11-11); see docs/MEDIA_INVENTORY.md §13.
  */
 export const PORTFOLIO_ORDER = [
   'proje-06',
@@ -336,10 +361,8 @@ export const PORTFOLIO_ORDER = [
   'proje-04',
   'proje-03',
   'proje-01',
-  'proje-11',
-  'proje-10',
-  'proje-07',
-  'proje-09',
+  // Drawing-only projects 11, 10, 07, 09 are withheld (drawing rights, pre-launch).
+  // Restore them here, in this order, once their rights are confirmed.
 ] as const;
 
 export const portfolio = (): Project[] =>

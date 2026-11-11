@@ -64,7 +64,10 @@ const icons: IconName[] = [
 ];
 const spacing = [1, 2, 3, 4, 6, 8, 10, 12, 16, 24];
 const sample = projects.slice(0, 3);
-const planProject = projects.find((p) => p.cover.kind === 'floor-plan');
+// Only public, registered drawings (none while drawing rights are unconfirmed).
+const planProject = projects.find(
+  (p) => p.visibility === 'public' && p.cover.kind === 'floor-plan',
+);
 ---
 
 <BaseLayout title="Tasarım sistemi (geliştirme)" noindex>

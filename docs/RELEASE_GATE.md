@@ -114,3 +114,20 @@ results below.
    5. check the domain;
    6. enable Enforce HTTPS;
    7. run the smoke tests.
+
+## 6. Update 2026-11-11 (pre-launch cleanup)
+
+- The owner's confirmations are incorporated: phones, e-mail and address; project photos genuine,
+  taken by the owner, authorized; project metadata unavailable.
+- **Exclusion §2.1 applied:** all 21 unverified drawings are withheld. Proje 07, 09, 10 and 11 are
+  redirect documents, and the homepage Mimarlık thumbnail is now an owner photo.
+- **Exclusion §2.2 not applied:** the photos indicate two buildings, so both are kept with no claim
+  either way.
+- **Exclusion §2.3 not applied:** SUGİAD becomes confirmation C2 in the final authorization.
+- **Rewritten:** the unsupported claims (`src/data/published-copy.ts`).
+- **Navigation:** Activities moved to the footer.
+- **Blocker count:** 12 → **0 hard blockers**. Classification: **READY FOR FINAL PUBLICATION
+  AUTHORIZATION** (`PRELAUNCH_FINAL_STATUS.md`).
+- **GitHub settings** (still unchanged): the `github-pages` environment has no reviewer. Add
+  `akose34` and leave "Prevent self-review" off (sole collaborator). For `main` protection, require
+  the CI check but not approvals.

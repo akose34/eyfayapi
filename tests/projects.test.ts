@@ -136,3 +136,21 @@ describe('portfolio composition', () => {
     }
   });
 });
+
+describe('owner photo authorization (2026-11-11)', () => {
+  it('publishes only the kinds the owner authorized (own photographs)', async () => {
+    const { ownerConfirmations } = await import('@/data/company');
+    const allowed: readonly string[] = ownerConfirmations.projectPhotographs.coversKinds;
+    for (const image of publicImages()) expect(allowed, image.src).toContain(image.kind);
+  });
+
+  it('never publishes drawings or renders while their rights are unverified', () => {
+    for (const p of publicProjects()) expect(projectPlans(p)).toEqual([]);
+    const withheldDrawings = projects
+      .flatMap((p) => p.curation.excluded)
+      .filter((e) => e.reason === 'unverified-drawing-rights')
+      .map((e) => e.src);
+    expect(withheldDrawings).toHaveLength(21); // 7109_4 ×6, 158_8 ×3, 7795_4 ×7, gallery 11 ×5
+    for (const src of withheldDrawings) expect(hasLegacyImage(src), src).toBe(false);
+  });
+});

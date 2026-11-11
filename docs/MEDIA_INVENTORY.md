@@ -179,3 +179,19 @@ default quality), so Astro reuses existing derivatives. The build grew only 1.0 
 - **`img/Eyfa-yapi-resim17.png`:** no longer registered (it was the old default share image). The
   original stays in the repository.
 - **Build output:** 31.2 MB (was 34.2 MB); the budget stays 40 MB.
+
+## 13. Pre-launch rights status (2026-11-11)
+
+- **Project photographs** (`projects-img/` photo, aerial and construction kinds, and the `img/`
+  photographs used on the site): **owner-confirmed**. They're genuine Eyfa Yapı projects, taken
+  personally by the owner, and authorized for website use. `ownerConfirmations` in
+  `src/data/company.ts` records this; a test allows only these kinds in public output.
+- **Architectural drawings:** **withheld**. That covers 21 files: `7109_4-1…6`, `158_8-1…3`,
+  `7795_4-1…7`, and `2–6.webp` from gallery 11.
+  - Reason: `unverified-drawing-rights`. The author and publication permission are unknown, and
+    the photo authorization doesn't cover drawings.
+  - They're excluded from the image registry and listed in `withheld-media.json`; `verify-dist`
+    checks they're absent from `dist/`. The originals stay in the repository.
+- **Unchanged:** the educational-watermark drawings (`6078_11-*`), third-party branding (`1.webp`,
+  `184_1-*`), the activity images, and the founder portrait (not published).
+- **Build output:** 22.5 MB (was 31.2 MB).

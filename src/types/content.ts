@@ -101,7 +101,8 @@ export type ExclusionReason =
   | 'near-duplicate' // same angle/moment as a shown image
   | 'third-party-branding' // visible logo/URL of another company
   | 'educational-watermark' // "PRODUCED BY AN AUTODESK EDUCATIONAL PRODUCT"
-  | 'other-company-signage'; // building signage naming another company
+  | 'other-company-signage' // building signage naming another company
+  | 'unverified-drawing-rights'; // drawing author/permission not confirmed (pre-launch)
 
 export interface ExcludedImage {
   src: string;

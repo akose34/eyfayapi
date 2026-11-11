@@ -48,10 +48,18 @@ export const serviceImages: Record<Service['id'], { src: string; alt: string }> 
     src: 'projects-img/34.webp',
     alt: 'Şantiye girişinde EYFA YAPI panosu ve inşaat demirleri',
   },
-  mimarlik: { src: 'projects-img/7795_4-7.webp', alt: 'Renklendirilmiş kat planı çizimi' },
+  // Pre-launch: was a floor plan (7795_4-7), withheld for drawing rights.
+  mimarlik: {
+    src: 'projects-img/26.webp',
+    alt: 'Köşe parseldeki konut binasının havadan görünümü',
+  },
   muhendislik: {
     src: 'projects-img/32.webp',
     alt: 'Kaba inşaat aşamasındaki betonarme karkas bina',
   },
-  emlak: { src: 'projects-img/24.webp', alt: 'Tamamlanmış konut binasının ön cephesi' },
+  // Alt text no longer says "tamamlanmış": completion is not confirmed.
+  emlak: {
+    src: 'projects-img/24.webp',
+    alt: 'Zemin katında dükkânlar bulunan konut binasının ön cephesi',
+  },
 };
