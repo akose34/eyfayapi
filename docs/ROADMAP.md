@@ -3,16 +3,16 @@
 Eight stages. Each one ends with a commit on `redesign/eyfa-professional`, a written report and
 the owner's go-ahead. Nothing is pushed, merged or deployed without explicit approval.
 
-| Stage | Title                                                | Status                                           |
-| ----- | ---------------------------------------------------- | ------------------------------------------------ |
-| 1     | Project foundation and migration audit               | **Done** (`06f997d`)                             |
-| 2     | Premium design system and shared UI                  | **Done** (see `STAGE_2_REPORT.md`)               |
-| 3     | Homepage                                             | **Next**                                         |
-| 4     | Projects: listing, detail, galleries                 | Not started (blocked on owner content for names) |
-| 5     | Corporate pages: About, Services, Activities         | Not started                                      |
-| 6     | Contact, conversion and SEO                          | Not started                                      |
-| 7     | Quality: accessibility, performance, browser testing | Not started                                      |
-| 8     | Release: deployment cut-over and legacy retirement   | Not started (needs owner approval)               |
+| Stage | Title                                                | Status                                    |
+| ----- | ---------------------------------------------------- | ----------------------------------------- |
+| 1     | Project foundation and migration audit               | **Done** (`06f997d`)                      |
+| 2     | Premium design system and shared UI                  | **Done** (see `STAGE_2_REPORT.md`)        |
+| 3     | Homepage                                             | **Done** (see `STAGE_3_REPORT.md`)        |
+| 4     | Projects: listing, detail, galleries                 | **Next** (names still need owner content) |
+| 5     | Corporate pages: About, Services, Activities         | Not started                               |
+| 6     | Contact, conversion and SEO                          | Not started                               |
+| 7     | Quality: accessibility, performance, browser testing | Not started                               |
+| 8     | Release: deployment cut-over and legacy retirement   | Not started (needs owner approval)        |
 
 ---
 
@@ -43,17 +43,21 @@ Deferred from the original Stage 2 sketch, deliberately:
 - **Stat component**: there are no verified figures.
 - **Transparent-over-hero header variant**: Stage 3, together with the hero.
 
-## Stage 3 — Homepage
+## Stage 3 — Homepage ✅
 
-- Hero: authentic photo (`img/Eyfa-yapi-resim17.png`; letterbox already trimmed by `MediaFrame`)
-  or one short muted loop with a poster image. Reduced motion shows the poster only. Decide
-  whether the header becomes transparent over the hero.
-- Use `Section`, `SectionHeading`, `MediaFrame`, `ProjectCard`, `ServiceCard`, `ContactCTA` and
-  `TextLink`/`Button` from Stage 2. No new one-off styling.
-- Sections: introduction (legacy copy), services, featured projects (only confirmed ones), a
-  corporate band, and a contact CTA.
-- No auto-advancing carousels without pause controls.
-- Performance budget: LCP image ≤ 200 KB, total homepage weight ≤ 1.5 MB without video.
+Delivered (details: `STAGE_3_REPORT.md`):
+
+- A split cinematic hero: verified headline on charcoal, with `projects-img/19.webp` bleeding to the
+  right edge (stacked on phones). No transparent header was needed.
+- An editorial introduction with verified activity areas and districts.
+- Featured galleries: one large and two stacked, neutral labels, no pending markers.
+- A services index rendered as rows.
+- An approach section: vision excerpt plus three verified principles.
+- A split closing contact band.
+- Initial transfer of about 194–266 KB, hero 59–130 KB, CLS 0, 812 B of inline JS.
+
+Deferred: a hero video loop (optional, documented), "featured" selection by the owner, and
+build-time letterbox cropping (removes an axe heuristic false positive).
 
 ## Stage 4 — Projects
 
@@ -107,7 +111,7 @@ Deferred from the original Stage 2 sketch, deliberately:
   Resolve the `emlakçi-logo.png` Unicode duplicate (PROJECT_AUDIT §6). Untrack `.DS_Store`. Archive
   `slider-photos/` duplicates. Never delete without a recoverable copy in Git history.
 
-## Open blockers and risks (updated after Stage 2)
+## Open blockers and risks (updated after Stage 3)
 
 1. **Project names and facts are unknown.** Stage 4 cannot publish real project pages until the
    owner answers the checklist.

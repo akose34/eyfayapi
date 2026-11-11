@@ -1,11 +1,17 @@
 ---
 /**
- * Contact call-to-action band. Uses only verified channels (phone, WhatsApp,
- * e-mail). The heading/lead are neutral UI copy, not company claims.
+ * Contact call-to-action band (dark). Uses only verified channels: WhatsApp,
+ * both telephone numbers, e-mail and the contact page. The heading/lead are
+ * neutral UI copy, not company claims.
+ *
+ * With `image` (S3) the band becomes a split composition: an authentic photo
+ * bleeds to the left edge on large screens and sits above the text on small
+ * screens. The image box is sized by its parent → no layout shift.
  */
 import Button from './Button.astro';
 import Container from './Container.astro';
 import Eyebrow from './Eyebrow.astro';
+import MediaFrame from './MediaFrame.astro';
 import TextLink from './TextLink.astro';
 import { company } from '@/data/company';
 import { mailtoHref, telHref, whatsappHref } from '@/lib/contact';
@@ -14,40 +20,82 @@ interface Props {
   title?: string;
   lead?: string;
   headingId?: string;
+  image?: { src: string; alt: string; position?: string };
 }
 
 const {
   title = 'Projeniz hakkında konuşalım',
   lead = 'Sorularınız için telefon, WhatsApp veya e-posta ile bize doğrudan ulaşabilirsiniz.',
   headingId = 'iletisim-cta',
+  image,
 } = Astro.props;
-const mobile = company.phones[0];
+const [mobile, landline] = company.phones;
 ---
 
-<section class="tone-dark" aria-labelledby={headingId}>
-  <Container width="wide" class="py-section grid gap-10 lg:grid-cols-12 lg:items-end">
-    <div class="lg:col-span-7">
-      <Eyebrow>İletişim</Eyebrow>
-      <h2 id={headingId} class="mt-5 text-5xl">
-        {title}
-      </h2>
-      <p class="text-ink-muted mt-6 max-w-xl text-lg">{lead}</p>
+<section class="tone-dark border-line relative border-t" aria-labelledby={headingId}>
+  {image && (
+    <div class="relative aspect-wide lg:absolute lg:inset-y-0 lg:left-0 lg:aspect-auto lg:w-[46%]">
+      <MediaFrame
+        src={image.src}
+        alt={image.alt}
+        aspect="fill"
+        rounded={false}
+        widths={[640, 960, 1280]}
+        sizes="(min-width: 1024px) 46vw, 100vw"
+        quality={70}
+        {...(image.position ? { position: image.position } : {})}
+      />
+      <div
+        aria-hidden="true"
+        class="from-charcoal pointer-events-none absolute inset-y-0 right-0 hidden w-32 bg-linear-to-l to-transparent lg:block"
+      />
     </div>
-    <div class="flex flex-col gap-4 lg:col-span-5 lg:items-end">
-      <div class="flex flex-col gap-3 sm:flex-row">
-        <Button
-          href={whatsappHref(company.whatsapp.e164)}
-          external
-          leadingIcon="whatsapp"
-          size="lg"
-        >
-          WhatsApp ile yazın
-        </Button>
-        <Button href={telHref(mobile.e164)} variant="secondary" leadingIcon="phone" size="lg">
-          {mobile.display}
-        </Button>
+  )}
+  <Container width="wide" class:list={['py-section relative', image && 'lg:min-h-[36rem]']}>
+    <div
+      class:list={[
+        image
+          ? 'flex flex-col justify-center lg:ml-[52%]'
+          : 'grid gap-10 lg:grid-cols-12 lg:items-end',
+      ]}
+    >
+      <div class:list={[!image && 'lg:col-span-7']}>
+        <Eyebrow>İletişim</Eyebrow>
+        <h2 id={headingId} class="mt-5 text-5xl">
+          {title}
+        </h2>
+        <p class="text-ink-muted mt-6 max-w-xl text-lg">{lead}</p>
       </div>
-      <TextLink href={mailtoHref(company.email)}>{company.email}</TextLink>
+      <div
+        class:list={['mt-10 flex flex-col gap-6', !image && 'lg:col-span-5 lg:mt-0 lg:items-end']}
+      >
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Button
+            href={whatsappHref(company.whatsapp.e164)}
+            external
+            leadingIcon="whatsapp"
+            size="lg"
+          >
+            WhatsApp ile yazın
+          </Button>
+          {mobile && (
+            <Button href={telHref(mobile.e164)} variant="secondary" leadingIcon="phone" size="lg">
+              {mobile.display}
+            </Button>
+          )}
+        </div>
+        <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
+          {landline && (
+            <TextLink href={telHref(landline.e164)} tone="ink" arrow={false}>
+              Sabit hat: {landline.display}
+            </TextLink>
+          )}
+          <TextLink href={mailtoHref(company.email)} tone="ink" arrow={false}>
+            {company.email}
+          </TextLink>
+          <TextLink href="/iletisim/">İletişim sayfası</TextLink>
+        </div>
+      </div>
     </div>
   </Container>
 </section>

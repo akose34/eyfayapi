@@ -313,13 +313,21 @@
   }
 
   /* Scroll-driven reveal. Pure CSS: content is fully visible when the browser
-     lacks scroll-driven animations, when motion is reduced, and without JS. */
+     lacks scroll-driven animations, when motion is reduced, in print, and
+     without JS.
+     NOTE: the timeline is passed through a custom property on purpose. The CSS
+     minifier otherwise merges `animation` + `animation-timeline` into one
+     shorthand (`animation: … view()`), which Chromium rejects — silently
+     disabling the effect (found in Stage 3 QA). */
   @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
+    @media screen and (prefers-reduced-motion: no-preference) {
       .reveal {
-        animation: reveal-in linear both;
-        animation-timeline: view();
-        animation-range: entry 0% entry 35%;
+        --reveal-timeline: view();
+        animation-name: reveal-in;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: var(--reveal-timeline);
+        animation-range: entry 0% entry 20%;
       }
     }
   }

@@ -73,4 +73,45 @@ export const legacyCopy = {
     'EYFA Yapı olarak, depreme dayanıklı, kaliteli ve estetik yapılar inşa ederek, müşterilerimizin güvenle yaşayabileceği huzurlu yaşam alanları üretmeyi hedefliyoruz. Faaliyet gösterdiğimiz her projede; sürdürülebilirlik, yenilikçi mühendislik çözümleri ve insan odaklı tasarım ilkeleri doğrultusunda hareket ediyor; kalite, güven ve müşteri memnuniyetini önceliğimiz olarak benimsiyoruz. Aynı zamanda topluma ve çevreye duyarlı projeler geliştirerek, bölgemizin sosyal ve ekonomik gelişimine katkıda bulunmayı misyon ediniyoruz.',
   vision:
     'Türkiye’nin en saygın ve güvenilir inşaat firmalarından biri olmak; şehirlerin geleceğine değer katan, yenilikçi ve sürdürülebilir yapıların öncüsü olmaktır. İnsana ve doğaya saygılı, modern yaşam standartlarını yansıtan projelerle sektörde liderliği hedeflerken; sosyal sorumluluk bilinciyle toplumun her kesimine dokunan yapılar inşa etmeyi amaçlıyoruz. Geleceğin şehirlerini bugünden tasarlayarak, güven, kalite ve estetikten ödün vermeden kalıcı eserler bırakmak vizyonumuzun temel taşlarıdır.',
+
+  /**
+   * Homepage (S3) — every string below is a VERBATIM excerpt of about.html
+   * (tests/content.test.ts asserts each one). Short labels (`title`) are
+   * navigation aids written for the layout; they summarise, never add facts.
+   */
+  homeIntroLead:
+    'İnsan hayatını önceleyen bir yaklaşımla; depreme dayanıklı, kaliteli, güvenli ve huzurlu yaşam alanları inşa etmeyi temel ilke edinmiştir.',
+  /** Districts named in about.html ("başta … olmak üzere birçok farklı bölgesinde"). */
+  districts: ['Sultanbeyli', 'Pendik', 'Kartal', 'Çekmeköy'],
+  /** Fields of activity named in about.html. `text` is verbatim. */
+  activityAreas: [
+    { title: 'Konut', text: 'Ana faaliyet alanı olan konut inşaatları' },
+    {
+      title: 'Kamu altyapısı',
+      text: 'İstanbul’un çeşitli semtlerinde metro istasyonları ve Telekom binaları',
+    },
+    {
+      title: 'Mağaza konseptleri',
+      text: 'Türkiye genelinde Türk Telekom mağazalarının yeni konseptlerine uygun olarak yeniden inşası ve tadilatı',
+    },
+    { title: 'Yol ve köprü', text: 'Yol ve köprü inşaatları' },
+  ],
+  /** Working principles (approach section). `text` is verbatim from about.html. */
+  principles: [
+    {
+      title: 'Güvenli yapılar',
+      text: 'Depreme dayanıklı, kaliteli ve estetik yapılar inşa ederek, müşterilerimizin güvenle yaşayabileceği huzurlu yaşam alanları üretmeyi hedefliyoruz.',
+    },
+    {
+      title: 'Mühendislik disiplini',
+      text: 'Güçlü mühendislik altyapısı, deneyimli kadrosu ve kalite odaklı iş anlayışıyla, projelerinde estetik, fonksiyonellik ve güvenliği bir arada sunmaktadır.',
+    },
+    {
+      title: 'Müşteri memnuniyeti',
+      text: 'Müşteri memnuniyetini her zaman öncelik kabul eden firma, bugüne dek teslim ettiği her projede bu anlayışıyla öne çıkmıştır.',
+    },
+  ],
+  /** Excerpt of the vision statement (about.html, "Vizyonumuz"). */
+  visionQuote:
+    'Geleceğin şehirlerini bugünden tasarlayarak, güven, kalite ve estetikten ödün vermeden kalıcı eserler bırakmak',
 } as const;

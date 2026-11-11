@@ -8,12 +8,16 @@
  * - `fit="contain"` for drawings/floor plans (never cropped), `cover` for photos.
  * - `zoom` scales the image gently while a parent `.group` is hovered.
  * - `caption` wraps the frame in <figure>/<figcaption>.
+ * - `aspect="fill"` (S3) drops the ratio and fills a parent that has its own
+ *   height (e.g. the full-bleed hero panel) — the parent must define the size,
+ *   so there is still no layout shift.
  */
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import { legacyImage, letterboxOf } from '@/lib/media';
 
-type Aspect = 'landscape' | 'photo' | 'wide' | 'cinema' | 'portrait' | 'square';
+type Aspect =
+  'landscape' | 'photo' | 'wide' | 'cinema' | 'portrait' | 'square' | 'feature' | 'fill';
 
 interface Props {
   src: string | null;
@@ -28,6 +32,8 @@ interface Props {
   zoom?: boolean;
   caption?: string;
   rounded?: boolean;
+  /** Encoder quality 1–100 (Astro default ≈ 80). Lower for large heroes. */
+  quality?: number;
   class?: string | undefined;
 }
 
@@ -43,6 +49,7 @@ const {
   zoom = false,
   caption,
   rounded = true,
+  quality,
   class: className,
 } = Astro.props;
 
@@ -53,6 +60,8 @@ const aspects: Record<Aspect, string> = {
   cinema: 'aspect-cinema',
   portrait: 'aspect-portrait',
   square: 'aspect-square',
+  feature: 'aspect-landscape lg:aspect-portrait', // 4:3 on phones, 4:5 from 1024px
+  fill: 'h-full',
 };
 const image = src ? legacyImage(src) : null;
 const maxWidth = Math.max(...widths);
@@ -66,7 +75,7 @@ const innerStyle = letterbox
   : 'top:0;height:100%';
 ---
 
-<Wrapper class:list={['min-w-0', className]}>
+<Wrapper class:list={['min-w-0', aspect === 'fill' && 'h-full', className]}>
   <div
     class:list={[
       'relative overflow-hidden',
@@ -86,6 +95,7 @@ const innerStyle = letterbox
           loading={priority ? 'eager' : 'lazy'}
           fetchpriority={priority ? 'high' : 'auto'}
           decoding="async"
+          {...(quality ? { quality } : {})}
           style={position ? `object-position:${position}` : undefined}
           class:list={[
             'absolute inset-0 size-full',

@@ -12,6 +12,9 @@
  *    mobile-menu trigger whose aria-controls points at an existing <dialog>,
  *    footer; unique ids; alt on every <img>; rel="noopener" on target=_blank
  *  - the development-only design showcase is NOT in the production output
+ *  - (S3) heading levels never skip (h1→h3); every <img> has width/height
+ *    (no layout shift); no external <script src> and ≤ 2 KB of inline JS;
+ *    homepage: exactly one eager, high-priority hero image, all others lazy
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -130,6 +133,28 @@ for (const f of files.filter((x) => x.endsWith('.html'))) {
       // `alt` may be serialised bare (= alt="", decorative) — both are valid.
       if (!/\salt(=|[\s/>])/.test(tag)) fail(`${name}: <img> without alt → ${tag.slice(0, 80)}`);
     }
+    for (const [tag] of html.matchAll(/<img\b[^>]*>/g)) {
+      if (!/\swidth="\d+"/.test(tag) || !/\sheight="\d+"/.test(tag)) {
+        fail(`${name}: <img> without width/height (layout shift risk) → ${tag.slice(0, 80)}`);
+      }
+    }
+
+    // Heading outline: levels may go up by at most one at a time.
+    const levels = [...html.matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
+    levels.forEach((level, i) => {
+      const prev = levels[i - 1] ?? 0;
+      if (level > prev + 1) fail(`${name}: heading level skips from h${prev} to h${level}`);
+    });
+
+    // Client JavaScript budget: no external scripts, tiny inline modules only.
+    if (/<script\b[^>]*\ssrc=/.test(html)) fail(`${name}: external <script src> found`);
+    const inlineJs = [
+      ...html.matchAll(/<script(?![^>]*application\/ld\+json)[^>]*>([\s\S]*?)<\/script>/g),
+    ]
+      .map((m) => m[1].length)
+      .reduce((a, b) => a + b, 0);
+    if (inlineJs > 2048) fail(`${name}: ${inlineJs} bytes of inline JS exceeds the 2 KB budget`);
+
     for (const [tag] of html.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)) {
       if (!/rel="[^"]*noopener/.test(tag)) fail(`${name}: target=_blank without rel=noopener`);
     }
@@ -141,6 +166,20 @@ for (const f of files.filter((x) => x.endsWith('.html'))) {
       if (!resolveInternal(u, f)) fail(`${name}: broken internal ${attr} → ${u}`);
     }
   }
+}
+
+// Homepage image loading strategy (Stage 3).
+{
+  const home = readFileSync(join(DIST, 'index.html'), 'utf8');
+  const imgs = [...home.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
+  const hero = imgs.filter((t) => /fetchpriority="high"/.test(t));
+  if (hero.length !== 1)
+    fail(`index.html: expected exactly 1 high-priority hero image, found ${hero.length}`);
+  if (hero[0] && /loading="lazy"/.test(hero[0])) fail('index.html: hero image must not be lazy');
+  const eager = imgs.filter((t) => !/loading="lazy"/.test(t));
+  // hero + header logo are the only above-the-fold images
+  if (eager.length > 2)
+    fail(`index.html: ${eager.length} eager images (expected hero + header logo)`);
 }
 
 const pages = files.filter((x) => x.endsWith('.html')).length;

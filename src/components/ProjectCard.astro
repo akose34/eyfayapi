@@ -4,18 +4,28 @@
  * ::after overlay) so there is a single tab stop and a meaningful link name.
  *
  * Only VERIFIED project facts are displayed. Unconfirmed projects show the
- * neutral provisional label and a "Bilgiler onay bekliyor" marker.
+ * neutral provisional label; listing pages add a "Bilgiler onay bekliyor"
+ * marker (`pendingNote`), which marketing contexts such as the homepage turn
+ * off — the uncertainty stays in the typed data and the review docs.
+ *
+ * `image` (S3) may override the cover, but ONLY with an image from the
+ * project's own gallery (enforced at build time below).
  */
 import Icon from './Icon.astro';
 import MediaFrame from './MediaFrame.astro';
 import { projectDisplayName } from '@/data/projects';
-import type { Project } from '@/types/content';
+import type { Project, ProjectImage } from '@/types/content';
 
 interface Props {
   project: Project;
   headingLevel?: 'h2' | 'h3';
   sizes?: string;
   priority?: boolean;
+  /** Alternative image from this project's gallery. */
+  image?: ProjectImage;
+  aspect?: 'landscape' | 'photo' | 'portrait' | 'square' | 'feature';
+  size?: 'default' | 'feature';
+  pendingNote?: boolean;
 }
 
 const {
@@ -23,7 +33,15 @@ const {
   headingLevel = 'h3',
   sizes = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw',
   priority = false,
+  image,
+  aspect = 'landscape',
+  size = 'default',
+  pendingNote = true,
 } = Astro.props;
+if (image && !project.gallery.some((g) => g.src === image.src)) {
+  throw new Error(`[ProjectCard] ${image.src} is not part of ${project.slug}'s gallery`);
+}
+const visual = image ?? project.cover;
 const Heading = headingLevel;
 const name = projectDisplayName(project);
 const confirmed = project.name.status === 'VERIFIED';
@@ -33,16 +51,16 @@ const plans = project.gallery.length - photos;
 const meta = [photos && `${photos} fotoğraf`, plans && `${plans} çizim`]
   .filter(Boolean)
   .join(' · ');
-const isPlan = project.cover.kind === 'floor-plan';
+const isPlan = visual.kind === 'floor-plan';
 ---
 
 <article class="group relative flex flex-col">
   <MediaFrame
-    src={project.cover.src}
-    alt={project.cover.alt}
-    aspect="landscape"
+    src={visual.src}
+    alt={visual.alt}
+    aspect={aspect}
     fit={isPlan ? 'contain' : 'cover'}
-    widths={[400, 640, 900]}
+    widths={size === 'feature' ? [480, 720, 960, 1280] : [400, 640, 900]}
     sizes={sizes}
     priority={priority}
     zoom={!isPlan}
@@ -50,7 +68,12 @@ const isPlan = project.cover.kind === 'floor-plan';
   <div class="mt-5 flex items-start justify-between gap-4">
     <div>
       {location && <p class="eyebrow">{location}</p>}
-      <Heading class="text-2xl transition-colors group-hover:text-accent-text">
+      <Heading
+        class:list={[
+          size === 'feature' ? 'text-3xl' : 'text-2xl',
+          'group-hover:text-accent-text transition-colors',
+        ]}
+      >
         <a
           href={`/projeler/${project.slug}/`}
           class="after:absolute after:inset-0 after:z-(--z-raised) after:rounded-lg focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-(--color-focus)"
@@ -59,7 +82,9 @@ const isPlan = project.cover.kind === 'floor-plan';
         </a>
       </Heading>
       <p class="text-ink-muted mt-1 text-sm">{meta}</p>
-      {!confirmed && <p class="text-ink-muted mt-2 text-xs italic">Bilgiler onay bekliyor</p>}
+      {!confirmed && pendingNote && (
+        <p class="text-ink-muted mt-2 text-xs italic">Bilgiler onay bekliyor</p>
+      )}
     </div>
     <span
       aria-hidden="true"

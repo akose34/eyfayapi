@@ -19,8 +19,11 @@ import type { ImageMetadata } from 'astro';
  */
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   [
-    // Homepage hero + default social preview image.
+    // Default social preview image (BaseLayout) + Stage 3 homepage photography
+    // (src/data/home.ts).
     '/img/Eyfa-yapi-resim17.png',
+    '/img/Eyfa-yapi-resim12.png',
+    '/img/Eyfa-yapi-resim18.png',
     // Project galleries (src/data/projects.ts). Excluded: files not shown on the
     // legacy projeler.html and pending owner review (docs/MEDIA_INVENTORY.md).
     '/projects-img/*.webp',
@@ -78,7 +81,9 @@ export function legacyVideo(path: string): string {
  */
 const DRONE_STILL = { top: 0.09, bottom: 0.05 } as const;
 const DRONE_STILLS = [
+  'img/Eyfa-yapi-resim12.png',
   'img/Eyfa-yapi-resim17.png',
+  'img/Eyfa-yapi-resim18.png',
   ...[
     7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     34,

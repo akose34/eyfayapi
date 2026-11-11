@@ -179,7 +179,7 @@ Conventions:
 - Allowed effects: link underline grow (`.link-underline`, a transformed `::after` line); arrow
   nudge on hover (Button, TextLink, ProjectCard); 3% image scale on card hover; gold rule widening
   on ServiceCard hover; header shadow after scroll.
-- **Section reveal** (`.reveal`) is pure CSS scroll-driven animation (`animation-timeline: view()`)
+- **Section reveal** (`.reveal`, range `entry 0%–20%`) is pure CSS scroll-driven animation (`animation-timeline: view()`)
   inside `@supports` and `prefers-reduced-motion: no-preference`. Content is fully visible without
   JavaScript, without support, and with reduced motion.
 - The mobile menu has **no open or close animation**, deliberately. In QA a `@starting-style` fade
@@ -193,29 +193,29 @@ Conventions:
 
 All components live in `src/components/`. Every `class` prop accepts `undefined` (strict TS).
 
-| Component        | Purpose                                                                                 | Key props                                                                                                                                                             |
-| ---------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Button`         | Primary actions; `<a>` with `href`, else `<button>`                                     | `variant` primary · secondary · light; `size` sm (44) · md (48) · lg (56 px); `icon`, `leadingIcon`, `external`, `disabled`, `fullWidth`; passes ARIA/data attributes |
-| `TextLink`       | Tertiary action with animated underline and arrow                                       | `tone` accent · ink; `arrow`; `external`                                                                                                                              |
-| `IconButton`     | Icon-only control (menu, close, future lightbox)                                        | `icon`, **`label` (required)**; always 44×44 px                                                                                                                       |
-| `Icon`           | Inline SVG set (12 icons, 1.5 px stroke); brand glyphs from the legacy site             | decorative by default; `label` makes it `role="img"`                                                                                                                  |
-| `BrandLogo`      | Authentic logo, cropped via `object-fit` (asset unmodified)                             | `height`, `lgHeight`, `alt`                                                                                                                                           |
-| `SiteHeader`     | Global header and mobile `<dialog>` menu                                                | none                                                                                                                                                                  |
-| `SiteFooter`     | Global footer                                                                           | none                                                                                                                                                                  |
-| `Container`      | Width wrapper                                                                           | `width` prose · content · wide                                                                                                                                        |
-| `Section`        | Tone + rhythm + container                                                               | `tone` ivory · white · sand · dark; `spacing`; `width`; `labelledby`                                                                                                  |
-| `Eyebrow`        | Uppercase label with gold rule                                                          | `rule`                                                                                                                                                                |
-| `SectionHeading` | Eyebrow · title · lead · `action` slot                                                  | `level` h1–h3; `size` page · section · sub; `align`                                                                                                                   |
-| `PageHeader`     | Inner-page intro on a dark band: breadcrumbs · eyebrow · `<h1>` · lead                  | `breadcrumbs` (required), `width`, default slot                                                                                                                       |
-| `Breadcrumbs`    | WAI-ARIA breadcrumb + BreadcrumbList JSON-LD                                            | `items`, `label`                                                                                                                                                      |
-| `MediaFrame`     | Fixed-ratio responsive image, figure/caption, letterbox trim, missing-image placeholder | `src` (path or `null`), `aspect`, `fit`, `position`, `widths`, `sizes`, `priority`, `zoom`, `caption`                                                                 |
-| `ProjectCard`    | Whole-card link (single tab stop), verified facts only                                  | `project`, `headingLevel`, `priority`                                                                                                                                 |
-| `ServiceCard`    | Numbered service tile                                                                   | `service`, `index`, `headingLevel`                                                                                                                                    |
-| `ContactLinks`   | Verified channels with icons (tone-aware)                                               | `address`                                                                                                                                                             |
-| `ContactCTA`     | Dark contact band: WhatsApp, phone and e-mail                                           | `title`, `lead`, `headingId`                                                                                                                                          |
-| `Divider`        | `<hr>`: hairline or short gold rule                                                     | `variant` line · accent                                                                                                                                               |
-| `EmptyState`     | Calm placeholder for absent content (filters, pending sections)                         | `title`, `description`, `icon`, slot                                                                                                                                  |
-| `StageNotice`    | Visible "awaiting owner confirmation" note                                              | `title`, slot                                                                                                                                                         |
+| Component        | Purpose                                                                                   | Key props                                                                                                                                                                              |
+| ---------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`         | Primary actions; `<a>` with `href`, else `<button>`                                       | `variant` primary · secondary · light; `size` sm (44) · md (48) · lg (56 px); `icon`, `leadingIcon`, `external`, `disabled`, `fullWidth`; passes ARIA/data attributes                  |
+| `TextLink`       | Tertiary action with animated underline and arrow                                         | `tone` accent · ink; `arrow`; `external`                                                                                                                                               |
+| `IconButton`     | Icon-only control (menu, close, future lightbox)                                          | `icon`, **`label` (required)**; always 44×44 px                                                                                                                                        |
+| `Icon`           | Inline SVG set (12 icons, 1.5 px stroke); brand glyphs from the legacy site               | decorative by default; `label` makes it `role="img"`                                                                                                                                   |
+| `BrandLogo`      | Authentic logo, cropped via `object-fit` (asset unmodified)                               | `height`, `lgHeight`, `alt`                                                                                                                                                            |
+| `SiteHeader`     | Global header and mobile `<dialog>` menu                                                  | none                                                                                                                                                                                   |
+| `SiteFooter`     | Global footer                                                                             | none                                                                                                                                                                                   |
+| `Container`      | Width wrapper                                                                             | `width` prose · content · wide                                                                                                                                                         |
+| `Section`        | Tone + rhythm + container                                                                 | `tone` ivory · white · sand · dark; `spacing`; `width`; `labelledby`                                                                                                                   |
+| `Eyebrow`        | Uppercase label with gold rule                                                            | `rule`                                                                                                                                                                                 |
+| `SectionHeading` | Eyebrow · title · lead · `action` slot                                                    | `level` h1–h3; `size` page · section · sub; `align`                                                                                                                                    |
+| `PageHeader`     | Inner-page intro on a dark band: breadcrumbs · eyebrow · `<h1>` · lead                    | `breadcrumbs` (required), `width`, default slot                                                                                                                                        |
+| `Breadcrumbs`    | WAI-ARIA breadcrumb + BreadcrumbList JSON-LD                                              | `items`, `label`                                                                                                                                                                       |
+| `MediaFrame`     | Fixed-ratio responsive image, figure/caption, letterbox trim, missing-image placeholder   | `src` (path or `null`), `aspect` (+ S3: `feature` = 4:3→4:5 at lg, `fill` = fills a sized parent), `fit`, `position`, `widths`, `sizes`, `priority`, `zoom`, `caption`, `quality` (S3) |
+| `ProjectCard`    | Whole-card link (single tab stop), verified facts only                                    | `project`, `headingLevel`, `priority`; S3: `image` (own-gallery override, build-time check), `aspect`, `size` default · feature, `pendingNote`                                         |
+| `ServiceCard`    | Numbered service tile                                                                     | `service`, `index`, `headingLevel`                                                                                                                                                     |
+| `ContactLinks`   | Verified channels with icons (tone-aware)                                                 | `address`                                                                                                                                                                              |
+| `ContactCTA`     | Dark contact band: WhatsApp, both phones, e-mail, contact page; optional split photo (S3) | `title`, `lead`, `headingId`, `image`                                                                                                                                                  |
+| `Divider`        | `<hr>`: hairline or short gold rule                                                       | `variant` line · accent                                                                                                                                                                |
+| `EmptyState`     | Calm placeholder for absent content (filters, pending sections)                           | `title`, `description`, `icon`, slot                                                                                                                                                   |
+| `StageNotice`    | Visible "awaiting owner confirmation" note                                                | `title`, slot                                                                                                                                                                          |
 
 ### Buttons
 
@@ -311,8 +311,8 @@ in `dist`).
 
 1. **Logo master.** Only a 1024 px PNG exists (gold artwork, transparent). A vector or SVG master
    is needed for crisp rendering, a monochrome variant, and any light-background use.
-2. **Hero treatment (Stage 3).** Still photo (current) or a short muted loop from `mini-videos/`
-   with a poster image.
+2. **Hero treatment.** Decided in Stage 3: a static split hero (`projects-img/19.webp`). A muted
+   `mini-videos` loop remains an optional enhancement (STAGE_3_REPORT §9).
 3. **Service imagery.** Typographic tiles are used now. The owner may prefer photos per service
    (MEDIA_INVENTORY §7).
 4. **Floor plans with black bottom bars** (`projects-img/2–6.webp`). These are not trimmed (contain
@@ -321,3 +321,17 @@ in `dist`).
    due in Stage 6.
 6. **Footer/CTA copy.** "Projeniz hakkında konuşalım" is neutral UI copy. The owner may want their
    own wording.
+
+## 15. Stage 3 additions and lessons
+
+- **Homepage section rhythm:** dark → ivory → dark → white → sand → dark → footer. Avoid two
+  light sections of the same tone in a row.
+- **One container edge per page.** All homepage sections use `width="wide"`, so the hero text,
+  section headings and grids share one left edge.
+- **Never combine `animation` and `animation-timeline` in plain declarations.** The minifier
+  merges them into an `animation: … view()` shorthand, which Chromium rejects. `.reveal` passes the
+  timeline through `--reveal-timeline` (see `global.css`).
+- **Index lists over card grids** when items are few and verbal (services). Cards stay for visual
+  items (projects).
+- **Marketing contexts hide pending markers** (`ProjectCard pendingNote={false}`). Listing and
+  detail pages keep them.

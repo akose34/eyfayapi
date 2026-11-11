@@ -1,80 +1,289 @@
 ---
 /**
- * Homepage — Stage 2 applies the shared design system to the Stage 1 content.
- * The full homepage composition (hero media, featured projects, corporate
- * band) is Stage 3 (docs/ROADMAP.md).
+ * Homepage (Stage 3). Rhythm: dark hero → ivory introduction → dark featured
+ * projects → white services index → sand approach → dark closing contact.
+ *
+ * Content rules: every sentence is verified legacy copy (src/data/company.ts,
+ * services.ts) or neutral UI wording; project names stay provisional.
+ * Curation (which image/project goes where) lives in src/data/home.ts.
+ * No client JavaScript beyond the shared header.
  */
 import Button from '@/components/Button.astro';
 import ContactCTA from '@/components/ContactCTA.astro';
 import Container from '@/components/Container.astro';
 import Eyebrow from '@/components/Eyebrow.astro';
+import Icon from '@/components/Icon.astro';
 import MediaFrame from '@/components/MediaFrame.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
 import Section from '@/components/Section.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import ServiceCard from '@/components/ServiceCard.astro';
 import TextLink from '@/components/TextLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { company, legacyCopy } from '@/data/company';
+import {
+  featuredProjects,
+  homeClosingImage,
+  homeHero,
+  homeIntroImage,
+  serviceImages,
+} from '@/data/home';
+import { getProjectBySlug, projects } from '@/data/projects';
 import { services } from '@/data/services';
+
+/** First sentence of the verified homepage introduction. */
+const heroLead = legacyCopy.homeIntro.split('. ')[0] + '.';
+/** First sentence of the verified projects introduction. */
+const projectsLead = legacyCopy.projectsIntro.split('. ')[0] + '.';
+
+const featured = featuredProjects.map(({ slug, image }) => {
+  const project = getProjectBySlug(slug);
+  const picked = project?.gallery.find((g) => g.src === image);
+  if (!project || !picked) throw new Error(`[home] featured ${slug}/${image} not found`);
+  return { project, image: picked };
+});
+const [lead, ...rest] = featured;
 ---
 
 <BaseLayout>
-  <section class="tone-dark border-line border-t" aria-labelledby="hero-title">
-    <Container width="wide" class="py-section grid items-center gap-12 lg:grid-cols-12">
-      <div class="lg:col-span-6">
-        <Eyebrow>{company.brandName}</Eyebrow>
-        <h1 id="hero-title" class="mt-6 text-display">
+  {/* A — Hero: text on charcoal, authentic photograph bleeding to the right edge. */}
+  <section class="tone-dark border-line relative border-t" aria-labelledby="hero-title">
+    <div class="relative aspect-square sm:aspect-photo lg:absolute lg:inset-y-0 lg:right-0 lg:aspect-auto lg:w-[56%]">
+      <MediaFrame
+        src={homeHero.src}
+        alt={homeHero.alt}
+        aspect="fill"
+        position={homeHero.position}
+        rounded={false}
+        priority
+        quality={68}
+        widths={[480, 768, 1080, 1440, 1920]}
+        sizes="(min-width: 1024px) 56vw, 100vw"
+      />
+      <div
+        aria-hidden="true"
+        class="from-charcoal pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t to-transparent lg:inset-x-auto lg:inset-y-0 lg:left-0 lg:h-auto lg:w-40 lg:bg-linear-to-r"
+      ></div>
+    </div>
+
+    <Container
+      width="wide"
+      class="relative flex flex-col justify-center pt-10 pb-16 sm:pt-14 sm:pb-20 lg:min-h-[min(calc(100svh-var(--spacing-header-lg)),56rem)] lg:py-24"
+    >
+      <div class="lg:w-[42%]">
+        <Eyebrow>2004’ten bu yana · İstanbul</Eyebrow>
+        <h1 id="hero-title" class="text-display mt-6 lg:mt-8">
           {legacyCopy.homeHeadline}
         </h1>
-        <p class="text-ink-muted mt-8 max-w-xl text-lg">{legacyCopy.homeIntro}</p>
-        <div class="mt-10 flex flex-wrap gap-3">
+        <p class="text-ink-muted mt-6 max-w-lg text-lg lg:mt-8">{heroLead}</p>
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row lg:mt-11">
           <Button href="/projeler/" size="lg" icon="arrow-right">
             Projelerimiz
           </Button>
           <Button href="/iletisim/" variant="secondary" size="lg">
-            İletişim
+            Bize ulaşın
           </Button>
         </div>
+        <ul
+          class="text-ink-muted border-line mt-12 flex flex-wrap gap-x-6 gap-y-2 border-t pt-6 text-xs font-semibold tracking-(--tracking-eyebrow) uppercase lg:mt-16"
+          aria-label="Hizmet alanlarımız"
+        >
+          {services.map((s) => (
+            <li>{s.title}</li>
+          ))}
+        </ul>
       </div>
-      <MediaFrame
-        src="img/Eyfa-yapi-resim17.png"
-        alt="Yeşil çatılı, sarı cephe şeritli konut binasının havadan görünümü"
-        aspect="photo"
-        widths={[480, 768, 1024, 1440]}
-        sizes="(min-width: 1024px) 50vw, 100vw"
-        priority
-        class="lg:col-span-6"
-      />
     </Container>
   </section>
 
-  <Section labelledby="hizmetler-baslik">
-    <SectionHeading eyebrow="Hizmetlerimiz" title="Neler yapıyoruz" id="hizmetler-baslik">
-      <TextLink slot="action" href="/hizmetler/">
-        Tüm hizmetler
-      </TextLink>
-    </SectionHeading>
-    <ul class="mt-14 grid gap-(--spacing-grid) md:grid-cols-3">
-      {services.map((service, index) => (
-        <li class="reveal">
-          <ServiceCard service={service} index={index} />
-        </li>
-      ))}
-    </ul>
+  {/* B — Corporate introduction: statement, verified lead, image + fields of activity. */}
+  <Section width="wide" labelledby="giris-baslik">
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+      <div class="lg:col-span-7">
+        <Eyebrow>Hakkımızda</Eyebrow>
+        <h2 id="giris-baslik" class="mt-6 text-4xl">
+          {legacyCopy.positioning}
+        </h2>
+      </div>
+      <div class="flex flex-col justify-end gap-6 lg:col-span-4 lg:col-start-9">
+        <p class="text-ink-muted text-lg">{legacyCopy.homeIntroLead}</p>
+        <TextLink href="/hakkimizda/">Kurumsal hikâyemiz</TextLink>
+      </div>
+    </div>
+
+    <div class="mt-16 grid gap-12 lg:mt-24 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+      <MediaFrame
+        src={homeIntroImage.src}
+        alt={homeIntroImage.alt}
+        aspect="photo"
+        position={homeIntroImage.position}
+        widths={[480, 768, 1080, 1440]}
+        sizes="(min-width: 1024px) 58vw, 100vw"
+        quality={72}
+        class="reveal lg:col-span-7"
+      />
+      <div class="lg:col-span-5 lg:pl-6">
+        <h3 class="text-3xl">Faaliyet alanlarımız</h3>
+        <dl class="border-line mt-8 border-t">
+          {legacyCopy.activityAreas.map((area, index) => (
+            <div class="border-line grid grid-cols-[2.25rem_1fr] gap-x-4 border-b py-5">
+              <span
+                class="text-accent-text pt-1 text-xs font-semibold tabular-nums"
+                aria-hidden="true"
+              >
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <dt class="font-semibold">{area.title}</dt>
+              <dd class="text-ink-muted col-start-2 mt-1 text-sm">{area.text}</dd>
+            </div>
+          ))}
+        </dl>
+        <p class="text-ink-muted mt-8 text-sm">
+          <span class="text-ink font-semibold">İstanbul’da başlıca bölgeler:</span>{' '}
+          {legacyCopy.districts.join(' · ')}
+        </p>
+      </div>
+    </div>
   </Section>
 
-  <Section tone="sand" labelledby="projeler-baslik">
+  {/* C — Featured projects: one large gallery + two stacked, on charcoal. */}
+  <Section tone="dark" width="wide" labelledby="projeler-baslik">
     <SectionHeading
       eyebrow="Projelerimiz"
-      title="Projelerimiz"
-      lead={legacyCopy.projectsIntro}
+      title="Seçili projeler"
+      lead={projectsLead}
       id="projeler-baslik"
     >
-      <Button slot="action" href="/projeler/" variant="secondary" icon="arrow-right">
-        Tüm Projelerimiz
-      </Button>
+      <TextLink slot="action" href="/projeler/">
+        Tüm projeler ({projects.length})
+      </TextLink>
     </SectionHeading>
+
+    <div class="mt-14 grid gap-x-(--spacing-grid) gap-y-14 lg:mt-20 lg:grid-cols-12">
+      {lead && (
+        <div class="reveal lg:col-span-7">
+          <ProjectCard
+            project={lead.project}
+            image={lead.image}
+            aspect="feature"
+            size="feature"
+            pendingNote={false}
+            sizes="(min-width: 1024px) 56vw, 100vw"
+          />
+        </div>
+      )}
+      <div class="grid gap-14 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
+        {rest.map(({ project, image }) => (
+          <div class="reveal">
+            <ProjectCard
+              project={project}
+              image={image}
+              pendingNote={false}
+              sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   </Section>
 
-  <ContactCTA />
+  {/* D — Services as an editorial index (rows, not cards). */}
+  <Section tone="white" width="wide" labelledby="hizmetler-baslik">
+    <SectionHeading eyebrow="Hizmetlerimiz" title="Uzmanlık alanlarımız" id="hizmetler-baslik">
+      <TextLink slot="action" href="/hizmetler/">
+        Hizmetler sayfası
+      </TextLink>
+    </SectionHeading>
+
+    <ol class="border-line mt-14 border-t lg:mt-20">
+      {services.map((service, index) => {
+        const image = serviceImages[service.id];
+        return (
+          <li class="border-line group relative border-b">
+            <article class="grid grid-cols-[1fr_5.5rem] items-start gap-x-5 gap-y-4 py-8 sm:grid-cols-[1fr_9rem] md:grid-cols-12 md:items-center md:gap-(--spacing-grid) md:py-10 lg:py-12">
+              <div class="flex items-baseline gap-4 md:col-span-5 md:gap-5">
+                <span class="text-accent-text text-xs font-semibold tabular-nums">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <h3 class="group-hover:text-accent-text text-3xl transition-colors md:text-4xl">
+                  <a
+                    href={`/hizmetler/#${service.id}`}
+                    class="after:absolute after:inset-0 after:z-(--z-raised) focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-(--color-focus)"
+                  >
+                    {service.title}
+                  </a>
+                </h3>
+              </div>
+              <div class="col-start-2 row-span-2 row-start-1 flex items-center gap-6 md:col-span-3 md:col-start-10 md:row-span-1">
+                <MediaFrame
+                  src={image.src}
+                  alt={image.alt}
+                  aspect="landscape"
+                  widths={[240, 480, 640]}
+                  sizes="(min-width: 768px) 20vw, 9rem"
+                  zoom
+                  class="flex-1"
+                />
+                <Icon
+                  name="arrow-right"
+                  size={20}
+                  class="text-ink-muted group-hover:text-accent-text hidden transition-transform duration-(--duration-base) group-hover:translate-x-1 md:block"
+                />
+              </div>
+              <p class="text-ink-muted md:col-span-4 md:col-start-6 md:row-start-1">
+                {service.description}
+              </p>
+            </article>
+          </li>
+        );
+      })}
+    </ol>
+  </Section>
+
+  {/* E — Approach: vision excerpt + three verified principles. */}
+  <Section tone="sand" width="wide" labelledby="yaklasim-baslik">
+    <div class="grid gap-14 lg:grid-cols-12 lg:gap-(--spacing-grid)">
+      <div class="lg:col-span-6">
+        <Eyebrow>Yaklaşımımız</Eyebrow>
+        <h2 id="yaklasim-baslik" class="sr-only">
+          Yaklaşımımız
+        </h2>
+        <figure class="mt-8">
+          <blockquote class="font-display max-w-xl text-3xl">
+            <p>“{legacyCopy.visionQuote}.”</p>
+          </blockquote>
+          <figcaption class="text-ink-muted mt-6 text-sm">
+            — {company.brandName}, Vizyonumuz
+          </figcaption>
+        </figure>
+      </div>
+      <ol class="grid gap-10 lg:col-span-5 lg:col-start-8">
+        {legacyCopy.principles.map((principle, index) => (
+          <li class="reveal border-line grid grid-cols-[2.5rem_1fr] gap-x-4 border-t pt-8">
+            <span
+              class="text-accent-text pt-2 text-xs font-semibold tabular-nums"
+              aria-hidden="true"
+            >
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <h3 class="text-2xl">{principle.title}</h3>
+              <p class="text-ink-muted mt-3">{principle.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+    <div class="mt-14 lg:mt-20">
+      <Button href="/hakkimizda/" variant="secondary" icon="arrow-right">
+        Misyon ve vizyonumuz
+      </Button>
+    </div>
+  </Section>
+
+  {/* F — Closing contact. */}
+  <ContactCTA
+    title="Bir sonraki projeniz için bize ulaşın"
+    headingId="kapanis-iletisim"
+    image={homeClosingImage}
+  />
 </BaseLayout>
