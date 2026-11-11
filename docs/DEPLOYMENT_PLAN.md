@@ -116,6 +116,24 @@ The site ships no form. If a form is ever needed:
 - This requires owner approval and a separate review. Until then contact remains `tel:`, `mailto:`
   and WhatsApp.
 
+## 6a. Stage 7 additions to the plan
+
+- **CI:** extend the workflow's build job after `npm run validate` with:
+  `npx playwright install --with-deps chromium && npx playwright test`.
+- **Preview deployments** must be built with `SITE_INDEXING=off`:
+  - every page gets `noindex`;
+  - `robots.txt` becomes `Disallow: /`;
+  - `SITE_INDEXING=off npm run verify:dist` checks this.
+
+  The production build (no variable) is indexable, and `verify-dist` fails if robots.txt blocks
+  the site.
+
+- **Hosting checks on the preview** (they cannot be proven locally): extension-less legacy URLs,
+  the trailing-slash 301, and the 404 status for unknown paths (`SEO_AUDIT.md` §6).
+- **Headers:** GitHub Pages cannot set them. The CSP ships as a `<meta>`. HSTS, `frame-ancestors`,
+  `nosniff` and `Referrer-Policy` need another host; values are in `STAGE_7_REPORT.md` §6.
+- **Release gate:** `RELEASE_BLOCKERS.md` must be resolved or accepted by the owner first.
+
 ## 7. Alternatives considered
 
 | Option                                   | Pros                                        | Cons                                              |

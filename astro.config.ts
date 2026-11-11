@@ -37,6 +37,10 @@ export default defineConfig({
   trailingSlash: 'always',
   build: {
     format: 'directory',
+    // Stage 7: inline the (single, ~13 KB gzip) stylesheet. Removes the only
+    // render-blocking request; measured −150…230 ms simulated mobile LCP
+    // (docs/PERFORMANCE_AUDIT.md). Trade-off: not cached across pages.
+    inlineStylesheets: 'always',
   },
   // Static redirect documents in public/ must stay as-is (e.g. /projeler.html).
   publicDir: './public',
@@ -44,6 +48,39 @@ export default defineConfig({
   image: {
     service: { entrypoint: './src/lib/image-service.ts' },
   },
+  /**
+   * Stage 7 — Content Security Policy as a <meta> element (GitHub Pages cannot
+   * send headers). Astro hashes every script and style it emits into
+   * script-src / style-src; everything else is same-origin only, except the
+   * Google Maps embed that /iletisim/ loads after an explicit click.
+   * style-src-attr allows the two inline style ATTRIBUTES (image focal point,
+   * logo size); attributes cannot carry script. Verified by tests/e2e (no CSP
+   * violations on any route) — see docs/SEO_AUDIT.md §Security.
+   */
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self'",
+        "font-src 'self'",
+        "connect-src 'self'",
+        'frame-src https://www.google.com',
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'none'",
+      ],
+      // 'self' + Astro's hashes for <style> elements; 'unsafe-inline' only for
+      // style ATTRIBUTES (style-src-attr).
+      styleDirective: {
+        resources: [
+          { resource: "'self'", kind: 'element' },
+          { resource: "'unsafe-inline'", kind: 'attribute' },
+        ],
+      },
+    },
+  },
+  // No Markdown content; disabling Shiki also removes its CSP warning.
+  markdown: { syntaxHighlight: false },
   integrations: [
     devShowcase(),
     sitemap({
@@ -53,5 +90,10 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      // Fonts are always emitted as files: cacheable, and a future CSP can keep
+      // font-src 'self' (no data: URIs). Other small assets use Vite's default.
+      assetsInlineLimit: (file) => (file.endsWith('.woff2') ? false : undefined),
+    },
   },
 });

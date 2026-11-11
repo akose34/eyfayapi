@@ -4,6 +4,7 @@
  * The last item is the current page: rendered as text with aria-current.
  */
 import Icon from './Icon.astro';
+import { jsonLdString } from '@/lib/seo';
 
 export interface Crumb {
   label: string;
@@ -20,7 +21,7 @@ interface Props {
 const { items, label = 'Sayfa konumu', class: className } = Astro.props;
 const trail: Crumb[] = [{ label: 'Ana Sayfa', href: '/' }, ...items];
 const site = Astro.site ?? new URL('https://eyfayapi.net');
-const jsonLd = JSON.stringify({
+const jsonLd = jsonLdString({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: trail.map((crumb, index) => ({

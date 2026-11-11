@@ -17,3 +17,8 @@ package-lock.json
 
 # Static redirect stubs are hand-written and intentionally minimal
 public/*.html
+
+# Local QA reports (Stage 7)
+lighthouse/
+playwright-report/
+test-results/

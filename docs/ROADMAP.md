@@ -11,8 +11,8 @@ the owner's go-ahead. Nothing is pushed, merged or deployed without explicit app
 | 4     | Projects: listing, detail, galleries                 | **Done** (see `STAGE_4_REPORT.md`) |
 | 5     | Corporate pages: About, Services, Activities         | **Done** (see `STAGE_5_REPORT.md`) |
 | 6     | Contact and conversion                               | **Done** (see `STAGE_6_REPORT.md`) |
-| 7     | SEO and quality: accessibility, performance, testing | **Next**                           |
-| 8     | Release: deployment cut-over and legacy retirement   | Not started (needs owner approval) |
+| 7     | SEO and quality: accessibility, performance, testing | **Done** (see `STAGE_7_REPORT.md`) |
+| 8     | Release: deployment cut-over and legacy retirement   | **Next**: blocked on owner review  |
 
 ---
 
@@ -106,19 +106,22 @@ Delivered (details: `STAGE_5_REPORT.md`):
 - Moved to Stage 7: the full SEO pass (OG images, `LocalBusiness` refinements, sitemap review).
   Opening hours remain unpublished until the owner provides them.
 
-## Stage 7 — SEO and quality
+## Stage 7 — SEO and quality ✅
 
-- SEO (carried over from the original Stage 6 plan): per-page OG images, JSON-LD review
-  (`LocalBusiness` subtype, `Project`/`Residence` only once projects are confirmed), sitemap and
-  robots review, Search Console handover plan.
-
-- Playwright smoke tests (routes, navigation, mobile menu, legacy redirects).
-- axe-core accessibility scans on every route, plus manual keyboard and VoiceOver passes.
-- Lighthouse CI budgets (Performance ≥ 90 mobile, Accessibility 100, Best Practices ≥ 95,
-  SEO 100). Results are recorded only from real runs.
-- Cross-browser checks: Safari iOS, Chrome Android, desktop Chrome, Firefox and Safari.
-- Optional re-encode of hero video and removal of audio tracks.
-- English localisation groundwork (route scaffolding only) if requested.
+- SEO: full OG/X metadata; generated 1200×630 share images (authentic photo + logo, no text);
+  404 canonical removed; placeholders `noindex, follow`; sitemap = indexable pages (enforced);
+  generated robots.txt with a staging switch (`SITE_INDEXING=off`); `GeneralContractor` +
+  `WebSite` JSON-LD with verified facts only.
+- Performance: mobile LCP ≤ 2.40 s and CLS 0 on every page. Photo quality 72, a 750 px width step,
+  metric-matched fallback fonts, Turkish font subsets, inline CSS.
+- Security: hashed meta CSP; JSON-LD escaping; public-output hygiene gate; production dependencies
+  have 0 advisories.
+- Quality gates: Playwright smoke + axe suite (`npm run test:e2e`), Lighthouse runner
+  (`npm run lighthouse`), extended `verify-dist`. All new checks were mutation-tested.
+- Visual: homepage approach band and services density, footer presence.
+- Readiness: **BLOCKED PENDING CONTENT APPROVAL** (`RELEASE_BLOCKERS.md`).
+- Not done (manual or owner): VoiceOver pass, real-device Safari iOS / Chrome Android checks,
+  creative proposals (`OWNER_REVIEW_CHECKLIST.md`).
 
 ## Stage 8 — Release
 
@@ -132,7 +135,7 @@ Delivered (details: `STAGE_5_REPORT.md`):
   Resolve the `emlakçi-logo.png` Unicode duplicate (PROJECT_AUDIT §6). Untrack `.DS_Store`. Archive
   `slider-photos/` duplicates. Never delete without a recoverable copy in Git history.
 
-## Open blockers and risks (updated after Stage 6)
+## Open blockers and risks (updated after Stage 7; full list in `RELEASE_BLOCKERS.md`)
 
 1. **Project names and facts are unknown.** Stage 4 cannot publish real project pages until the
    owner answers the checklist.

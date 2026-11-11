@@ -5,7 +5,7 @@
  * always text → image, so reading order is stable on every layout.
  *
  * Image widths deliberately match ProjectGallery thumbnails
- * (480/720/960/1280, default quality): Astro hashes identical transforms to
+ * (480/750/960/1280, photo quality 72): Astro hashes identical transforms to
  * the same file, so these rows reuse existing derivatives instead of growing
  * the build.
  */
@@ -37,7 +37,7 @@ const imageSpan = textSpan === 5 ? 'lg:col-span-6' : 'lg:col-span-5';
     src={image.src}
     alt={image.alt}
     aspect={aspect}
-    widths={[480, 720, 960, 1280]}
+    widths={[480, 750, 960, 1280]}
     sizes="(min-width: 1024px) 50vw, 100vw"
     {...(image.position ? { position: image.position } : {})}
     class:list={[

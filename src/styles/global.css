@@ -6,10 +6,72 @@
  */
 @import 'tailwindcss';
 
-/* Self-hosted, SIL OFL 1.1 licensed variable fonts. Only the latin and
-   latin-ext subsets are ever downloaded for Turkish text (unicode-range). */
-@import '@fontsource-variable/manrope/wght.css';
-@import '@fontsource-variable/cormorant-garamond/wght.css';
+/* Self-hosted, SIL OFL 1.1 licensed variable fonts (fontsource builds).
+   Stage 7: two faces per family instead of fontsource's full subset list —
+     latin    the fontsource file, unchanged
+     turkish  Ğ ğ İ Ş ş only (2–3 KB), cut from fontsource's latin-ext file by
+              scripts/subset-fonts.py — replaces the 15–33 KB latin-ext download
+   Characters outside both ranges fall back to the metric-matched faces below. */
+@font-face {
+  font-family: 'Manrope Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Manrope Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('../assets/fonts/manrope-turkish-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+011E-011F, U+0130, U+015E-015F;
+}
+@font-face {
+  font-family: 'Cormorant Garamond Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('@fontsource-variable/cormorant-garamond/files/cormorant-garamond-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cormorant Garamond Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('../assets/fonts/cormorant-garamond-turkish-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range: U+011E-011F, U+0130, U+015E-015F;
+}
+
+/* Metric-matched fallbacks (Stage 7): shown while the web fonts load, sized so
+   that text wraps the same way before and after the swap (no layout shift).
+   Values come from the font files' hmtx/hhea tables, measured on a Turkish
+   sample string (docs/PERFORMANCE_AUDIT.md). Roboto / Noto Serif cover Android. */
+@font-face {
+  font-family: 'Manrope Fallback';
+  src: local('Arial'), local('ArialMT'), local('Roboto');
+  size-adjust: 100.12%;
+  ascent-override: 106.47%;
+  descent-override: 29.96%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Cormorant Fallback';
+  src: local('Georgia'), local('Noto Serif');
+  size-adjust: 88.32%;
+  ascent-override: 104.62%;
+  descent-override: 32.5%;
+  line-gap-override: 0%;
+}
 
 @theme static {
   /* ---- Colour: brand palette (approved) ------------------------------ */
@@ -45,8 +107,10 @@
   --color-focus: var(--color-champagne-700); /* ≥3:1 against light surfaces */
 
   /* ---- Typography ---------------------------------------------------- */
-  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Cormorant Garamond Variable', 'Iowan Old Style', Georgia, serif;
+  --font-sans:
+    'Manrope Variable', 'Manrope Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
+  --font-display: 'Cormorant Garamond Variable', 'Cormorant Fallback', Georgia, serif;
 
   /* Fluid type scale (≈1.25 ratio, clamped between 360px and 1440px),
      each with its own line-height. */

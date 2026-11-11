@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://eyfayapi.net/sitemap-index.xml

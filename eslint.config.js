@@ -7,7 +7,17 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   {
     // Legacy static site files are preserved verbatim and are not linted.
-    ignores: ['dist/', '.astro/', 'node_modules/', '*.html', 'public/'],
+    ignores: [
+      'dist/',
+      '.astro/',
+      'node_modules/',
+      '*.html',
+      'public/',
+      // Local QA reports (git-ignored)
+      'lighthouse/',
+      'playwright-report/',
+      'test-results/',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.strict,

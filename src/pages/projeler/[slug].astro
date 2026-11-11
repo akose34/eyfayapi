@@ -83,6 +83,8 @@ const intro =
     : hero
       ? 'Eyfa Yapı arşivinden, projeye ait fotoğraflar.'
       : 'Eyfa Yapı arşivinden, projeye ait mimari çizimler.');
+/** Meta description: verified description, or the neutral intro plus the media count. */
+const metaDescription = description ?? `${title}: ${intro.replace(/\.$/, '')} (${summary}).`;
 ---
 
 {withheld ? (
@@ -101,7 +103,7 @@ const intro =
     </body>
   </html>
 ) : (
-  <BaseLayout title={title} ogImage={project.cover.src} noindex={!confirmed}>
+  <BaseLayout title={title} description={metaDescription} og={project.slug} noindex={!confirmed}>
     <PageHeader
       title={title}
       eyebrow={construction ? 'Proje · İnşaat süreci' : 'Proje'}
@@ -133,7 +135,7 @@ const intro =
             aspect="wide"
             priority
             quality={72}
-            widths={[640, 960, 1280, 1600, 2000]}
+            widths={[640, 750, 960, 1280, 1600, 2000]}
             sizes="(min-width: 1376px) 1296px, 100vw"
             class="lg:[&>div]:aspect-cinema"
           />

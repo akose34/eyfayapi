@@ -32,7 +32,10 @@ interface Props {
   zoom?: boolean;
   caption?: string;
   rounded?: boolean;
-  /** Encoder quality 1–100 (Astro default ≈ 80). Lower for large heroes. */
+  /**
+   * Encoder quality 1–100. Photos (`cover`) default to PHOTO_QUALITY; drawings
+   * (`contain`) keep the encoder default (80) so plan lines stay crisp.
+   */
   quality?: number;
   class?: string | undefined;
 }
@@ -43,7 +46,7 @@ const {
   aspect = 'landscape',
   fit = 'cover',
   position,
-  widths = [400, 640, 960, 1280],
+  widths = [400, 640, 750, 960, 1280],
   sizes = '100vw',
   priority = false,
   zoom = false,
@@ -68,6 +71,9 @@ const aspects: Record<Aspect, string> = {
 // cropped picture. Originals stay untouched. Only verified solid black bands
 // are listed (src/data/image-crops.json) — drawing content is never cropped.
 const cropped = src ? croppedImage(src) : null;
+/** Stage 7: matches the hero setting; visually checked on phones and 2x desktop. */
+const PHOTO_QUALITY = 72;
+const encoderQuality = quality ?? (fit === 'cover' ? PHOTO_QUALITY : undefined);
 const maxWidth = Math.max(...widths);
 const Wrapper = caption ? 'figure' : 'div';
 const renderWidth = cropped ? Math.min(maxWidth, cropped.width) : 0;
@@ -95,7 +101,7 @@ const renderHeight = cropped ? Math.round((renderWidth * cropped.height) / cropp
         loading={priority ? 'eager' : 'lazy'}
         fetchpriority={priority ? 'high' : 'auto'}
         decoding="async"
-        {...(quality ? { quality } : {})}
+        {...(encoderQuality ? { quality: encoderQuality } : {})}
         style={position ? `object-position:${position}` : undefined}
         class:list={[
           'absolute inset-0 size-full',

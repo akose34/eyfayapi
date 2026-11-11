@@ -19,7 +19,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "verify:dist": "node scripts/verify-dist.mjs",
-    "validate": "npm run format:check && npm run lint && npm run check && npm run test && npm run build && npm run verify:dist"
+    "validate": "npm run format:check && npm run lint && npm run check && npm run test && npm run build && npm run verify:dist",
+    "test:e2e": "npm run build && playwright test",
+    "validate:full": "npm run validate && playwright test",
+    "lighthouse": "node scripts/lighthouse.mjs --runs 3",
+    "fonts:subset": "python3 scripts/subset-fonts.py"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",
@@ -32,11 +36,13 @@
   "devDependencies": {
     "@astrojs/check": "0.9.12",
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.0",
     "axe-core": "4.14.0",
     "eslint": "10.14.0",
     "eslint-plugin-astro": "3.2.1",
     "eslint-plugin-jsx-a11y-x": "0.2.0",
     "globals": "17.0.0",
+    "lighthouse": "13.6.0",
     "prettier": "3.9.10",
     "prettier-plugin-astro": "1.1.2",
     "prettier-plugin-tailwindcss": "0.8.1",

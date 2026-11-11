@@ -4,42 +4,47 @@ import { getImage } from 'astro:assets';
 import SiteFooter from '@/components/SiteFooter.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
 import { company, contact, legacyCopy } from '@/data/company';
-import { croppedImage, legacyImage } from '@/lib/media';
-import { SITE_NAME, canonicalUrl, pageTitle } from '@/lib/seo';
+import { OG_HEIGHT, OG_WIDTH, ogAlt, ogImagePath, type OgKey } from '@/data/og';
+import { legacyImage } from '@/lib/media';
+import {
+  SITE_NAME,
+  canonicalUrl,
+  indexingDisabled,
+  jsonLdString,
+  pageTitle,
+  robotsContent,
+} from '@/lib/seo';
 
 interface Props {
   /** Page title without the brand suffix. Omit on the homepage. */
   title?: string;
   description?: string;
-  /** Legacy image path for social previews. */
-  ogImage?: string;
-  /** Keep placeholder / unconfirmed pages out of search indexes. */
+  /** Sharing image key (src/data/og.ts). Defaults to the logo-only image. */
+  og?: OgKey;
+  /** Keep placeholder / unconfirmed pages out of search indexes (links still followed). */
   noindex?: boolean;
+  /** false: no canonical link (error pages have no canonical URL). */
+  canonical?: boolean;
 }
 
 const {
   title,
   description = legacyCopy.metaDescription,
-  ogImage = 'img/Eyfa-yapi-resim17.png',
+  og = 'default',
   noindex = false,
+  canonical: hasCanonical = true,
 } = Astro.props;
 
 const site = Astro.site ?? new URL('https://eyfayapi.net');
 const fullTitle = pageTitle(title);
 const canonical = canonicalUrl(Astro.url.pathname, site);
-const ogSource = croppedImage(ogImage);
-const og = await getImage({
-  src: ogSource.src,
-  ...ogSource.options,
-  width: 1200,
-  height: Math.round((1200 * ogSource.height) / ogSource.width),
-  format: 'jpeg',
-});
-const ogUrl = new URL(og.src, site).toString();
+const robots = robotsContent({ noindex: noindex || indexingDisabled() });
+const ogUrl = new URL(ogImagePath(og), site).toString();
+const ogImageAlt = ogAlt(og);
 const favicon = await getImage({ src: legacyImage('logos/logo.png'), width: 64, format: 'png' });
-/** JSON for an inline <script>; escapes "<" so data can never close the tag. */
-const safeJson = (data: unknown) => JSON.stringify(data).replace(/</g, '\\u003c');
 const touchIcon = await getImage({ src: legacyImage('logos/logo.png'), width: 180, format: 'png' });
+const logo = await getImage({ src: legacyImage('logos/logo.png'), width: 512, format: 'png' });
+const orgId = new URL('/#organization', site).toString();
 ---
 
 <!doctype html>
@@ -53,8 +58,8 @@ const touchIcon = await getImage({ src: legacyImage('logos/logo.png'), width: 18
     </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {hasCanonical && <link rel="canonical" href={canonical} />}
+    {robots && <meta name="robots" content={robots} />}
     <meta name="theme-color" content="#151C1E" />
     <link rel="icon" type="image/png" href={favicon.src} />
     <link rel="apple-touch-icon" href={touchIcon.src} />
@@ -65,40 +70,65 @@ const touchIcon = await getImage({ src: legacyImage('logos/logo.png'), width: 18
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {hasCanonical && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content={String(OG_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_HEIGHT)} />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <script
       type="application/ld+json"
-      set:html={safeJson({
+      set:html={jsonLdString({
         '@context': 'https://schema.org',
-        '@type': 'GeneralContractor',
-        name: company.brandName,
-        legalName: company.legalName,
-        url: site.toString(),
-        email: company.email,
-        telephone: company.phones.map((p) => p.e164),
-        foundingDate: String(company.foundedYear.value),
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: company.address.street,
-          postalCode: company.address.postalCode,
-          addressLocality: company.address.district,
-          addressRegion: company.address.city,
-          addressCountry: company.address.country,
-        },
-        sameAs: company.social.map((s) => s.url),
-        // Stage 6 — verified only: founder (about.html), map link, phone contact points.
-        // Deliberately absent: opening hours, geo, areaServed, ratings (none verified).
-        founder: { '@type': 'Person', name: company.founder.value },
-        hasMap: contact.address.directionsHref,
-        contactPoint: [contact.mobile, contact.landline].map((phone) => ({
-          '@type': 'ContactPoint',
-          telephone: phone.e164,
-          contactType: 'customer service',
-          availableLanguage: 'tr',
-        })),
+        '@graph': [
+          {
+            // GeneralContractor (a LocalBusiness subtype): the registered legal name is
+            // "EYFA MÜTEAHHİTLİK YAPI İNŞAAT…" — müteahhitlik = construction contracting.
+            '@type': 'GeneralContractor',
+            '@id': orgId,
+            name: company.brandName,
+            legalName: company.legalName,
+            url: site.toString(),
+            logo: new URL(logo.src, site).toString(),
+            image: new URL(ogImagePath('home'), site).toString(),
+            email: company.email,
+            telephone: company.phones.map((p) => p.e164),
+            foundingDate: String(company.foundedYear.value),
+            founder: { '@type': 'Person', name: company.founder.value },
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: company.address.street,
+              postalCode: company.address.postalCode,
+              addressLocality: company.address.district,
+              addressRegion: company.address.city,
+              addressCountry: company.address.country,
+            },
+            hasMap: contact.address.directionsHref,
+            sameAs: company.social.map((s) => s.url),
+            contactPoint: [contact.mobile, contact.landline].map((phone) => ({
+              '@type': 'ContactPoint',
+              telephone: phone.e164,
+              contactType: 'customer service',
+              availableLanguage: 'tr',
+            })),
+            // Deliberately absent (no verified source): openingHours, geo, areaServed,
+            // aggregateRating/review, award, hasCredential, priceRange.
+          },
+          {
+            '@type': 'WebSite',
+            '@id': new URL('/#website', site).toString(),
+            url: site.toString(),
+            name: SITE_NAME,
+            inLanguage: 'tr-TR',
+            publisher: { '@id': orgId },
+          },
+        ],
       })}
     />
   </head>

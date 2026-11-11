@@ -21,9 +21,8 @@ import { LETTERBOX_OPTION } from './image-crop-option';
  */
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   [
-    // Default social preview image (BaseLayout) + Stage 3 homepage photography
-    // (src/data/home.ts).
-    '/img/Eyfa-yapi-resim17.png',
+    // Stage 3 homepage photography (src/data/home.ts). resim17 (the former default
+    // social image) is no longer registered: Stage 7 generates /og/*.jpg instead.
     '/img/Eyfa-yapi-resim12.png',
     '/img/Eyfa-yapi-resim18.png',
     // Project galleries (src/data/projects.ts). Excluded: files not shown on the

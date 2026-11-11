@@ -35,9 +35,16 @@ const layout = [
 ] as const;
 const fallback = layout[5];
 const slot = (i: number) => layout[i % layout.length] ?? fallback;
+/**
+ * Stage 7 meta description: shortened from the legacy intro (legacyCopy.projectsIntro,
+ * 236 characters, truncated in search results). Same fields of work, no new facts,
+ * without the "başarıyla tamamladığı" claim.
+ */
+const metaDescription =
+  'Eyfa Yapı projeleri: konut, ticari yapı, altyapı ve kentsel dönüşüm alanlarındaki çalışmalarımızdan fotoğraflar ve çizimler.';
 ---
 
-<BaseLayout title="Projelerimiz" description={legacyCopy.projectsIntro}>
+<BaseLayout title="Projelerimiz" description={metaDescription} og="projects">
   <PageHeader
     title="Projelerimiz"
     eyebrow="Portföy"
@@ -63,7 +70,7 @@ const slot = (i: number) => layout[i % layout.length] ?? fallback;
               project={project}
               aspect={s.aspect}
               size={s.size}
-              priority={i < 2}
+              priority={i === 0}
               sizes={
                 s.size === 'feature'
                   ? '(min-width: 1024px) 56vw, (min-width: 640px) 50vw, 100vw'

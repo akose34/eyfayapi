@@ -229,3 +229,36 @@ Specific questions:
 - [ ] Approve the WhatsApp default message and the project enquiry wording.
 - [ ] Should opening hours be published? If so, provide them.
 - [ ] Is a contact form wanted? It would need a separately reviewed delivery provider.
+
+## 8. Stage 7 updates (editorial audit)
+
+**Ready for publication** (verified or editorially grounded, no new facts):
+
+- company facts (2004, founder, legal name, districts, fields of work);
+- Stage 5 About/Services copy;
+- contact data (pending reconfirmation, B2);
+- the neutral project intros;
+- the shortened Projects meta description (from the legacy intro, without "başarıyla");
+- per-project meta descriptions (intro + media count).
+
+**Requires owner approval** (`OWNER_REVIEW_CHECKLIST.md` §3):
+
+- legacy claims "başarıyla tamamladığı" (Projects lead) and "öne çıkmıştır" (homepage principle 3);
+- "güvenilir çözümler" (default meta description);
+- "Uzman mimarlarla", "Alanında yetkin" and "Doğru projeleri, doğru yatırımcılarla" (services);
+- brand casing "Eyfa Yapı" vs "EYFA Yapı";
+- temporary project labels;
+- WhatsApp messages;
+- whether Activities stays in the header.
+
+**Must remain withheld:**
+
+- founder biography details;
+- the SUGİAD award photo;
+- the theatre evening;
+- watermarked or third-party-branded media;
+- opening hours, coordinates and service area (no source).
+
+Checked and consistent: phone numbers, address, e-mail and Instagram (single source, tested); the
+year 2004 (only verified date); no ratings, awards or certifications anywhere (JSON-LD and text
+scans).

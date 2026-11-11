@@ -27,3 +27,8 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Local QA reports (Stage 7)
+lighthouse/
+playwright-report/
+test-results/

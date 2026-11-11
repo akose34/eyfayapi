@@ -267,3 +267,31 @@ manually in a real browser against every production route at 320/768/1280 px (re
   On `/iletisim/` it also requires the load button, the templated iframe and the directions link.
   Mutation tests confirm that a planted iframe, form, unverified number or tag-manager script each
   make it fail.
+
+## 14. SEO, security and quality gates (Stage 7)
+
+- **Metadata** (`BaseLayout`): `og` (key into `src/data/og.ts`), `noindex` (→ `noindex, follow`)
+  and `canonical={false}` (404). `SITE_INDEXING=off` at build time makes every page `noindex` and
+  makes `robots.txt` (`src/pages/robots.txt.ts`) disallow crawling (`src/lib/seo.ts`).
+- **Share images:** `src/pages/og/[key].jpg.ts` composes the images with sharp at build time from
+  registered public photos + the trimmed logo. Logo-only pages share `og/default.jpg`.
+- **CSP** (`astro.config.ts` → `security.csp`): Astro hashes every emitted script and `<style>`
+  into a `<meta http-equiv="content-security-policy">`. Other directives:
+  - `default-src 'self'`, `frame-src https://www.google.com` (click-to-load map only);
+  - `object-src 'none'`, `form-action 'none'`, `base-uri 'self'`;
+  - `style-src-attr 'unsafe-inline'`, for two style attributes: image focal point and logo size.
+
+  Adding an inline script needs no manual hash: Astro computes it. Adding a third-party script
+  requires a directive change and fails the browser tests until then.
+
+- **Fonts:** latin files from fontsource plus Turkish subsets in `src/assets/fonts/`, regenerated
+  with `npm run fonts:subset`. Metric-matched fallback faces sit in `global.css`. Fonts are always
+  emitted as files (`vite.build.assetsInlineLimit`).
+- **Styles:** inlined into each page (`build.inlineStylesheets: 'always'`).
+- **Gates:**
+
+  | Command              | What it runs                                                                               |
+  | -------------------- | ------------------------------------------------------------------------------------------ |
+  | `npm run validate`   | format, lint, types, unit tests, build, `verify-dist` (with S7 SEO/CSP/hygiene checks)     |
+  | `npm run test:e2e`   | build, then Playwright desktop + mobile: routes, interactions, network isolation, CSP, axe |
+  | `npm run lighthouse` | local Lighthouse, 3 runs per page, median (needs a running preview)                        |

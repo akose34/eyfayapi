@@ -168,3 +168,14 @@ Not used, pending owner approval as before: `projects-img/1.webp`, `6078_11-*`, 
 
 No image repeats within a page. New rows reuse the gallery thumbnail widths (480/720/960/1280,
 default quality), so Astro reuses existing derivatives. The build grew only 1.0 MB (33.1 → 34.1 MB).
+
+## 12. Stage 7 — derivatives and share images
+
+- **Photo derivatives:** WebP quality 72 by default (`MediaFrame`, `fit="cover"`). Drawings keep
+  the encoder default (80). A 750 px step was added to the width ladders for phones.
+- **Share images:** `/og/*.jpg` (1200×630) are composed at build time from photos already shown
+  publicly: home `19`, about `23`, services `33`, projects (first portfolio photo), and each public
+  project's first photo. The logo is trimmed, not edited. No floor plan is used (tested).
+- **`img/Eyfa-yapi-resim17.png`:** no longer registered (it was the old default share image). The
+  original stays in the repository.
+- **Build output:** 31.2 MB (was 34.2 MB); the budget stays 40 MB.

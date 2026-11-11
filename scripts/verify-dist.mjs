@@ -25,6 +25,13 @@
  *    (no layout shift); (S4) JS only from first-party /_astro/*.js or inline,
  *    ≤ 8 KB per page;
  *    homepage: exactly one eager, high-priority hero image, all others lazy
+ *  - (S7) SEO: indexable pages have a unique title and description, a
+ *    self-referencing absolute canonical, complete og:/twitter: tags whose
+ *    image exists at 1200×630; noindex pages use "noindex, follow"; the sitemap
+ *    lists exactly the indexable pages; robots.txt allows crawling and names
+ *    the sitemap; JSON-LD parses and carries no unverifiable properties; every
+ *    full page has a CSP <meta>; public output contains only web file types
+ *    (no source maps, docs, sources or dotfiles); total budget unchanged
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -326,6 +333,145 @@ for (let n = 1; n <= 11; n++) {
   // hero + header logo are the only above-the-fold images
   if (eager.length > 2)
     fail(`index.html: ${eager.length} eager images (expected hero + header logo)`);
+}
+
+// Stage 7 — SEO metadata, sitemap, robots, structured data, CSP, output hygiene.
+{
+  const SITE = 'https://eyfayapi.net';
+  const attr = (html, re) => html.match(re)?.[1];
+  const meta = (html, key) =>
+    attr(html, new RegExp(`<meta (?:name|property)="${key}" content="([^"]*)"`));
+  const urlFor = (name) =>
+    `${SITE}/${name.replace(/index\.html$/, '').replace(/^404\.html$/, '404')}`;
+  const indexable = [];
+  const titles = new Map();
+  const descriptions = new Map();
+
+  for (const f of files.filter((x) => x.endsWith('.html'))) {
+    const name = rel(f);
+    const html = readFileSync(f, 'utf8');
+    if (isRedirectStub(html)) {
+      if (!/<link rel="canonical" href="https:\/\/eyfayapi\.net\//.test(html))
+        fail(`${name}: redirect document without an absolute canonical`);
+      continue;
+    }
+    if (!/<meta http-equiv="content-security-policy" content="[^"]*default-src 'self'/.test(html))
+      fail(`${name}: missing Content-Security-Policy <meta>`);
+    const robots = meta(html, 'robots');
+    const canonical = attr(html, /<link rel="canonical" href="([^"]+)"/);
+    if (robots) {
+      if (!/^noindex, follow$/.test(robots) && name !== '404.html')
+        fail(`${name}: unexpected robots "${robots}" (use "noindex, follow")`);
+      if (name === '404.html' && canonical) fail('404.html: must not declare a canonical URL');
+      continue;
+    }
+    indexable.push(urlFor(name));
+    if (canonical !== urlFor(name)) fail(`${name}: canonical ${canonical} ≠ ${urlFor(name)}`);
+    const title = attr(html, /<title>([^<]+)<\/title>/) ?? '';
+    const description = meta(html, 'description') ?? '';
+    if (titles.has(title)) fail(`${name}: duplicate title (also ${titles.get(title)})`);
+    titles.set(title, name);
+    if (descriptions.has(description))
+      fail(`${name}: duplicate description (also ${descriptions.get(description)})`);
+    descriptions.set(description, name);
+    if (description.length < 50 || description.length > 170)
+      fail(`${name}: description length ${description.length} (expected 50–170)`);
+    for (const key of [
+      'og:title',
+      'og:description',
+      'og:url',
+      'og:image',
+      'og:image:alt',
+      'og:locale',
+      'twitter:card',
+      'twitter:image',
+    ]) {
+      if (!meta(html, key)) fail(`${name}: missing ${key}`);
+    }
+    if (meta(html, 'og:url') !== canonical) fail(`${name}: og:url ≠ canonical`);
+    const image = meta(html, 'og:image') ?? '';
+    if (!image.startsWith(`${SITE}/og/`)) fail(`${name}: og:image must be a generated /og/ image`);
+    else if (!existsSync(join(DIST, image.slice(SITE.length))))
+      fail(`${name}: og:image file missing → ${image}`);
+    if (meta(html, 'og:image:width') !== '1200' || meta(html, 'og:image:height') !== '630')
+      fail(`${name}: og:image dimensions must be declared as 1200×630`);
+
+    for (const [, json] of html.matchAll(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+    )) {
+      let data;
+      try {
+        data = JSON.parse(json);
+      } catch {
+        fail(`${name}: invalid JSON-LD`);
+        continue;
+      }
+      const text = JSON.stringify(data);
+      for (const key of [
+        'aggregateRating',
+        'review',
+        'openingHours',
+        'openingHoursSpecification',
+        'geo',
+        'areaServed',
+        'award',
+        'hasCredential',
+        'priceRange',
+      ]) {
+        if (text.includes(`"${key}"`)) fail(`${name}: JSON-LD contains unverified "${key}"`);
+      }
+    }
+  }
+
+  // og images: real JPEGs at exactly 1200×630 (SOF0/SOF2 marker).
+  for (const f of files.filter((x) => rel(x).startsWith('og/'))) {
+    const buf = readFileSync(f);
+    let i = 2;
+    let size = null;
+    while (i < buf.length) {
+      const marker = buf[i + 1];
+      if (marker === 0xc0 || marker === 0xc2) {
+        size = [buf.readUInt16BE(i + 7), buf.readUInt16BE(i + 5)];
+        break;
+      }
+      i += 2 + buf.readUInt16BE(i + 2);
+    }
+    if (!size || size[0] !== 1200 || size[1] !== 630)
+      fail(`${rel(f)}: expected a 1200×630 JPEG, got ${size?.join('×') ?? 'unknown'}`);
+  }
+
+  const staging = process.env.SITE_INDEXING?.toLowerCase() === 'off';
+  if (staging && indexable.length)
+    fail(`staging build (SITE_INDEXING=off) has indexable page(s): ${indexable.join(', ')}`);
+
+  // Sitemap = exactly the indexable pages (production build).
+  const sitemapFiles = files.filter((x) => /sitemap-\d+\.xml$/.test(x));
+  const listed = sitemapFiles.flatMap((f) =>
+    [...readFileSync(f, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]),
+  );
+  const missing = indexable.filter((u) => !listed.includes(u));
+  const extra = listed.filter((u) => !indexable.includes(u));
+  if (!staging && missing.length) fail(`sitemap misses indexable page(s): ${missing.join(', ')}`);
+  if (!staging && extra.length) fail(`sitemap lists non-indexable URL(s): ${extra.join(', ')}`);
+
+  // robots.txt: the production default must never block the site.
+  const robotsTxt = readFileSync(join(DIST, 'robots.txt'), 'utf8');
+  if (staging) {
+    if (!/Disallow: \/\s*$/m.test(robotsTxt)) fail('robots.txt: staging build must disallow /');
+  } else {
+    if (/^Disallow:\s*\/\s*$/m.test(robotsTxt)) fail('robots.txt blocks the whole site');
+    if (!robotsTxt.includes(`Sitemap: ${SITE}/sitemap-index.xml`))
+      fail('robots.txt: missing Sitemap line');
+  }
+
+  // Public output hygiene: only web file types; nothing internal.
+  const allowed = /\.(html|css|js|webp|jpe?g|png|svg|avif|woff2|mp4|xml|txt|ico)$/;
+  for (const f of files) {
+    const name = rel(f);
+    if (!allowed.test(name)) fail(`unexpected file type in public output: ${name}`);
+    if (/(^|\/)\.|\.map$|\.md$|\.ts$|(^|\/)(docs|src|scripts|tests|e2e)\//.test(name))
+      fail(`internal file in public output: ${name}`);
+  }
 }
 
 const pages = files.filter((x) => x.endsWith('.html')).length;

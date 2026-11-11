@@ -33,7 +33,7 @@ import { about, aboutImages } from '@/data/corporate';
 const mobile = contact.mobile;
 ---
 
-<BaseLayout title="Hakkımızda" description={about.hero.lead.text} ogImage={aboutImages.hero.src}>
+<BaseLayout title="Hakkımızda" description={about.hero.lead.text} og="about">
   <PageHeader
     title={about.hero.title.text}
     eyebrow={about.hero.eyebrow}
@@ -50,7 +50,7 @@ const mobile = contact.mobile;
         position={aboutImages.hero.position}
         priority
         quality={72}
-        widths={[640, 960, 1280, 1600, 2000]}
+        widths={[640, 750, 960, 1280, 1600, 2000]}
         sizes="(min-width: 1376px) 1296px, 100vw"
         class="lg:[&>div]:aspect-cinema"
       />
@@ -111,7 +111,7 @@ const mobile = contact.mobile;
         src={aboutImages.storyFrame.src}
         alt={aboutImages.storyFrame.alt}
         aspect="portrait"
-        widths={[480, 720, 960, 1280]}
+        widths={[480, 750, 960, 1280]}
         sizes="(min-width: 640px) 40vw, 100vw"
         class="reveal sm:col-span-5"
       />
@@ -119,7 +119,7 @@ const mobile = contact.mobile;
         src={aboutImages.storyFinished.src}
         alt={aboutImages.storyFinished.alt}
         aspect="photo"
-        widths={[480, 720, 960, 1280]}
+        widths={[480, 750, 960, 1280]}
         sizes="(min-width: 640px) 58vw, 100vw"
         class="reveal sm:col-span-7 sm:self-end"
       />
