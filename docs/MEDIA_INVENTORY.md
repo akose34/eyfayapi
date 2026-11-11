@@ -140,3 +140,15 @@ are never shipped. `tests/media.test.ts` ensures every registered file is used, 
 
 Not used, pending owner approval as before: `projects-img/1.webp`, `6078_11-*`, `184_1-*`,
 `boss-photo.jpg`, `sugiad-resim.webp`.
+
+## 10. Stage 4 — portfolio usage and build-time crops
+
+- The full selection and exclusion review is in `docs/PROJECT_MEDIA_REVIEW.md`.
+- **Withheld from the public site** (still in the repository, recoverable, never in `dist/`):
+  `6078_11-1…8`, `1.webp`, `184_1-*`, and the near-duplicates `8, 11, 16, 29, 30.webp`. The list is
+  in `src/data/withheld-media.json` and enforced by tests and `verify-dist`.
+- **Letterbox bands are now removed at build time** by `src/lib/image-service.ts`, using measured
+  pixel rows from `src/data/image-crops.json` (34 files: 29 drone stills and the 5 colour plans 2–6).
+  This replaces the Stage 2/3 CSS oversizing trick. The original files are unchanged.
+- The drone stills are 3024 × 1964 with bands at 168 px top and 94 px bottom, cropped to
+  3024 × 1698. Plans 2–6 lose their 313–340 px bottom band only.

@@ -27,7 +27,7 @@ import {
   homeIntroImage,
   serviceImages,
 } from '@/data/home';
-import { getProjectBySlug, projects } from '@/data/projects';
+import { getProjectBySlug, portfolio } from '@/data/projects';
 import { services } from '@/data/services';
 
 /** First sentence of the verified homepage introduction. */
@@ -37,9 +37,10 @@ const projectsLead = legacyCopy.projectsIntro.split('. ')[0] + '.';
 
 const featured = featuredProjects.map(({ slug, image }) => {
   const project = getProjectBySlug(slug);
-  const picked = project?.gallery.find((g) => g.src === image);
-  if (!project || !picked) throw new Error(`[home] featured ${slug}/${image} not found`);
-  return { project, image: picked };
+  if (!project || project.visibility !== 'public') {
+    throw new Error(`[home] featured ${slug} is not a public project`);
+  }
+  return { project, image };
 });
 const [lead, ...rest] = featured;
 ---
@@ -154,7 +155,7 @@ const [lead, ...rest] = featured;
       id="projeler-baslik"
     >
       <TextLink slot="action" href="/projeler/">
-        Tüm projeler ({projects.length})
+        Tüm projeler ({portfolio().length})
       </TextLink>
     </SectionHeading>
 
@@ -166,7 +167,6 @@ const [lead, ...rest] = featured;
             image={lead.image}
             aspect="feature"
             size="feature"
-            pendingNote={false}
             sizes="(min-width: 1024px) 56vw, 100vw"
           />
         </div>
@@ -177,7 +177,6 @@ const [lead, ...rest] = featured;
             <ProjectCard
               project={project}
               image={image}
-              pendingNote={false}
               sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
             />
           </div>

@@ -4,7 +4,7 @@ import { getImage } from 'astro:assets';
 import SiteFooter from '@/components/SiteFooter.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
 import { company, legacyCopy } from '@/data/company';
-import { legacyImage } from '@/lib/media';
+import { croppedImage, legacyImage } from '@/lib/media';
 import { SITE_NAME, canonicalUrl, pageTitle } from '@/lib/seo';
 
 interface Props {
@@ -27,7 +27,14 @@ const {
 const site = Astro.site ?? new URL('https://eyfayapi.net');
 const fullTitle = pageTitle(title);
 const canonical = canonicalUrl(Astro.url.pathname, site);
-const og = await getImage({ src: legacyImage(ogImage), width: 1200, format: 'jpeg' });
+const ogSource = croppedImage(ogImage);
+const og = await getImage({
+  src: ogSource.src,
+  ...ogSource.options,
+  width: 1200,
+  height: Math.round((1200 * ogSource.height) / ogSource.width),
+  format: 'jpeg',
+});
 const ogUrl = new URL(og.src, site).toString();
 const favicon = await getImage({ src: legacyImage('logos/logo.png'), width: 64, format: 'png' });
 /** JSON for an inline <script>; escapes "<" so data can never close the tag. */

@@ -16,7 +16,7 @@ import {
 } from '@/data/home';
 import { getProjectBySlug } from '@/data/projects';
 import { services } from '@/data/services';
-import { hasLegacyImage, letterboxOf } from '@/lib/media';
+import { cropOf, hasLegacyImage } from '@/lib/media';
 import { ROOT, normaliseText, readRoot } from './helpers';
 
 const about = normaliseText(readRoot('about.html'));
@@ -40,8 +40,8 @@ describe('homepage curation', () => {
     for (const img of [homeHero, homeIntroImage, homeClosingImage]) {
       expect(hasLegacyImage(img.src), img.src).toBe(true);
       expect(img.alt.length).toBeGreaterThan(10);
-      // Drone stills must be trimmed — the letterbox table must know them.
-      expect(letterboxOf(img.src), img.src).toBeDefined();
+      // Drone stills must be trimmed — the crop table must know them.
+      expect(cropOf(img.src), img.src).toBeDefined();
     }
   });
 

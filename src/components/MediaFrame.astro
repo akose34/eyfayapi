@@ -14,7 +14,7 @@
  */
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
-import { legacyImage, letterboxOf } from '@/lib/media';
+import { croppedImage } from '@/lib/media';
 
 type Aspect =
   'landscape' | 'photo' | 'wide' | 'cinema' | 'portrait' | 'square' | 'feature' | 'fill';
@@ -63,16 +63,15 @@ const aspects: Record<Aspect, string> = {
   feature: 'aspect-landscape lg:aspect-portrait', // 4:3 on phones, 4:5 from 1024px
   fill: 'h-full',
 };
-const image = src ? legacyImage(src) : null;
+// Measured letterbox bands are removed at BUILD time by the image service
+// (src/lib/image-service.ts); the HTML width/height/srcset describe the
+// cropped picture. Originals stay untouched. Only verified solid black bands
+// are listed (src/data/image-crops.json) — drawing content is never cropped.
+const cropped = src ? croppedImage(src) : null;
 const maxWidth = Math.max(...widths);
 const Wrapper = caption ? 'figure' : 'div';
-// Trim baked-in letterbox bars (cover fit only): the image box is made taller
-// than the frame and shifted up, so the bars fall outside `overflow: hidden`.
-const letterbox = image && src && fit === 'cover' ? letterboxOf(src) : undefined;
-const visible = letterbox ? 1 - letterbox.top - letterbox.bottom : 1;
-const innerStyle = letterbox
-  ? `top:${((-letterbox.top / visible) * 100).toFixed(3)}%;height:${(100 / visible).toFixed(3)}%`
-  : 'top:0;height:100%';
+const renderWidth = cropped ? Math.min(maxWidth, cropped.width) : 0;
+const renderHeight = cropped ? Math.round((renderWidth * cropped.height) / cropped.width) : 0;
 ---
 
 <Wrapper class:list={['min-w-0', aspect === 'fill' && 'h-full', className]}>
@@ -84,27 +83,27 @@ const innerStyle = letterbox
       fit === 'contain' ? 'bg-white' : 'bg-ivory-200',
     ]}
   >
-    {image ? (
-      <div class="absolute inset-x-0" style={innerStyle}>
-        <Image
-          src={image}
-          alt={alt}
-          widths={widths.filter((w) => w <= image.width)}
-          width={Math.min(maxWidth, image.width)}
-          sizes={sizes}
-          loading={priority ? 'eager' : 'lazy'}
-          fetchpriority={priority ? 'high' : 'auto'}
-          decoding="async"
-          {...(quality ? { quality } : {})}
-          style={position ? `object-position:${position}` : undefined}
-          class:list={[
-            'absolute inset-0 size-full',
-            fit === 'contain' ? 'object-contain p-3 sm:p-4' : 'object-cover',
-            zoom &&
-              'transition-transform duration-(--duration-slow) ease-(--ease-out-quiet) group-hover:scale-103',
-          ]}
-        />
-      </div>
+    {cropped ? (
+      <Image
+        src={cropped.src}
+        {...cropped.options}
+        alt={alt}
+        widths={widths.filter((w) => w <= cropped.width)}
+        width={renderWidth}
+        height={renderHeight}
+        sizes={sizes}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : 'auto'}
+        decoding="async"
+        {...(quality ? { quality } : {})}
+        style={position ? `object-position:${position}` : undefined}
+        class:list={[
+          'absolute inset-0 size-full',
+          fit === 'contain' ? 'object-contain p-3 sm:p-4' : 'object-cover',
+          zoom &&
+            'transition-transform duration-(--duration-slow) ease-(--ease-out-quiet) group-hover:scale-103',
+        ]}
+      />
     ) : (
       <div
         class="text-ink-muted absolute inset-0 flex flex-col items-center justify-center gap-2 text-xs"

@@ -3,16 +3,16 @@
 Eight stages. Each one ends with a commit on `redesign/eyfa-professional`, a written report and
 the owner's go-ahead. Nothing is pushed, merged or deployed without explicit approval.
 
-| Stage | Title                                                | Status                                    |
-| ----- | ---------------------------------------------------- | ----------------------------------------- |
-| 1     | Project foundation and migration audit               | **Done** (`06f997d`)                      |
-| 2     | Premium design system and shared UI                  | **Done** (see `STAGE_2_REPORT.md`)        |
-| 3     | Homepage                                             | **Done** (see `STAGE_3_REPORT.md`)        |
-| 4     | Projects: listing, detail, galleries                 | **Next** (names still need owner content) |
-| 5     | Corporate pages: About, Services, Activities         | Not started                               |
-| 6     | Contact, conversion and SEO                          | Not started                               |
-| 7     | Quality: accessibility, performance, browser testing | Not started                               |
-| 8     | Release: deployment cut-over and legacy retirement   | Not started (needs owner approval)        |
+| Stage | Title                                                | Status                             |
+| ----- | ---------------------------------------------------- | ---------------------------------- |
+| 1     | Project foundation and migration audit               | **Done** (`06f997d`)               |
+| 2     | Premium design system and shared UI                  | **Done** (see `STAGE_2_REPORT.md`) |
+| 3     | Homepage                                             | **Done** (see `STAGE_3_REPORT.md`) |
+| 4     | Projects: listing, detail, galleries                 | **Done** (see `STAGE_4_REPORT.md`) |
+| 5     | Corporate pages: About, Services, Activities         | **Next**                           |
+| 6     | Contact, conversion and SEO                          | Not started                        |
+| 7     | Quality: accessibility, performance, browser testing | Not started                        |
+| 8     | Release: deployment cut-over and legacy retirement   | Not started (needs owner approval) |
 
 ---
 
@@ -59,16 +59,24 @@ Delivered (details: `STAGE_3_REPORT.md`):
 Deferred: a hero video loop (optional, documented), "featured" selection by the owner, and
 build-time letterbox cropping (removes an axe heuristic false positive).
 
-## Stage 4 — Projects
+## Stage 4 — Projects ✅
 
-- Owner content collected through the checklist in `CONTENT_INVENTORY.md`.
-- Move projects to an Astro Content Collection (one Markdown file per project, Zod schema mirroring
-  `Unverified<T>`).
-- Name-based slugs, with redirect stubs from provisional slugs if those were ever public.
-- Listing with client-side category/status filters (no backend). Detail pages with gallery,
-  lightbox, facts table (verified only) and plans section.
-- Remove `noindex` per project once it is confirmed.
-- Resolve media licensing items (Autodesk watermark, third-party logos).
+Delivered (details: `STAGE_4_REPORT.md`, `PROJECT_MEDIA_REVIEW.md`):
+
+- A per-gallery media review. Every legacy image is shown or excluded with a reason. Gallery 8
+  (educational watermark) is withheld, and its URL redirects.
+- The registry gains curation, visibility and optional verified fields (type, location, status,
+  year, description, related), all still `UNKNOWN` or `NEEDS_CONFIRMATION`.
+- An editorial portfolio index (photographed projects plus a drawing archive). No filters, because
+  there is no verified categorisation.
+- Detail pages: header summary, cinematic hero, photo gallery, uncropped plans, other projects,
+  contact.
+- An accessible `<dialog>` viewer: keyboard, swipe, live counter, focus restoration, no-JS fallback.
+- **Build-time letterbox crop** through a custom image service. The Stage 3 axe "incomplete"
+  results are resolved.
+
+Still blocked on the owner: names, facts, the gallery 4/6 question, drawing rights, and name-based
+slugs (planned with redirect stubs from `proje-NN`; never published so far).
 
 ## Stage 5 — Corporate pages
 
@@ -111,7 +119,7 @@ build-time letterbox cropping (removes an axe heuristic false positive).
   Resolve the `emlakçi-logo.png` Unicode duplicate (PROJECT_AUDIT §6). Untrack `.DS_Store`. Archive
   `slider-photos/` duplicates. Never delete without a recoverable copy in Git history.
 
-## Open blockers and risks (updated after Stage 3)
+## Open blockers and risks (updated after Stage 4)
 
 1. **Project names and facts are unknown.** Stage 4 cannot publish real project pages until the
    owner answers the checklist.

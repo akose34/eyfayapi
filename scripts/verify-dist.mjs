@@ -12,8 +12,12 @@
  *    mobile-menu trigger whose aria-controls points at an existing <dialog>,
  *    footer; unique ids; alt on every <img>; rel="noopener" on target=_blank
  *  - the development-only design showcase is NOT in the production output
+ *  - (S4) no withheld legacy media (src/data/withheld-media.json) in any form;
+ *    every public project page exists and has exactly one image viewer;
+ *    withheld project pages are redirect documents; drawings stay uncropped
  *  - (S3) heading levels never skip (h1→h3); every <img> has width/height
- *    (no layout shift); no external <script src> and ≤ 2 KB of inline JS;
+ *    (no layout shift); (S4) JS only from first-party /_astro/*.js or inline,
+ *    ≤ 8 KB per page;
  *    homepage: exactly one eager, high-priority hero image, all others lazy
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
@@ -90,14 +94,19 @@ if (existsSync(join(DIST, 'sitemap-0.xml'))) {
   if (/tasarim-sistemi|\/dev\//.test(sitemap)) fail('sitemap lists the development showcase');
 }
 
-const redirectStubs = new Set(['about.html', 'anaEkran.html', 'faaliyet.html', 'projeler.html']);
+// Redirect documents (legacy URLs, withheld projects): any page whose only job
+// is an instant meta refresh. They must still be lang="tr" and point somewhere real.
+const isRedirectStub = (html) => /<meta http-equiv="refresh" content="0; url=([^"]+)"/.test(html);
 
 for (const f of files.filter((x) => x.endsWith('.html'))) {
   const name = rel(f);
   const html = readFileSync(f, 'utf8');
   if (!/<html lang="tr"/.test(html)) fail(`${name}: missing <html lang="tr">`);
   if (!/<title>[^<]+<\/title>/.test(html)) fail(`${name}: missing <title>`);
-  if (!redirectStubs.has(name)) {
+  const refresh = html.match(/<meta http-equiv="refresh" content="0; url=([^"]+)"/)?.[1];
+  if (refresh && !resolveInternal(refresh, f))
+    fail(`${name}: redirect target missing → ${refresh}`);
+  if (!isRedirectStub(html)) {
     if (!/<meta name="description" content="[^"]+"/.test(html))
       fail(`${name}: missing meta description`);
     const h1 = (html.match(/<h1[\s>]/g) ?? []).length;
@@ -146,14 +155,21 @@ for (const f of files.filter((x) => x.endsWith('.html'))) {
       if (level > prev + 1) fail(`${name}: heading level skips from h${prev} to h${level}`);
     });
 
-    // Client JavaScript budget: no external scripts, tiny inline modules only.
-    if (/<script\b[^>]*\ssrc=/.test(html)) fail(`${name}: external <script src> found`);
-    const inlineJs = [
+    // Client JavaScript budget (S4): only first-party modules bundled by Astro
+    // (/_astro/*.js) or inline; no third-party scripts; ≤ 8 KB total per page.
+    let jsBytes = [
       ...html.matchAll(/<script(?![^>]*application\/ld\+json)[^>]*>([\s\S]*?)<\/script>/g),
     ]
       .map((m) => m[1].length)
       .reduce((a, b) => a + b, 0);
-    if (inlineJs > 2048) fail(`${name}: ${inlineJs} bytes of inline JS exceeds the 2 KB budget`);
+    for (const [, src] of html.matchAll(/<script\b[^>]*\ssrc="([^"]+)"/g)) {
+      if (!/^\/_astro\/[^/]+\.js$/.test(src)) {
+        fail(`${name}: script from outside /_astro/ → ${src}`);
+      } else if (existsSync(join(DIST, src))) {
+        jsBytes += statSync(join(DIST, src)).size;
+      }
+    }
+    if (jsBytes > 8192) fail(`${name}: ${jsBytes} bytes of JavaScript exceeds the 8 KB budget`);
 
     for (const [tag] of html.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)) {
       if (!/rel="[^"]*noopener/.test(tag)) fail(`${name}: target=_blank without rel=noopener`);
@@ -165,6 +181,55 @@ for (const f of files.filter((x) => x.endsWith('.html'))) {
       if (!u || /^(https?:|mailto:|tel:|data:|#|\/\/)/.test(u)) continue;
       if (!resolveInternal(u, f)) fail(`${name}: broken internal ${attr} → ${u}`);
     }
+  }
+}
+
+// Stage 4 — withheld media must never be published (originals or derivatives).
+{
+  const withheld = JSON.parse(
+    readFileSync(
+      fileURLToPath(new URL('../src/data/withheld-media.json', import.meta.url)),
+      'utf8',
+    ),
+  ).files;
+  // Astro names derivatives "<basename>.<hash>[_<variant>].<ext>".
+  const names = files.map((f) => rel(f).split('/').pop());
+  for (const path of withheld) {
+    const base = path
+      .split('/')
+      .pop()
+      .replace(/\.[a-z]+$/i, '');
+    const leaked = names.filter((n) => n.startsWith(`${base}.`));
+    if (leaked.length) fail(`withheld media leaked: ${path} → ${leaked.slice(0, 2).join(', ')}`);
+  }
+}
+
+// Stage 4 — project pages.
+for (let n = 1; n <= 11; n++) {
+  const page = `projeler/proje-${String(n).padStart(2, '0')}/index.html`;
+  if (!existsSync(join(DIST, page))) {
+    fail(`missing project page: ${page}`);
+    continue;
+  }
+  const html = readFileSync(join(DIST, page), 'utf8');
+  if (isRedirectStub(html)) {
+    if (!/url=\/projeler\/"/.test(html))
+      fail(`${page}: withheld redirect must point to /projeler/`);
+    if (/<img\b/.test(html)) fail(`${page}: withheld redirect must not contain images`);
+    continue;
+  }
+  const dialogs = (html.match(/<dialog\b[^>]*data-lightbox-dialog/g) ?? []).length;
+  const links = [...html.matchAll(/<a\b[^>]*data-lightbox="[^"]+"[^>]*>/g)].map((m) => m[0]);
+  if (links.length && dialogs !== 1)
+    fail(`${page}: expected 1 image viewer dialog, found ${dialogs}`);
+  for (const link of links) {
+    if (!/aria-label="[^"]+ — büyüt \(\d+\/\d+\)"/.test(link))
+      fail(`${page}: viewer link without a descriptive label`);
+  }
+  // Drawings: every plan thumbnail is contained, never cover-cropped.
+  for (const [, block] of html.matchAll(/data-lightbox-kind="plans"[^>]*>([\s\S]*?)<\/a>/g)) {
+    if (!/object-contain/.test(block) || /object-cover/.test(block))
+      fail(`${page}: plan thumbnail is cropped`);
   }
 }
 

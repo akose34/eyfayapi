@@ -40,6 +40,10 @@ export default defineConfig({
   },
   // Static redirect documents in public/ must stay as-is (e.g. /projeler.html).
   publicDir: './public',
+  // Stock sharp pipeline + build-time letterbox crop (src/lib/image-service.ts).
+  image: {
+    service: { entrypoint: './src/lib/image-service.ts' },
+  },
   integrations: [
     devShowcase(),
     sitemap({

@@ -1,0 +1,25 @@
+{
+  "$comment": "Legacy media that must never reach dist/ (rights or duplication). Kept in sync with the `excluded` lists in src/data/projects.ts by tests/projects.test.ts; scanned by scripts/verify-dist.mjs. Plus the files that are not part of any legacy gallery but must not be published (184_1-*, 6078_11-1).",
+  "files": [
+    "projects-img/1.webp",
+    "projects-img/11.webp",
+    "projects-img/16.webp",
+    "projects-img/184_1-1.webp",
+    "projects-img/184_1-2.webp",
+    "projects-img/184_1-3.webp",
+    "projects-img/184_1-4.webp",
+    "projects-img/184_1-5.webp",
+    "projects-img/184_1-6.webp",
+    "projects-img/29.webp",
+    "projects-img/30.webp",
+    "projects-img/6078_11-1.webp",
+    "projects-img/6078_11-2.webp",
+    "projects-img/6078_11-3.webp",
+    "projects-img/6078_11-4.webp",
+    "projects-img/6078_11-5.webp",
+    "projects-img/6078_11-6.webp",
+    "projects-img/6078_11-7.webp",
+    "projects-img/6078_11-8.webp",
+    "projects-img/8.webp"
+  ]
+}

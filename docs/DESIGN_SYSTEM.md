@@ -335,3 +335,32 @@ in `dist`).
   items (projects).
 - **Marketing contexts hide pending markers** (`ProjectCard pendingNote={false}`). Listing and
   detail pages keep them.
+
+## 16. Stage 4 additions
+
+| Component        | Purpose                                                                                                                 | Key props                         |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `ProjectGallery` | Grid of thumbnail links for the viewer. `photos`: 2-up, portrait photos keep 4:5. `plans`: drawings on white, uncropped | `images`, `variant`, `group`      |
+| `Lightbox`       | Accessible full-screen `<dialog>` viewer (include once per page)                                                        | none; enhances `a[data-lightbox]` |
+
+Changes:
+
+- **`MediaFrame`.** The letterbox is now cropped at build time. The CSS oversized-box technique is
+  gone, which also removed the axe "overlap" heuristic results.
+- **`ProjectCard`.** It uses curated photos and counts (`N fotoğraf · M çizim`), adds
+  "· İnşaat sürecinden" when the photos show construction, and outlines plan covers.
+  - `image` now takes a path and must be a curated public photo of that project.
+  - The visitor-facing "Bilgiler onay bekliyor" marker was removed (Stage 4 brief).
+- **Portfolio grid rhythm** (reading order, no masonry): 7/12 + 5/12, then 5 + 7, then 6 + 6;
+  square, 4:3 and 3:2 frames balance the row heights.
+
+Viewer conventions:
+
+- No animation.
+- Focus goes to the close button on open and back to the thumbnail on close.
+- ←/→ wrap around; Home and End jump to the ends.
+- Swipe works at 50 px or more.
+- The live region announces "Fotoğraf 2 / 5" or "Çizim 1 / 5".
+- On phones the prev/next buttons sit at the bottom (44 px). On tablets and desktops they sit at
+  the sides.
+- Drawings are shown on a white sheet.

@@ -5,7 +5,7 @@ import type { Service } from '@/types/content';
  * goes where and which galleries are shown first. Nothing here is a company
  * fact; selection is based on photographic quality (docs/STAGE_3_REPORT.md §3).
  * Every path must exist in src/lib/media.ts; tests/home.test.ts enforces that
- * featured images belong to their own project's gallery.
+ * featured images are public, curated photos of their own project.
  */
 
 export const homeHero = {
@@ -37,7 +37,9 @@ export const homeClosingImage = {
 export const featuredProjects = [
   { slug: 'proje-06', image: 'projects-img/27.webp' },
   { slug: 'proje-02', image: 'projects-img/7.webp' },
-  { slug: 'proje-01', image: 'projects-img/31.webp' },
+  // Stage 4: replaces proje-01/31.webp (busy top-down site shot); 14.webp is a
+  // stronger composition and is labelled as construction on the card.
+  { slug: 'proje-03', image: 'projects-img/14.webp' },
 ] as const;
 
 /** One authentic image per verified service (MEDIA_INVENTORY §7). */

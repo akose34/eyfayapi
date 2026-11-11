@@ -1,11 +1,40 @@
 ---
+/**
+ * Projects index (Stage 4) — editorial portfolio.
+ *
+ * 1. Photographed projects in a reading-order editorial grid: rows alternate
+ *    wide (7/12) + narrow (5/12) cards, then a balanced pair. DOM order equals
+ *    visual order (no masonry), so keyboard and screen-reader order match.
+ * 2. Drawing-only projects as a quieter archive of plans on white.
+ *
+ * No filters: there is no verified categorisation (type/status/year) to filter
+ * by — inventing "completed/ongoing/commercial" would be fabrication. The only
+ * honest split, photographs vs. drawings, is shown as two sections instead.
+ */
+import ContactCTA from '@/components/ContactCTA.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 import Section from '@/components/Section.astro';
-import StageNotice from '@/components/StageNotice.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { legacyCopy } from '@/data/company';
-import { projects } from '@/data/projects';
+import { portfolio } from '@/data/projects';
+
+const all = portfolio();
+const photographed = all.filter((p) => p.curation.hero);
+const drawings = all.filter((p) => !p.curation.hero);
+
+/** Editorial rhythm for the photographed grid, applied in reading order. */
+const layout = [
+  { span: 'lg:col-span-7', aspect: 'landscape', size: 'feature' },
+  { span: 'lg:col-span-5', aspect: 'square', size: 'default' },
+  { span: 'lg:col-span-5', aspect: 'square', size: 'default' },
+  { span: 'lg:col-span-7', aspect: 'landscape', size: 'feature' },
+  { span: 'lg:col-span-6', aspect: 'photo', size: 'default' },
+  { span: 'lg:col-span-6', aspect: 'photo', size: 'default' },
+] as const;
+const fallback = layout[5];
+const slot = (i: number) => layout[i % layout.length] ?? fallback;
 ---
 
 <BaseLayout title="Projelerimiz" description={legacyCopy.projectsIntro}>
@@ -15,22 +44,58 @@ import { projects } from '@/data/projects';
     lead={legacyCopy.projectsIntro}
     breadcrumbs={[{ label: 'Projeler' }]}
     width="wide"
-  />
+  >
+    <p class="text-ink-muted mt-8 text-sm tracking-(--tracking-ui)">
+      {photographed.length} fotoğraflı proje · {drawings.length} proje çizimi
+    </p>
+  </PageHeader>
 
-  <Section width="wide">
-    <StageNotice title="Proje bilgileri onay bekliyor" class="max-w-(--container-prose)">
-      Mevcut sitede proje adları, konumları ve açıklamaları bulunmamaktadır. Galeriler mevcut
-      sitedeki sırayla geçici olarak numaralandırılmıştır; bilgiler firma tarafından onaylandıktan
-      sonra eklenecektir.
-    </StageNotice>
-
-    <h2 class="sr-only">Proje galerileri</h2>
-    <ul class="mt-14 grid gap-x-(--spacing-grid) gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((project, index) => (
-        <li class="reveal">
-          <ProjectCard project={project} priority={index < 3} />
-        </li>
-      ))}
+  <Section width="wide" labelledby="fotografli-projeler">
+    <h2 id="fotografli-projeler" class="sr-only">
+      Fotoğraflı projeler
+    </h2>
+    <ul class="grid gap-x-(--spacing-grid) gap-y-16 sm:grid-cols-2 lg:grid-cols-12 lg:gap-y-24">
+      {photographed.map((project, i) => {
+        const s = slot(i);
+        return (
+          <li class:list={['reveal', s.span]}>
+            <ProjectCard
+              project={project}
+              aspect={s.aspect}
+              size={s.size}
+              priority={i < 2}
+              sizes={
+                s.size === 'feature'
+                  ? '(min-width: 1024px) 56vw, (min-width: 640px) 50vw, 100vw'
+                  : '(min-width: 1024px) 42vw, (min-width: 640px) 50vw, 100vw'
+              }
+            />
+          </li>
+        );
+      })}
     </ul>
   </Section>
+
+  {drawings.length > 0 && (
+    <Section tone="white" width="wide" labelledby="proje-cizimleri">
+      <SectionHeading
+        eyebrow="Arşiv"
+        title="Proje çizimleri"
+        lead="Mimari çizimleriyle yer alan projelerimiz. Çizimler kırpılmadan gösterilir."
+        id="proje-cizimleri"
+      />
+      <ul class="mt-14 grid gap-x-(--spacing-grid) gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+        {drawings.map((project) => (
+          <li class="reveal">
+            <ProjectCard
+              project={project}
+              sizes="(min-width: 1024px) 24vw, (min-width: 640px) 50vw, 100vw"
+            />
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )}
+
+  <ContactCTA />
 </BaseLayout>

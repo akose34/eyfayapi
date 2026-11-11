@@ -151,3 +151,29 @@ Specific questions:
 - [ ] 184/1 (Necip Fazıl Mah.) drawings with ARTRIA / GOKTUG branding: publish, and with what credit?
 - [ ] `6078_11-1.webp` render with "YILMAZ İNŞAAT" signage: what is the relationship, and may it be published?
 - [ ] `slider-photos/` duplicates: may they be archived once the new site is live?
+
+---
+
+## 5. Stage 4 updates (portfolio)
+
+- **Public presentation.** Provisional names ("Proje 01"…) stay. Visitor-facing pending warnings
+  were removed; uncertainty lives in `src/data/projects.ts` (`UNKNOWN` / `NEEDS_CONFIRMATION`) and
+  in this checklist.
+- **New optional fields** per project: `type`, `location`, `status`, `completionYear`,
+  `description`, `related`. Each renders only when `VERIFIED`. `tests/projects.test.ts` currently
+  asserts that none is verified, so confirming a fact means updating data and test together.
+- **Construction honesty.** Galleries 1 and 3 show only construction-phase photos. Their cards and
+  pages say "İnşaat sürecinden" / "İnşaat süreci" and never imply completion.
+- **Gallery 8 is withheld** (educational-watermark drawings), and `/projeler/proje-08/` redirects
+  to `/projeler/`.
+
+### Additional owner questions (Stage 4)
+
+- [ ] Galleries 4 and 6: same building, or two buildings of the same design? Signage differs
+      ("≡EYFA" logo band vs. "EYFA YAPI" lettering).
+- [ ] Who drew the plans in galleries 7, 9, 10 and 11 (7109_4, 158_8, 7795_4, 2–6), and may we
+      publish them?
+- [ ] Gallery 8: can you provide drawings without the Autodesk educational watermark?
+- [ ] Are galleries 1 and 3 completed now? If so, are there photos of the finished buildings?
+- [ ] Which projects should the homepage feature? It currently shows 06, 02 and 03, chosen on
+      photo quality only.

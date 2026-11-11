@@ -185,3 +185,34 @@ manually in a real browser against every production route at 320/768/1280 px (re
 - **Performance model.** Only the hero and header logo load eagerly. Everything else is lazy, with
   fixed-ratio boxes. Measured values are in `STAGE_3_REPORT.md` §6, computed from the built HTML
   by resolving each `srcset` for a given viewport and DPR.
+
+## 11. Portfolio architecture (Stage 4)
+
+- **Data model** (`src/types/content.ts`, `src/data/projects.ts`):
+  - `gallery` is the immutable legacy mirror.
+  - `curation` holds hero, photos, plans, excluded-with-reason, and alt overrides.
+  - `visibility` is public or withheld.
+  - Optional `Unverified<T>` facts render only when `VERIFIED`.
+  - Helpers: `portfolio()` (editorial order), `projectPhotos`, `projectPlans`, `publicImages`,
+    `showsConstruction`, `otherProjects`.
+  - **To update a project:** edit `src/data/projects.ts` only. No page markup changes are needed.
+- **Routes:** `/projeler/` and `/projeler/proje-NN/` (11 generated). Withheld projects render a
+  `lang="tr"` meta-refresh document to `/projeler/`. Detail pages stay `noindex` and out of the
+  sitemap until names are confirmed.
+- **Build-time image crop** (`src/lib/image-service.ts`):
+  - It wraps `astro/assets/services/sharp`.
+  - It adds a `data-letterbox="<top>,<bottom>"` option, applied with `sharp.extract()` (lossless
+    intermediate) before the stock resize and encode.
+  - `getHTMLAttributes` strips the option. `propertiesToHash` includes it, _plus Astro's defaults_:
+    the stock sharp service defines none, which caused filename collisions during development.
+  - `croppedImage(path)` in `src/lib/media.ts` returns the source, the cropped intrinsic size and
+    the option, so `width`, `height` and `srcset` describe the trimmed picture.
+  - Crop data comes from `scripts/measure-letterbox.mjs` (with `--check` to detect staleness), and
+    `tests/letterbox.test.ts` re-measures the pixels.
+- **Viewer:** `Lightbox.astro` is one native `<dialog>` per page plus about 2 KB of script.
+  `ProjectGallery.astro` renders thumbnail links to 1280/2048 px derivatives, so the images still
+  open without JS.
+- **JS budget:** `verify-dist` allows first-party `/_astro/*.js` modules or inline scripts, at most
+  8 KB per page. Measured: 812 B on most pages, 2,709 B on project pages.
+- **Withheld media guard:** `src/data/withheld-media.json`, with negative globs in `media.ts`, a
+  unit test and a `dist/` filename scan.
