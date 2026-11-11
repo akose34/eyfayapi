@@ -1,6 +1,10 @@
 # Release Blockers (Stage 7)
 
-**Classification: BLOCKED PENDING CONTENT APPROVAL.**
+**Stage 8 classification: READY FOR OWNER APPROVAL, publication BLOCKED BY CONTENT.** The
+technical work is complete, and the deployment workflow and runbooks are prepared. Every open
+content question is now a numbered row in `FINAL_OWNER_APPROVAL.md` §2.
+
+**Stage 7 classification (historical): BLOCKED PENDING CONTENT APPROVAL.**
 
 The site is technically complete:
 
@@ -65,7 +69,7 @@ Public release is blocked by unverified content and by the owner decisions below
 
 ## Deployment prerequisites (Stage 8 work, needs the owner's approval)
 
-### D1. GitHub Pages must switch to Actions-based deployment
+### D1. GitHub Pages must switch to Actions-based deployment (Stage 8: workflow prepared)
 
 - **Severity:** High (for the release step only).
 - **Evidence:** `DEPLOYMENT_PLAN.md` §2. Merging to `main` without this would keep serving the
@@ -117,3 +121,14 @@ Public release is blocked by unverified content and by the owner decisions below
 - **Opening hours:** not published, because there is no source.
 - **Activities page:** sparse (one item); see `OWNER_REVIEW_CHECKLIST.md` §4.
 - **Logo:** no vector master. The PNG works on dark surfaces.
+
+## Stage 8 status of the deployment prerequisites
+
+- **D1:** `.github/workflows/deploy.yml` is ready (manual, approval-gated). The owner still has to
+  switch the Pages source (`RELEASE_RUNBOOK.md` §4.2).
+- **D2:** a staging procedure is prepared (`RELEASE_RUNBOOK.md` §2). Option B needs a repository
+  and DNS authorization.
+- **D3:** unchanged (a Pages limitation).
+- **D4:** a step in the release runbook (§4.4).
+- **New, B5:** possible duplicate galleries (Proje 04 / 06) and floor-plan authorship are listed as
+  blocking rows 2.4 and 2.6 in `FINAL_OWNER_APPROVAL.md`.

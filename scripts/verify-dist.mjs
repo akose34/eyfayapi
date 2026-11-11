@@ -37,7 +37,12 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const DIST = fileURLToPath(new URL('../dist/', import.meta.url));
+// `--dist <dir>` verifies another output folder (CI staging build); default dist/.
+const distArg = process.argv.indexOf('--dist');
+const DIST =
+  distArg > -1
+    ? join(process.cwd(), process.argv[distArg + 1] ?? '', '/')
+    : fileURLToPath(new URL('../dist/', import.meta.url));
 const MAX_FILE_BYTES = 1024 * 1024; // 1 MB per file
 const MAX_TOTAL_BYTES = 40 * 1024 * 1024; // 40 MB total
 

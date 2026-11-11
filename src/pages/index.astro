@@ -46,9 +46,11 @@ const [lead, ...rest] = featured;
 ---
 
 <BaseLayout og="home">
-  {/* A — Hero: text on charcoal, authentic photograph bleeding to the right edge. */}
+  {/* A — Hero: text on charcoal, authentic photograph bleeding to the right edge.
+      Stage 8: the desktop blend is a wide eased gradient (was a 160 px linear ramp,
+      which showed a hard seam at the photo's left edge). */}
   <section class="tone-dark border-line relative border-t" aria-labelledby="hero-title">
-    <div class="relative aspect-square sm:aspect-photo lg:absolute lg:inset-y-0 lg:right-0 lg:aspect-auto lg:w-[56%]">
+    <div class="relative aspect-[5/4] sm:aspect-photo lg:absolute lg:inset-y-0 lg:right-0 lg:aspect-auto lg:w-[56%]">
       <MediaFrame
         src={homeHero.src}
         alt={homeHero.alt}
@@ -62,7 +64,7 @@ const [lead, ...rest] = featured;
       />
       <div
         aria-hidden="true"
-        class="from-charcoal pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t to-transparent lg:inset-x-auto lg:inset-y-0 lg:left-0 lg:h-auto lg:w-40 lg:bg-linear-to-r"
+        class="from-charcoal pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t to-transparent lg:inset-x-auto lg:inset-y-0 lg:-left-px lg:h-auto lg:w-[42%] lg:bg-[linear-gradient(90deg,var(--color-charcoal),rgb(21_28_30/0.78)_16%,rgb(21_28_30/0.42)_42%,rgb(21_28_30/0.14)_72%,rgb(21_28_30/0))]"
       ></div>
     </div>
 

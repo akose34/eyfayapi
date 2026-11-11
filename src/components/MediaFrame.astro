@@ -86,7 +86,9 @@ const renderHeight = cropped ? Math.round((renderWidth * cropped.height) / cropp
       'relative overflow-hidden',
       aspects[aspect],
       rounded && 'rounded-lg',
-      fit === 'contain' ? 'bg-white' : 'bg-ivory-200',
+      // Placeholder colour while the photo loads: matches the surface (no light flash
+      // on dark sections, Stage 8). Drawings always sit on white.
+      fit === 'contain' ? 'bg-white' : 'bg-ivory-200 [.tone-dark_&]:bg-charcoal-800',
     ]}
   >
     {cropped ? (

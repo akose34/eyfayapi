@@ -295,3 +295,22 @@ manually in a real browser against every production route at 320/768/1280 px (re
   | `npm run validate`   | format, lint, types, unit tests, build, `verify-dist` (with S7 SEO/CSP/hygiene checks)     |
   | `npm run test:e2e`   | build, then Playwright desktop + mobile: routes, interactions, network isolation, CSP, axe |
   | `npm run lighthouse` | local Lighthouse, 3 runs per page, median (needs a running preview)                        |
+
+## 15. Delivery pipeline (Stage 8)
+
+- `.github/workflows/ci.yml` runs on PRs to `main`, pushes to `redesign/**` and on demand:
+  - validate, typecheck and Playwright;
+  - uploads the production `dist/` and a `SITE_INDEXING=off` staging build as private artifacts.
+
+  It never publishes.
+
+- `.github/workflows/deploy.yml` runs on manual dispatch only:
+  - `main` only, with the typed confirmation `eyfayapi.net`;
+  - the same gate as CI, then `upload-pages-artifact` → `deploy-pages` behind the `github-pages`
+    environment (required reviewer).
+- Permissions: the workflow-level default is none in deploy and `contents: read` in CI. `deploy`
+  holds `pages: write` + `id-token: write` only.
+- Actions are pinned to commit SHAs (the version is in a comment).
+- `scripts/verify-dist.mjs --dist <dir>` verifies any output folder (used for the staging build).
+- `.nojekyll` at the root: branch-based Pages builds serve files verbatim. This keeps the legacy
+  site safe between merge and source switch, and makes rollback work.

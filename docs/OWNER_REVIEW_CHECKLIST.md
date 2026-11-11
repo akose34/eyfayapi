@@ -1,5 +1,9 @@
 # Owner Review Checklist
 
+> **Stage 8:** superseded by `FINAL_OWNER_APPROVAL.md`, which numbers every question and
+> separates technical status, content, design, image rights and publishing authorization. This
+> file is kept for history.
+
 How to review locally:
 
 ```bash

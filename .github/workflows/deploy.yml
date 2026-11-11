@@ -1,0 +1,94 @@
+# PRODUCTION deployment to GitHub Pages (eyfayapi.net) — Stage 8, prepared, NOT active.
+#
+# Safeguards (all must hold before anything is published):
+#   1. Manual only: there is no push/schedule trigger. Someone with write access
+#      must start it from Actions → "Deploy to GitHub Pages" → Run workflow.
+#   2. Only from main: the jobs are skipped on any other ref.
+#   3. Typed confirmation: the `confirm` input must be exactly "eyfayapi.net".
+#   4. The full quality gate (validate, typecheck, browser + axe tests) passes.
+#   5. The `github-pages` environment requires approval by a required reviewer
+#      (owner sets this in Settings → Environments; see docs/RELEASE_RUNBOOK.md).
+#   6. Pages must be switched to "GitHub Actions" as its source — until the owner
+#      does that, deploy-pages fails and the legacy site keeps serving.
+#
+# Least privilege: no permissions at workflow level; `verify` can only read the
+# repo, `deploy` can only write Pages and mint the OIDC token Pages requires.
+name: Deploy to GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'PRODUCTION release. Type the domain "eyfayapi.net" to confirm.'
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: pages-production
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify and build
+    if: github.ref == 'refs/heads/main' && inputs.confirm == 'eyfayapi.net'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      # actions/checkout v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      # actions/setup-node v7.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install (lockfile only)
+        run: npm ci
+
+      - name: Refuse a staging configuration
+        run: |
+          if [ "${SITE_INDEXING:-}" = "off" ]; then
+            echo "SITE_INDEXING=off must never reach production" >&2
+            exit 1
+          fi
+
+      - name: Format, lint, astro check, unit tests, build, verify-dist
+        run: npm run validate
+
+      - name: Type check (astro check + tsc)
+        run: npm run typecheck
+
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser smoke + accessibility tests
+        run: npx playwright test
+
+      # actions/upload-pages-artifact v5.0.0
+      - name: Upload Pages artifact (dist/)
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        with:
+          path: dist/
+
+  deploy:
+    name: Deploy (requires environment approval)
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # actions/deploy-pages v5.0.1
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346

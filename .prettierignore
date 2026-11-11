@@ -22,3 +22,4 @@ public/*.html
 lighthouse/
 playwright-report/
 test-results/
+dist-staging/

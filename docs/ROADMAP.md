@@ -3,16 +3,16 @@
 Eight stages. Each one ends with a commit on `redesign/eyfa-professional`, a written report and
 the owner's go-ahead. Nothing is pushed, merged or deployed without explicit approval.
 
-| Stage | Title                                                | Status                             |
-| ----- | ---------------------------------------------------- | ---------------------------------- |
-| 1     | Project foundation and migration audit               | **Done** (`06f997d`)               |
-| 2     | Premium design system and shared UI                  | **Done** (see `STAGE_2_REPORT.md`) |
-| 3     | Homepage                                             | **Done** (see `STAGE_3_REPORT.md`) |
-| 4     | Projects: listing, detail, galleries                 | **Done** (see `STAGE_4_REPORT.md`) |
-| 5     | Corporate pages: About, Services, Activities         | **Done** (see `STAGE_5_REPORT.md`) |
-| 6     | Contact and conversion                               | **Done** (see `STAGE_6_REPORT.md`) |
-| 7     | SEO and quality: accessibility, performance, testing | **Done** (see `STAGE_7_REPORT.md`) |
-| 8     | Release: deployment cut-over and legacy retirement   | **Next**: blocked on owner review  |
+| Stage | Title                                                | Status                                 |
+| ----- | ---------------------------------------------------- | -------------------------------------- |
+| 1     | Project foundation and migration audit               | **Done** (`06f997d`)                   |
+| 2     | Premium design system and shared UI                  | **Done** (see `STAGE_2_REPORT.md`)     |
+| 3     | Homepage                                             | **Done** (see `STAGE_3_REPORT.md`)     |
+| 4     | Projects: listing, detail, galleries                 | **Done** (see `STAGE_4_REPORT.md`)     |
+| 5     | Corporate pages: About, Services, Activities         | **Done** (see `STAGE_5_REPORT.md`)     |
+| 6     | Contact and conversion                               | **Done** (see `STAGE_6_REPORT.md`)     |
+| 7     | SEO and quality: accessibility, performance, testing | **Done** (see `STAGE_7_REPORT.md`)     |
+| 8     | Release preparation (cut-over awaits authorization)  | **Prepared** (see `STAGE_8_REPORT.md`) |
 
 ---
 
@@ -123,7 +123,16 @@ Delivered (details: `STAGE_5_REPORT.md`):
 - Not done (manual or owner): VoiceOver pass, real-device Safari iOS / Chrome Android checks,
   creative proposals (`OWNER_REVIEW_CHECKLIST.md`).
 
-## Stage 8 — Release
+## Stage 8 — Release preparation ✅ (cut-over not executed)
+
+- Final design review with three safe refinements: the hero seam, the phone hero crop, and dark
+  image placeholders.
+- Founder-section proposal (not published).
+- Content release audit; navigation recommendation.
+- `ci.yml` + `deploy.yml` prepared; staging, release and rollback runbooks.
+- The release itself waits on `FINAL_OWNER_APPROVAL.md`.
+
+## Stage 8 — Release (original plan)
 
 - Owner approval of the deployment plan (`DEPLOYMENT_PLAN.md`).
 - Add a GitHub Actions Pages workflow. The owner switches Pages source from "Deploy from a branch"

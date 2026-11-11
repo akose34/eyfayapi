@@ -1,5 +1,12 @@
 # Deployment Plan
 
+> **Stage 8 update:** the workflows now exist: `.github/workflows/ci.yml` (verification only) and
+> `.github/workflows/deploy.yml` (manual, `main` only, typed confirmation, environment approval,
+> SHA-pinned actions). The executable procedures are `RELEASE_RUNBOOK.md` and
+> `ROLLBACK_RUNBOOK.md`; they supersede the workflow sketch in §3 and the steps in §4–§5 below.
+> Release order matters: merge (legacy keeps serving thanks to `.nojekyll`) → switch the Pages
+> source → run the deploy.
+
 **Status: plan only. Nothing has been deployed, pushed or reconfigured.** Every step below that
 touches GitHub settings, `main`, DNS or the live site requires the owner's explicit approval.
 
